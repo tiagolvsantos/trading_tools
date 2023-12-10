@@ -80,5 +80,5 @@ if __name__ == "__main__":
     counter_sell = 0
     counter_buy = 0
     counter_occurence = 0
-    occurence = 100 # configure the number of occurences to print the Delta results
+    occurence = 1000 # configure the number of occurences to print the Delta results
     main()
