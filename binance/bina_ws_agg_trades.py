@@ -6,9 +6,12 @@ import typer
 class bcolors:
     Red = '\033[91m'
     Green = '\033[92m'
+    Magenta = '\033[95m'
+    Yellow = '\033[93m'
+    White = '\33[37m'
 
 def on_open(ws):
-    print(f"Subscribing to Binance trade agg stream for {symbol}...")
+    print(bcolors.White + f"Subscribing to Binance trade agg stream for {symbol}...")
     ws.send(json.dumps({
         "method": "SUBSCRIBE",
         "params": [f"{symbol}@aggTrade"],
@@ -18,24 +21,47 @@ def on_open(ws):
 def on_message(ws, message):
     message = json.loads(message)
     side = get_side(message)
-    size = message["q"] 
-    #print(message)
-    if float(size)> 0.1:
+    size = message["q"]
+    global counter_occurence 
+    counter_occurence +=1
+    global occurence
+    
+    get_position_delta(message,side)
+    if float(size)> float(threshold):
         print(f'{bcolors.Red if side == "SELL" else bcolors.Green}{message["s"]} {side} Size:{size} @{message["p"]}')
+    
+
+    if counter_occurence/occurence == 1:
+        counter_occurence = 0
+        print_position_delta()
 
 
 def on_error(ws, error):
-    print("Error occurred:")
+    print(bcolors.White + "Error occurred:")
     print(error)
 
 def on_close(ws):
-    print("WebSocket connection closed.")
+    print(bcolors.White + "WebSocket connection closed.")
 
 def get_side(message):
     if message["m"] == True:
         return "BUY"
     else:
         return "SELL"
+
+def get_position_delta(message, side):
+    global counter_buy 
+    counter_buy += float(message["q"]) if  side == "BUY" else 0
+    global counter_sell 
+    counter_sell += float(message["q"]) if  side == "SELL" else 0
+
+def print_position_delta():
+    print(bcolors.Yellow  + "#################### POSITION DELTA ####################")
+    print(bcolors.Green  + "Buy: " + str(counter_buy))
+    print(bcolors.Red  + "Sell: " + str(counter_sell))
+    print(bcolors.White  + "Delta (Buy/Sell): " + str(counter_buy/counter_sell))
+    print(bcolors.Yellow  + "########################################################")
+
 
 def main():
     socket = "wss://stream.binance.com:9443/ws"
@@ -50,4 +76,9 @@ def main():
 if __name__ == "__main__":
     symbol = input("Select a symbol:")
     threshold = input("Select a threshold:")
+   
+    counter_sell = 0
+    counter_buy = 0
+    counter_occurence = 0
+    occurence = 100 # configure the number of occurences to print the Delta results
     main()
