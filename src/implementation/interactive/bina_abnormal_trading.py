@@ -33,6 +33,3 @@ def binance_abnormal_trading():
 def main():
     while True:
         binance_abnormal_trading()
-
-if __name__ == "__main__":
-    main()
