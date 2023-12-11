@@ -11,7 +11,7 @@ class bcolors:
     White = '\33[37m'
 
 def on_open(ws):
-    print(bcolors.White + f"Subscribing to Binance trade agg stream for {symbol}...")
+    print(f"{bcolors.White}Subscribing to Binance trade agg stream for {symbol}...")
     ws.send(json.dumps({
         "method": "SUBSCRIBE",
         "params": [f"{symbol}@aggTrade"],
@@ -37,17 +37,14 @@ def on_message(ws, message):
 
 
 def on_error(ws, error):
-    print(bcolors.White + "Error occurred:")
+    print(f"{bcolors.White}Error occurred:")
     print(error)
 
 def on_close(ws):
-    print(bcolors.White + "WebSocket connection closed.")
+    print(f"{bcolors.White}WebSocket connection closed.")
 
 def get_side(message):
-    if message["m"] == True:
-        return "BUY"
-    else:
-        return "SELL"
+    return "BUY" if message["m"] == True else "SELL"
 
 def get_position_delta(message, side):
     global counter_buy 
@@ -56,11 +53,11 @@ def get_position_delta(message, side):
     counter_sell += float(message["q"]) if  side == "SELL" else 0
 
 def print_position_delta():
-    print(bcolors.Yellow  + "#################### POSITION DELTA ####################")
-    print(bcolors.Green  + "Buy: " + str(counter_buy))
-    print(bcolors.Red  + "Sell: " + str(counter_sell))
-    print(bcolors.White  + "Delta (Buy/Sell): " + str(counter_buy/counter_sell))
-    print(bcolors.Yellow  + "########################################################")
+    print(f"{bcolors.Yellow}#################### POSITION DELTA ####################")
+    print(f"{bcolors.Green}Buy: {str(counter_buy)}")
+    print(f"{bcolors.Red}Sell: {str(counter_sell)}")
+    print(f"{bcolors.White}Delta (Buy/Sell): {str(counter_buy / counter_sell)}")
+    print(f"{bcolors.Yellow}########################################################")
 
 
 def main():
