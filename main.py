@@ -35,7 +35,7 @@ def charts_menu():
     inquirer.List('option',
                     message="Select an option",
                     choices=["TA", "MAG7","Asset profile","Cross asset corr",
-                             "SPX/VIX ratio","SPX 2D RSI", "VIX 1 ATR"],
+                             "SPX/VIX ratio","SPX 2D RSI", "VIX 1 ATR","Futures curve"],
                     carousel=True
                 ),
     ]
@@ -54,6 +54,8 @@ def charts_menu():
         charts_impl.chart_spx_2d_rsi_impl()
     if charts_menu_pick["option"] == "VIX 1 ATR":
         charts_impl.chart_vix_atr_1_impl()
+    if charts_menu_pick["option"] == "Futures curve":
+        charts_impl.chart_futures_curve_impl(input("Select a symbol:").upper())
     main()
         # bina_ws_agg_trades.main(input("Select a symbol:"),input("Select a threshold:"))
 

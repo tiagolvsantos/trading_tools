@@ -251,3 +251,10 @@ def plot_vix_atr_1():
     fig.update_xaxes(rangeslider_visible=False)
     fig.update_layout(title_text="SP500 VS VIX ATR < 1 = Brace for impact!", template="plotly_dark")
     fig.show()
+
+def plot_futures_curve(symbol):
+    df_data = openbb_lib.get_futures_curve(symbol)
+    df_data = df_data.reset_index(drop=False)
+    df_data.columns = ['date', 'value']
+    fig = px.line(df_data, x="date", y="value", title=f"{symbol} Futures Curve", template="plotly_dark")
+    fig.show()

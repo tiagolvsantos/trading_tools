@@ -22,3 +22,6 @@ def chart_spx_2d_rsi_impl():
 
 def chart_vix_atr_1_impl():
     chartpedia.plot_vix_atr_1()
+
+def chart_futures_curve_impl(symbol):
+    chartpedia.plot_futures_curve(symbol)
