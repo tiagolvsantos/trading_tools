@@ -3,6 +3,8 @@ import inquirer
 from env_vars import configure_env_vars
 from src.implementation import interactive_impl 
 from src.implementation import charts_impl
+from src.implementation import tradefi_impl
+from src.implementation import crypto_impl
 ## Menus
 def main_menu():
     main_menu = [
@@ -14,6 +16,32 @@ def main_menu():
     ]
     return inquirer.prompt(main_menu)
 
+
+def tradefi_menu():
+    tradefi_menu = [
+    inquirer.List('option',
+                    message="Select an option",
+                    choices=['Market Breath', 'Top gainers', 'Top loosers', 'Most active equity Options', 'Most active index options',
+                             'Intraday top volume','Stock ratings'],
+                    carousel=True
+                ),
+    ]
+    tradefi_menu_pick = inquirer.prompt(tradefi_menu)
+    if tradefi_menu_pick["option"] == "Market Breath":
+        tradefi_impl.get_market_breath()
+    if tradefi_menu_pick["option"] == "Top gainers":
+        tradefi_impl.get_market_top_gainers()
+    if tradefi_menu_pick["option"] == "Top loosers":
+        tradefi_impl.get_market_top_loosers()
+    if tradefi_menu_pick["option"] == "Most active equity Options":
+        tradefi_impl.get_most_active_equity_options()
+    if tradefi_menu_pick["option"] == "Most active index options":
+        tradefi_impl.get_most_active_index_options()
+    if tradefi_menu_pick["option"] == "Intraday top volume":
+        tradefi_impl.get_intraday_top_volume()
+    if tradefi_menu_pick["option"] == "Stock ratings":
+        tradefi_impl.get_stock_ratings(input("Select a symbol:"))
+    main()
 
 def interactive_menu():
     interactive_menu = [
@@ -57,15 +85,29 @@ def charts_menu():
     if charts_menu_pick["option"] == "Futures curve":
         charts_impl.chart_futures_curve_impl(input("Select a symbol:").upper())
     main()
-        # bina_ws_agg_trades.main(input("Select a symbol:"),input("Select a threshold:"))
 
+
+def crypto_menu():
+    crypto_menu = [
+    inquirer.List('option',
+                    message="Select an option",
+                    choices=['Binance Order Flow'],
+                    carousel=True
+                ),
+    ]
+    crypto_menu_pick = inquirer.prompt(crypto_menu)
+    if crypto_menu_pick["option"] == "Binance Order Flow":
+        crypto_impl.plot_binance_flows_for_asset(input("Select a symbol:").upper())
+
+
+    main()
 
 def main():
     main_menu_pick = main_menu()
     if main_menu_pick["option"] == "TradeFi":
-        print("TradeFi")
+        tradefi_menu()
     if main_menu_pick["option"] == "Crypto":
-        print("Crypto")
+        crypto_menu()
     if main_menu_pick["option"] == "Charts":
         charts_menu()
     if main_menu_pick["option"] == "Reports":
