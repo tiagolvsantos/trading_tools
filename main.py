@@ -5,17 +5,17 @@ from src.implementation import interactive_impl
 from src.implementation import charts_impl
 from src.implementation import tradefi_impl
 from src.implementation import crypto_impl
+from src.implementation import links_impl
 ## Menus
 def main_menu():
     main_menu = [
     inquirer.List('option',
                     message="Select an option",
-                    choices=['TradeFi', 'Crypto', 'Charts', 'Reports', 'Interactive'],
+                    choices=['TradeFi', 'Crypto', 'Charts', 'Reports', 'Interactive','Links'],
                     carousel=True
                 ),
     ]
     return inquirer.prompt(main_menu)
-
 
 def tradefi_menu():
     tradefi_menu = [
@@ -86,7 +86,6 @@ def charts_menu():
         charts_impl.chart_futures_curve_impl(input("Select a symbol:").upper())
     main()
 
-
 def crypto_menu():
     crypto_menu = [
     inquirer.List('option',
@@ -102,6 +101,34 @@ def crypto_menu():
 
     main()
 
+def links_menu():
+    links_menu = [
+    inquirer.List('option',
+                    message="Select an option",
+                    choices=['Research links'],
+                    carousel=True
+                ),
+    ]
+    links_menu_pick = inquirer.prompt(links_menu)
+    if links_menu_pick["option"] == "Research links":
+        links_impl.get_links_list()
+
+    main()
+
+def reports_menu():
+    reports_menu = [
+    inquirer.List('option',
+                    message="Select an option",
+                    choices=['50 MA up/down'],
+                    carousel=True
+                ),
+    ]
+    reports_menu_pick = inquirer.prompt(reports_menu)
+    if reports_menu_pick["option"] == "50 MA up/down":
+        print()
+
+    main()
+
 def main():
     main_menu_pick = main_menu()
     if main_menu_pick["option"] == "TradeFi":
@@ -114,7 +141,8 @@ def main():
         print("Reports")
     if main_menu_pick["option"] == "Interactive":
         interactive_menu()
-
+    if main_menu_pick["option"] == "Links":
+        links_menu()
 
 if __name__ == "__main__":
     #configure_env_vars()
