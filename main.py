@@ -41,6 +41,7 @@ def tradefi_menu():
         tradefi_impl.get_intraday_top_volume()
     if tradefi_menu_pick["option"] == "Stock ratings":
         tradefi_impl.get_stock_ratings(input("Select a symbol:"))
+    
     main()
 
 def interactive_menu():
