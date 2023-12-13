@@ -6,12 +6,13 @@ from src.implementation import charts_impl
 from src.implementation import tradefi_impl
 from src.implementation import crypto_impl
 from src.implementation import links_impl
+from src.implementation import reports_impl
 ## Menus
 def main_menu():
     main_menu = [
     inquirer.List('option',
                     message="Select an option",
-                    choices=['TradeFi', 'Crypto', 'Charts', 'Reports', 'Interactive','Links'],
+                    choices=['TradeFi', 'Crypto', 'Charts', 'Reports', 'Interactive','Links','Jobs'],
                     carousel=True
                 ),
     ]
@@ -126,10 +127,23 @@ def reports_menu():
     ]
     reports_menu_pick = inquirer.prompt(reports_menu)
     if reports_menu_pick["option"] == "50 MA up/down":
-        print()
+        reports_impl.report_ma(50)
 
     main()
 
+def jobs_menu():
+    reports_menu = [
+    inquirer.List('option',
+                    message="Select an option",
+                    choices=['Reports MA'],
+                    carousel=True
+                ),
+    ]
+    reports_menu_pick = inquirer.prompt(reports_menu)
+    if reports_menu_pick["option"] == "Reports MA":
+        reports_impl.run_jobs()
+
+    main()
 def main():
     main_menu_pick = main_menu()
     if main_menu_pick["option"] == "TradeFi":
@@ -139,12 +153,15 @@ def main():
     if main_menu_pick["option"] == "Charts":
         charts_menu()
     if main_menu_pick["option"] == "Reports":
-        print("Reports")
+        reports_menu()
     if main_menu_pick["option"] == "Interactive":
         interactive_menu()
     if main_menu_pick["option"] == "Links":
         links_menu()
+    if main_menu_pick["option"] == "Jobs":
+        jobs_menu()
 
 if __name__ == "__main__":
     #configure_env_vars()
     main()
+  

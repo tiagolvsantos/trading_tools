@@ -73,6 +73,8 @@ def _plot_summary(symbol, df_data):
 def get_crypto_order_flow(symbol:str):
 
     df_data = binance_lib.get_order_book_depth(symbol)
+    if len(df_data)==0:
+        return f"No data for {symbol}"
 
     # BID ASK RATIO  ranges from -1 to 1.
     # The ratio essentially shows which side is stronger and by how much. So let's say bids = 5million and asks = 2.5million. bid ask ratio = (5 - 2.5) / (5 + 2.5) = 0.33. --> implying, more demand than supply.
@@ -116,6 +118,9 @@ def get_crypto_order_flow(symbol:str):
 
 def plot_aggtrades(symbol:str):
     df_data = binance_lib.get_daily_aggtrades(symbol)
+    if len(df_data)==0:
+        return f"No data for {symbol}"
+
     fig = go.Figure(data=go.Heatmap(
             z=df_data["qty"],
             x=df_data["price"],
@@ -129,6 +134,9 @@ def plot_aggtrades(symbol:str):
 
 def plot_net_asset_taker(symbol:str):
     df_data = binance_lib.get_quotes(symbol)
+    if len(df_data)==0:
+        return f"No data for {symbol}"
+
     df_data["Net taker volume"] = pd.to_numeric(df_data["asset volume"]) - pd.to_numeric(df_data["taker buy quote volume"])
 
     # Create figure with secondary y-axis
