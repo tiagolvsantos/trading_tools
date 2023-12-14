@@ -1,6 +1,9 @@
 from src.libs import openbb_lib
 from src.libs import yfinance_lib
 from src.libs import technical_indicators_lib
+from src.libs import binance_lib
+from src.libs import yfinance_lib
+
 import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
@@ -12,8 +15,6 @@ import matplotlib.ticker as mtick
 import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
-import warnings
-from src.libs import yfinance_lib
 from statsmodels.tsa.seasonal import seasonal_decompose
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
@@ -257,4 +258,49 @@ def plot_futures_curve(symbol):
     df_data = df_data.reset_index(drop=False)
     df_data.columns = ['date', 'value']
     fig = px.line(df_data, x="date", y="value", title=f"{symbol} Futures Curve", template="plotly_dark")
+    fig.show()
+
+def plot_crypto_cvd(symbol, interval,to_tail):
+    try:
+        df_data = binance_lib.get_quotes(symbol, interval)
+    except Exception:
+        return pd.DataFrame()
+    
+    df_oi = binance_lib.get_open_Interest(symbol, interval)
+    df_oi["oi"] = pd.to_numeric(df_oi["oi"])
+    df_oi["oi in $"] = pd.to_numeric(df_oi["oi in $"])
+    if len(df_data)>0:
+        _plot_crypto_cvd_chart(df_data, symbol, df_oi, to_tail)
+    else:
+        print("NO DATA!")
+
+
+def _plot_crypto_cvd_chart(df_data, symbol, df_oi,to_tail):
+    df_data.columns = ['date', 'open', 'high', 'low','close','volume','close time','asset volume', 'number of trades' ,'taker buy asset volume','taker buy quote volume', 'ignore']
+    df_cvd = technical_indicators_lib.cumulative_volume_delta(df_data.tail(to_tail))
+
+    fig = make_subplots(rows=4, cols=1)
+
+    fig.append_trace(go.Candlestick(x=df_cvd['date'],
+                    open=df_cvd['open'], high=df_cvd['high'],
+                    low=df_cvd['low'], close=df_cvd['close'], name = symbol), row=1, col=1)
+
+    fig.append_trace(go.Scatter(
+        x=df_cvd['date'],
+        y=df_cvd['cumulative_delta'], name = "Delta", line_color='grey',mode='lines',marker = dict(color=list(map(_set_color, df_cvd['delta'])))
+    ), row=2, col=1)
+
+    fig.append_trace(go.Scatter(
+        x=df_oi['date'],
+        y=df_oi['oi'], name = "OI", line_color='#9966CC'
+    ), row=3, col=1)
+
+    fig.append_trace(go.Scatter(
+        x=df_oi['date'],
+        y=df_oi['oi in $'], name = "OI in $", line_color='#682860'
+    ), row=4, col=1)
+
+
+    fig.update_xaxes(rangeslider_visible=False)
+    fig.update_layout(title_text=f"{symbol} CVD + OI + OI in $ for {to_tail} Trading periods", template="plotly_dark")
     fig.show()

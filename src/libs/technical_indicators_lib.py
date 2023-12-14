@@ -694,4 +694,14 @@ def cumulative_volume_delta(df):
     df.loc[df.is_close_larger == False, 'delta'] = df.loc[df.is_close_larger == False, 'volume'] * (-df.loc[df.is_close_larger == False, 'delta'])
     df.loc[df.is_close_larger == True, 'delta'] = df.loc[df.is_close_larger == True, 'volume'] * (df.loc[df.is_close_larger == True, 'delta'])
 
+    #df = df.sort_values(by='date',ascending=False)
+
+    count=0
+    for index, row in df.iterrows():
+        count+=1
+        if count==1:
+            continue
+        else:
+            df.loc[index , 'cumulative_delta'] =  df.loc[index -1 , 'delta'] +  df.loc[index , 'delta'] 
+       
     return df
