@@ -26,5 +26,5 @@ def chart_vix_atr_1_impl():
 def chart_futures_curve_impl(symbol):
     chartpedia.plot_futures_curve(symbol)
 
-def chart_binance_symbol_cvd(symbol):
-    chartpedia.plot_crypto_cvd(symbol)
+def chart_binance_symbol_cvd(symbol,interval,to_tail):
+    chartpedia.plot_crypto_cvd(symbol,interval,to_tail)

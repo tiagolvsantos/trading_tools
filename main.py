@@ -87,7 +87,7 @@ def charts_menu():
     if charts_menu_pick["option"] == "Futures curve":
         charts_impl.chart_futures_curve_impl(input("Select a symbol:").upper())
     if charts_menu_pick["option"] == "Crypto CVD":
-        charts_impl.chart_binance_symbol_cvd(input("Select a symbol:").upper())
+        charts_impl.chart_binance_symbol_cvd(input("Select a symbol:").upper(),"1d",180)
     main()
 
 def crypto_menu():
