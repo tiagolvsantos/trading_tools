@@ -123,14 +123,15 @@ def reports_menu():
     reports_menu = [
     inquirer.List('option',
                     message="Select an option",
-                    choices=['50 MA up/down'],
+                    choices=['50 MA up/down','Volume bigger than average'],
                     carousel=True
                 ),
     ]
     reports_menu_pick = inquirer.prompt(reports_menu)
     if reports_menu_pick["option"] == "50 MA up/down":
         reports_impl.report_ma(50)
-
+    if reports_menu_pick["option"] == "Volume bigger than average":
+        reports_impl.process_volume_average()
     main()
 
 def jobs_menu():

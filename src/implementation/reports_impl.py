@@ -1,6 +1,5 @@
 from src.implementation.reports import reportpedia
 from src.libs import sqlite_lib
-import asyncio
 
 def process_ma_50():
     list_symbols = sqlite_lib.get_stock_symbols_list()
@@ -19,6 +18,11 @@ def process_ma_200():
 
 def report_ma(ma):
     reportpedia.report_ma(ma)
+
+def process_volume_average():
+    list_symbols = sqlite_lib.get_stock_symbols_list()
+    for symbol in list_symbols:
+        reportpedia.report_volume_up_average(symbol[0])
 
 def run_jobs():
     print("Running jobs.....")

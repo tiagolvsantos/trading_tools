@@ -29,3 +29,10 @@ def report_ma(ma):
     search_query = f"select * from  strat_moving_average where ma='{ma}' and updated= '{datetime.now().strftime('%Y-%m-%d')}'"
     search_data = sqlite_lib.get_record_query(search_query)
     tabulate_lib.tabulate_it(f"Updated MA {ma}", pd.DataFrame(search_data, columns=['symbol', 'ma','signal','updated']))
+
+def report_volume_up_average(symbol):
+    df_data = yfinance_lib.get_download_data(symbol, "1y")
+    last_volume = float(df_data["volume"].tail(1))
+    avg_volume = float(df_data["volume"].tail(30).mean())
+    if last_volume>avg_volume:
+        print(f"Volume bigger than average for {symbol}  {round(last_volume,2)} > {round(avg_volume,2)}")
