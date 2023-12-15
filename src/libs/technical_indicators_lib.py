@@ -223,7 +223,7 @@ def average_directional_movement_index(df, n, n_ADX):
     return df.sort_values(by=['date'], ascending=False)
 
 
-def macd(df, n_fast, n_slow):
+def macd(df, n_fast=12, n_slow=26):
     """Calculate MACD, MACD Signal and MACD difference
     
     :param df: pandas.DataFrame
@@ -681,27 +681,20 @@ def cumulative_volume_delta(df):
     df['is_close_larger'] = df.close >= df.open
     df['is_open_larger'] = df.open > df.close
     df['is_body_cond_met'] = df.is_close_larger | df.is_open_larger
-    
+
     df.loc[df.is_body_cond_met == False, 'open_close_abs_2x'] = 0
     df.loc[df.is_body_cond_met == True, 'open_close_abs_2x'] = 2*df.open_close_abs
 
     df['nominator'] = df.open_close_max + df.open_close_min + df.open_close_abs_2x
     df['denom'] = df.open_close_max + df.open_close_min + df.open_close_abs
-    
+
     df['delta'] = 0
     df.loc[df.denom == 0, 'delta'] = 0.5
     df.loc[df.denom != 0, 'delta'] = df.nominator / df.denom
     df.loc[df.is_close_larger == False, 'delta'] = df.loc[df.is_close_larger == False, 'volume'] * (-df.loc[df.is_close_larger == False, 'delta'])
     df.loc[df.is_close_larger == True, 'delta'] = df.loc[df.is_close_larger == True, 'volume'] * (df.loc[df.is_close_larger == True, 'delta'])
 
-    #df = df.sort_values(by='date',ascending=False)
-
-    count=0
-    for index, row in df.iterrows():
-        count+=1
-        if count==1:
-            continue
-        else:
+    for count, (index, row) in enumerate(df.iterrows(), start=1):
+        if count != 1:
             df.loc[index , 'cumulative_delta'] =  df.loc[index -1 , 'delta'] +  df.loc[index , 'delta'] 
-       
     return df

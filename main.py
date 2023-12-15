@@ -65,7 +65,7 @@ def charts_menu():
     inquirer.List('option',
                     message="Select an option",
                     choices=["TA", "MAG7","Asset profile","Cross asset corr",
-                             "SPX/VIX ratio","SPX 2D RSI", "VIX 1 ATR","Futures curve","Crypto CVD"],
+                             "SPX/VIX ratio","SPX 2D RSI", "VIX 1 ATR","Futures curve","Crypto CVD","S/R TradeFi","S/R Crypto"],
                     carousel=True
                 ),
     ]
@@ -88,6 +88,10 @@ def charts_menu():
         charts_impl.chart_futures_curve_impl(input("Select a symbol:").upper())
     if charts_menu_pick["option"] == "Crypto CVD":
         charts_impl.chart_binance_symbol_cvd(input("Select a symbol:").upper(),"1d",180)
+    if charts_menu_pick["option"] == "S/R TradeFi":
+        charts_impl.chart_sr_tradefi(input("Select a symbol:").upper())
+    if charts_menu_pick["option"] == "S/R Crypto":
+        charts_impl.chart_sr_crypto(input("Select a symbol:").upper())
     main()
 
 def crypto_menu():

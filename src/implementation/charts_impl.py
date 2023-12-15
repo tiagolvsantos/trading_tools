@@ -28,3 +28,9 @@ def chart_futures_curve_impl(symbol):
 
 def chart_binance_symbol_cvd(symbol,interval,to_tail):
     chartpedia.plot_crypto_cvd(symbol,interval,to_tail)
+
+def chart_sr_crypto(symbol):
+    chartpedia.plot_sr_crypto(symbol)
+
+def chart_sr_tradefi(symbol):
+    chartpedia.plot_sr_tradefi(symbol)

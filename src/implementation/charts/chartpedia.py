@@ -31,6 +31,144 @@ def _set_color(x):
 def _set_markercolor(x):
     return "green" if (x <= 1) else "grey"
 
+def _plot_sr_chart(df_data, symbol, interval):
+    df_ppsr = technical_indicators_lib.ppsr(df_data)
+
+    df_ppsr["close"] = pd.to_numeric(df_ppsr["close"])
+    df_ppsr["S1"] = pd.to_numeric(df_ppsr["S1"])
+    df_ppsr["S2"] = pd.to_numeric(df_ppsr["S2"])
+    df_ppsr["S3"] = pd.to_numeric(df_ppsr["S3"])
+    df_ppsr["R1"] = pd.to_numeric(df_ppsr["R1"])
+    df_ppsr["R2"] = pd.to_numeric(df_ppsr["R2"])
+    df_ppsr["R3"] = pd.to_numeric(df_ppsr["R3"])
+
+    print("")
+    print(f"# Interval: {interval}")
+    print(f"Last quote for {symbol} @ {float(round(df_ppsr['close'].head(1),3))}")
+    print (f"Pivot: {float(round(df_ppsr['PP'].head(1),3))} ")
+    print (f"R1: {float(round(df_ppsr['R1'].head(1),3))} | S1: {float(round(df_ppsr['S1'].head(1),3))}")
+    print (f"R2: {float(round(df_ppsr['R2'].head(1),3))} | S2: {float(round(df_ppsr['S2'].head(1),3))}")
+    print (f"R3: {float(round(df_ppsr['R3'].head(1),3))} | S3: {float(round(df_ppsr['S3'].head(1),3))}")
+
+    df_ppsr = df_ppsr.head(7)
+    # Plot chart
+    fig = go.Figure()
+
+    fig.add_traces([
+    go.Candlestick(
+        x=df_ppsr["date"],
+        open=df_ppsr['open'],
+        high=df_ppsr['high'],
+        low=df_ppsr['low'],
+        close=df_ppsr['close'],
+        name= symbol
+    ), 
+    go.Scatter(
+        x=[min(df_ppsr["date"]),max(df_ppsr["date"])],
+        y=[float(round(df_ppsr["S1"].head(1),3)),float(round(df_ppsr["S1"].head(1),3))], 
+        line={
+            'color': 'rgb(50,205,50)',
+            'width': 1,
+            'dash': 'solid',
+        }, name='S1'
+    ),
+    go.Scatter(
+        x=[min(df_ppsr["date"]),max(df_ppsr["date"])],
+        y=[float(round(df_ppsr["R1"].head(1),3)),float(round(df_ppsr["R1"].head(1),3))], 
+        line={
+            'color': 'rgb(240,128,128)',
+            'width': 1,
+            'dash': 'solid',
+        }, name='R1'
+    ),  
+    go.Scatter(
+        x=[min(df_ppsr["date"]),max(df_ppsr["date"])],
+        y=[float(round(df_ppsr["S2"].head(1),3)),float(round(df_ppsr["S2"].head(1),3))], 
+        line={
+            'color': 'rgb(34,139,34)',
+            'width': 1,
+            'dash': 'solid',
+        }, name='S2'
+    ), 
+    go.Scatter(
+        x=[min(df_ppsr["date"]),max(df_ppsr["date"])],
+        y=[float(round(df_ppsr["R2"].head(1),3)),float(round(df_ppsr["R2"].head(1),3))], 
+        line={
+            'color': 'rgb(255,99,71)',
+            'width': 1,
+            'dash': 'solid',
+        }, name='R2'
+    ), 
+    go.Scatter(
+        x=[min(df_ppsr["date"]),max(df_ppsr["date"])],
+        y=[float(round(df_ppsr["S3"].head(1),3)),float(round(df_ppsr["S3"].head(1),3))], 
+        line={
+            'color': 'rgb(46,139,87)',
+            'width': 1,
+            'dash': 'solid',
+        }, name='S3'
+    ), 
+    go.Scatter(
+        x=[min(df_ppsr["date"]),max(df_ppsr["date"])],
+        y=[float(round(df_ppsr["R3"].head(1),3)),float(round(df_ppsr["R3"].head(1),3))], 
+        line={
+            'color': 'rgb(178,34,34)',
+            'width': 1,
+            'dash': 'solid',
+        }, name='R3'
+    ), 
+    go.Scatter(
+        x=[min(df_ppsr["date"]),max(df_ppsr["date"])],
+        y=[float(round(df_ppsr["PP"].head(1),3)),float(round(df_ppsr["PP"].head(1),3))], 
+        line={
+            'color': 'rgb(255,250,205)',
+            'width': 1,
+            'dash': 'solid',
+        }, name='Pivot'
+    )
+    ])
+
+    # Add figure title
+    fig.update_layout(
+        title_text=f"{symbol} {interval} S/R Last: {float(round(df_ppsr['close'].head(1),3))} Pivot:{float(round(df_ppsr['PP'].head(1),3))}  R1:{float(round(df_ppsr['R1'].head(1),3))}  S1:{float(round(df_ppsr['S1'].head(1),3))} R2:{float(round(df_ppsr['R2'].head(1),3))} S2:{float(round(df_ppsr['S2'].head(1),3))} R3:{float(round(df_ppsr['R3'].head(1),3))} S3:{float(round(df_ppsr['S3'].head(1),3))} ",
+        template="plotly_dark",
+        showlegend=True, xaxis_rangeslider_visible=False
+    )
+
+
+
+    fig.show()
+
+def _plot_crypto_cvd_chart(df_data, symbol, df_oi,to_tail):
+    df_data.columns = ['date', 'open', 'high', 'low','close','volume','close time','asset volume', 'number of trades' ,'taker buy asset volume','taker buy quote volume', 'ignore']
+    df_cvd = technical_indicators_lib.cumulative_volume_delta(df_data.tail(to_tail))
+
+    fig = make_subplots(rows=4, cols=1)
+
+    fig.append_trace(go.Candlestick(x=df_cvd['date'],
+                    open=df_cvd['open'], high=df_cvd['high'],
+                    low=df_cvd['low'], close=df_cvd['close'], name = symbol), row=1, col=1)
+
+    fig.append_trace(go.Scatter(
+        x=df_cvd['date'],
+        y=df_cvd['cumulative_delta'], name = "Delta", line_color='grey',mode='lines',marker = dict(color=list(map(_set_color, df_cvd['delta'])))
+    ), row=2, col=1)
+
+    fig.append_trace(go.Scatter(
+        x=df_oi['date'],
+        y=df_oi['oi'], name = "OI", line_color='#9966CC'
+    ), row=3, col=1)
+
+    fig.append_trace(go.Scatter(
+        x=df_oi['date'],
+        y=df_oi['oi in $'], name = "OI in $", line_color='#682860'
+    ), row=4, col=1)
+
+
+    fig.update_xaxes(rangeslider_visible=False)
+    fig.update_layout(title_text=f"{symbol} CVD + OI + OI in $ for {to_tail} Trading periods", template="plotly_dark")
+    fig.show()
+
 def plot_ma_chart(symbol:str):
     openbb_lib.plot_ma_asset_chart(symbol, 1440, True)
 
@@ -304,3 +442,29 @@ def _plot_crypto_cvd_chart(df_data, symbol, df_oi,to_tail):
     fig.update_xaxes(rangeslider_visible=False)
     fig.update_layout(title_text=f"{symbol} CVD + OI + OI in $ for {to_tail} Trading periods", template="plotly_dark")
     fig.show()
+
+def plot_sr_crypto(symbol:str,):
+    lst_intervals =["1d","1w","1M"]
+    for interval in lst_intervals:
+        df_data = binance_lib.get_quotes(symbol, interval)
+        if len(df_data) >1:
+            df_data.rename(columns = {'open time':'date'}, inplace = True)
+        else:
+            print("That symbol does not exist!")
+        if len(df_data) >1:
+            _plot_sr_chart(df_data, symbol, interval)
+
+def plot_sr_tradefi(symbol:str,):
+    lst_intervals =["1wk"] # "1d","1wk","1mo"
+    for interval in lst_intervals:
+        df_data = yfinance_lib.get_download_data(symbol= symbol,interval=interval)
+
+        if len(df_data) >1:
+            df_data["open"] = pd.to_numeric(df_data["open"])
+            df_data["high"] = pd.to_numeric(df_data["high"])
+            df_data["low"] = pd.to_numeric(df_data["low"])
+            df_data["close"] = pd.to_numeric(df_data["close"])
+        else:
+            print("That symbol does not exist!")
+        if len(df_data) >1:
+            _plot_sr_chart(df_data, symbol, interval)
