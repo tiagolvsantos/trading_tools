@@ -123,7 +123,7 @@ def reports_menu():
     reports_menu = [
     inquirer.List('option',
                     message="Select an option",
-                    choices=['50 MA up/down','Volume bigger than average'],
+                    choices=['50 MA up/down','Volume bigger than average','RSI Overbought','RSI Oversold'],
                     carousel=True
                 ),
     ]
@@ -132,6 +132,10 @@ def reports_menu():
         reports_impl.report_ma(50)
     if reports_menu_pick["option"] == "Volume bigger than average":
         reports_impl.process_volume_average()
+    if reports_menu_pick["option"] == "RSI Overbought":
+        reports_impl.process_rsi_overbought()
+    if reports_menu_pick["option"] == "RSI Oversold":
+        reports_impl.process_rsi_oversold()
     main()
 
 def jobs_menu():

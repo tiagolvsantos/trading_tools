@@ -36,3 +36,15 @@ def report_volume_up_average(symbol):
     avg_volume = float(df_data["volume"].tail(30).mean())
     if last_volume>avg_volume:
         print(f"Volume bigger than average for {symbol}  {round(last_volume,2)} > {round(avg_volume,2)}")
+
+def report_rsi_oversold(symbol):
+    df_data = yfinance_lib.get_download_data(symbol, "1y")
+    rsi = technical_indicators_lib.rsi(df_data)
+    if round(float(rsi.tail(1)),2)<=30:
+        print(f"RSI for {symbol} is Oversold!")
+
+def report_rsi_overbought(symbol):
+    df_data = yfinance_lib.get_download_data(symbol, "1y")
+    rsi = technical_indicators_lib.rsi(df_data)
+    if round(float(rsi.tail(1)),2)>=70:
+        print(f"RSI for {symbol} is Overbought!")
