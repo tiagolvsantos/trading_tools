@@ -126,15 +126,17 @@ def reports_menu():
     reports_menu = [
     inquirer.List('option',
                     message="Select an option",
-                    choices=['50 MA up/down','Volume bigger than average','RSI Overbought','RSI Oversold'],
+                    choices=['50 MA up/down','Volume bigger than average TradeFi','Volume bigger than average Crypto','RSI Overbought','RSI Oversold'],
                     carousel=True
                 ),
     ]
     reports_menu_pick = inquirer.prompt(reports_menu)
     if reports_menu_pick["option"] == "50 MA up/down":
         reports_impl.report_ma(50)
-    if reports_menu_pick["option"] == "Volume bigger than average":
-        reports_impl.process_volume_average()
+    if reports_menu_pick["option"] == "Volume bigger than average TradeFi":
+        reports_impl.process_volume_average("tradefi")
+    if reports_menu_pick["option"] == "Volume bigger than average Crypto":
+        reports_impl.process_volume_average("crypto")
     if reports_menu_pick["option"] == "RSI Overbought":
         reports_impl.process_rsi_overbought()
     if reports_menu_pick["option"] == "RSI Oversold":

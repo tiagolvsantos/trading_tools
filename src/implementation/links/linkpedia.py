@@ -11,7 +11,7 @@ def get_all_links():
             ['https://seekingalpha.com/author/john-vincent', 'Earnings reviews', 'TradeFi'],  
             ['https://www.marketwatch.com/tools/options-expiration-calendar', 'OPEX Calendar', 'TradeFi'], 
             ['https://www.investing.com/central-banks/', 'Central Banks rates', 'TradeFi'], 
-            ['https://www.arktrack.com/', 'ARK Funds tracker', 'TradeFi'], 
+            ['https://cathiesark.com/arkk/trades', 'ARK Funds tracker', 'TradeFi'], 
             ['https://miltonfmr.com/hedge-fund-letters/', 'Hedge funds letters', 'TradeFi'], 
             ['https://charts.bitbo.io/beam/', 'BTC BEAM Chart', 'Crypto'], 
             ['https://charts.bitbo.io/mayer-multiple/', 'BTC Mayer Multiple ', 'Crypto'], 

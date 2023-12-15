@@ -30,6 +30,9 @@ def get_record_query(search_query):
 def get_stock_symbols_list():
     return get_record_query("select * from tradefi_stocks_symbols")
 
+def get_crypto_symbols_list():
+    return get_record_query("select * from crypto_asset_symbols")
+
 
 def insert_from_csv():
     df_data = pd.read_csv(r"C:\Users\User\Downloads\binance_usdt_markets.txt")
