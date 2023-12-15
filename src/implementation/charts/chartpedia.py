@@ -132,7 +132,11 @@ def _plot_sr_chart(df_data, symbol, interval):
     fig.update_layout(
         title_text=f"{symbol} {interval} S/R Last: {float(round(df_ppsr['close'].head(1),3))} Pivot:{float(round(df_ppsr['PP'].head(1),3))}  R1:{float(round(df_ppsr['R1'].head(1),3))}  S1:{float(round(df_ppsr['S1'].head(1),3))} R2:{float(round(df_ppsr['R2'].head(1),3))} S2:{float(round(df_ppsr['S2'].head(1),3))} R3:{float(round(df_ppsr['R3'].head(1),3))} S3:{float(round(df_ppsr['S3'].head(1),3))} ",
         template="plotly_dark",
-        showlegend=True, xaxis_rangeslider_visible=False
+        showlegend=True, xaxis_rangeslider_visible=False, font=dict(
+        family="Courier New, monospace",
+        size=14,  # Set the font size here
+        color="grey"
+    )
     )
 
 
@@ -166,7 +170,11 @@ def _plot_crypto_cvd_chart(df_data, symbol, df_oi,to_tail):
 
 
     fig.update_xaxes(rangeslider_visible=False)
-    fig.update_layout(title_text=f"{symbol} CVD + OI + OI in $ for {to_tail} Trading periods", template="plotly_dark")
+    fig.update_layout(title_text=f"{symbol} CVD + OI + OI in $ for {to_tail} Trading periods", template="plotly_dark", font=dict(
+        family="Courier New, monospace",
+        size=18,  # Set the font size here
+        color="grey"
+    ))
     fig.show()
 
 def plot_ma_chart(symbol:str):
@@ -203,7 +211,11 @@ def plot_asset_profile(symbol:str):
         xaxis2=dict(showticklabels=False),
         title_text=f'{symbol} Most traded zones | close: {str(round(float(df_data["close"].tail(1)),3))}',
         template="plotly_dark",
-        showlegend=False,
+        showlegend=False, font=dict(
+        family="Courier New, monospace",
+        size=18,  # Set the font size here
+        color="grey"
+    )
     )
 
     fig.update_xaxes(title_text = f"Trade data for the close {len(df_data)} trading days".format(), row=3, col=1)
@@ -340,7 +352,11 @@ def plot_sp500_vix_ratio():
     fig.update_layout(
         title_text= f"SP500: {round(df_spx.iloc[len(df_spx)-1]['close'],2)} | VIX: {round(df_vix.iloc[len(df_vix)-1]['close'],2)} | Ratio: {ratio[len(ratio)-1]}  30 days implied range",
         template="plotly_dark",
-        showlegend=True,
+        showlegend=True, font=dict(
+        family="Courier New, monospace",
+        size=18,  # Set the font size here
+        color="grey"
+    )
     )
 
     fig.show()
@@ -359,13 +375,17 @@ def plot_spx_2d_rsi():
 
     fig.append_trace(go.Scatter(
         x=df_spx['date'],
-        y=df_spx['rsi'], name = "2D RSI", line_color='grey',mode='lines'
+        y=df_spx['rsi'], name = "2D RSI", line_color='orange',mode='lines'
     ), row=2, col=1)
 
     fig.add_hrect(y0=0, y1=30, line_width=0, fillcolor="green", opacity=0.2, row=2, col=1)
     fig.add_hrect(y0=80, y1=100, line_width=0, fillcolor="red", opacity=0.2, row=2, col=1)
     fig.update_xaxes(rangeslider_visible=False)
-    fig.update_layout(title_text="SP500 2D RSI", template="plotly_dark")
+    fig.update_layout(title_text="SP500 2D RSI", template="plotly_dark", font=dict(
+        family="Courier New, monospace",
+        size=18,  # Set the font size here
+        color="grey"
+    ))
     fig.show()
 
 def plot_vix_atr_1():
@@ -388,7 +408,11 @@ def plot_vix_atr_1():
     ), row=3, col=1)
 
     fig.update_xaxes(rangeslider_visible=False)
-    fig.update_layout(title_text="SP500 VS VIX ATR < 1 = Brace for impact!", template="plotly_dark")
+    fig.update_layout(title_text="SP500 VS VIX ATR < 1 = Brace for impact!", template="plotly_dark", font=dict(
+        family="Courier New, monospace",
+        size=14,  # Set the font size here
+        color="grey"
+    ))
     fig.show()
 
 def plot_futures_curve(symbol):
@@ -398,7 +422,7 @@ def plot_futures_curve(symbol):
     fig = px.line(df_data, x="date", y="value", title=f"{symbol} Futures Curve", template="plotly_dark")
     fig.show()
 
-def plot_crypto_cvd(symbol, interval,to_tail):
+def plot_crypto_cvd(symbol, interval="1d",to_tail=30):
     try:
         df_data = binance_lib.get_quotes(symbol, interval)
     except Exception:
@@ -440,7 +464,11 @@ def _plot_crypto_cvd_chart(df_data, symbol, df_oi,to_tail):
 
 
     fig.update_xaxes(rangeslider_visible=False)
-    fig.update_layout(title_text=f"{symbol} CVD + OI + OI in $ for {to_tail} Trading periods", template="plotly_dark")
+    fig.update_layout(title_text=f"{symbol} CVD + OI + OI in $ for {to_tail} Trading periods", template="plotly_dark", font=dict(
+        family="Courier New, monospace",
+        size=18,  # Set the font size here
+        color="grey"
+    ))
     fig.show()
 
 def plot_sr_crypto(symbol:str,):
