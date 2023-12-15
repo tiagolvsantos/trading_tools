@@ -1,6 +1,5 @@
 # Import the necessary packages
 import inquirer
-from env_vars import configure_env_vars
 from src.implementation import interactive_impl 
 from src.implementation import charts_impl
 from src.implementation import tradefi_impl

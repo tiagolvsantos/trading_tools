@@ -134,7 +134,7 @@ def _plot_sr_chart(df_data, symbol, interval):
         template="plotly_dark",
         showlegend=True, xaxis_rangeslider_visible=False, font=dict(
         family="Courier New, monospace",
-        size=14,  # Set the font size here
+        size=18,  # Set the font size here
         color="grey"
     )
     )
@@ -410,7 +410,7 @@ def plot_vix_atr_1():
     fig.update_xaxes(rangeslider_visible=False)
     fig.update_layout(title_text="SP500 VS VIX ATR < 1 = Brace for impact!", template="plotly_dark", font=dict(
         family="Courier New, monospace",
-        size=14,  # Set the font size here
+        size=18,  # Set the font size here
         color="grey"
     ))
     fig.show()
