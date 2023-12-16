@@ -97,14 +97,15 @@ def crypto_menu():
     crypto_menu = [
     inquirer.List('option',
                     message="Select an option",
-                    choices=['Binance Order Flow'],
+                    choices=['Binance Order Flow',"Trending tokens"],
                     carousel=True
                 ),
     ]
     crypto_menu_pick = inquirer.prompt(crypto_menu)
     if crypto_menu_pick["option"] == "Binance Order Flow":
         crypto_impl.plot_binance_flows_for_asset(input("Select a symbol:").upper())
-
+    if crypto_menu_pick["option"] == "Trending tokens":
+        crypto_impl.get_trending_tokens()
 
     main()
 

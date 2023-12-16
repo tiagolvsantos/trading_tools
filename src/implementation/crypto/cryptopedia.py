@@ -1,11 +1,13 @@
+from src.libs import utils
+from src.libs import binance_lib
+from src.libs import coingecko_lib
+from src.libs import tabulate_lib
 import requests
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import plotly.graph_objects as go
-import src.libs.utils as utils
 import warnings
-import src.libs.binance_lib as binance_lib
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 warnings.filterwarnings("ignore")
@@ -169,3 +171,6 @@ def plot_net_asset_taker(symbol:str):
     fig.update_yaxes(title_text="<b>Net asset taker volume</b>e", secondary_y=True)
 
     fig.show()
+
+def get_trending_tokens():
+    tabulate_lib.tabulate_dict(coingecko_lib.get_trending_coins())

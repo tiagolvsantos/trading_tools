@@ -47,5 +47,5 @@ def tabulate_it(title: str, data: DataFrame):
     print(f'{bcolors.HEADER} {bcolors.BOLD}  {title}')
     print(bcolors.White + tb.tabulate(data, headers='keys', tablefmt='github'))
 
-def tabulate_dict(dic_data: dict):
-    print(tb.tabulate(dic_data, headers="firstrow"))
+def tabulate_dict(dic_data):
+    print(tb.tabulate(dic_data, headers="keys"))
