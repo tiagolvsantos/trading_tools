@@ -22,7 +22,7 @@ def tradefi_menu():
     inquirer.List('option',
                     message="Select an option",
                     choices=['Market Breath', 'Top gainers', 'Top loosers', 'Most active equity Options', 'Most active index options',
-                             'Intraday top volume','Stock ratings'],
+                             'Intraday top volume','Stock ratings','ETF top holdings'],
                     carousel=True
                 ),
     ]
@@ -41,7 +41,9 @@ def tradefi_menu():
         tradefi_impl.get_intraday_top_volume()
     if tradefi_menu_pick["option"] == "Stock ratings":
         tradefi_impl.get_stock_ratings(input("Select a symbol:"))
-    
+    if tradefi_menu_pick["option"] == "ETF top holdings":
+        tradefi_impl.get_etf_top_holdings(input("Select a symbol:"))
+       
     main()
 
 def interactive_menu():
@@ -108,7 +110,7 @@ def crypto_menu():
         crypto_impl.get_trending_tokens()
     if crypto_menu_pick["option"] == "Companies holding crypto":
         crypto_impl.get_companies_holding_crypto()
-        
+
     main()
 
 def links_menu():

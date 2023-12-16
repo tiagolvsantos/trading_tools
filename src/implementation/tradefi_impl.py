@@ -20,3 +20,6 @@ def get_intraday_top_volume():
 
 def get_stock_ratings(symbol):
     tradefipedia.get_stock_ratings(symbol)
+
+def get_etf_top_holdings(symbol):
+    tradefipedia.get_etf_top_holdings(symbol)

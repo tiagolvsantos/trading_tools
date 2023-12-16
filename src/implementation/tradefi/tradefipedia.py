@@ -3,6 +3,7 @@ from src.libs import tabulate_lib
 from src.libs import openbb_lib
 from src.libs import CBOE_lib
 from src.libs import webull_lib
+from src.libs import trackinsight_lib
 import pandas as pd
 
 
@@ -67,3 +68,6 @@ def get_stock_ratings(symbol):
     print(
         f"""Low: {data['targetPrice']["low"]}   High: {data['targetPrice']["high"]}   Mean: {data['targetPrice']["mean"]}   Current: {data['targetPrice']["current"]}"""
     )
+
+def get_etf_top_holdings(symbol):
+    tabulate_lib.tabulate_dict(trackinsight_lib.get_etf_x_ray(symbol))
