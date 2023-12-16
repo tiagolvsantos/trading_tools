@@ -97,7 +97,7 @@ def crypto_menu():
     crypto_menu = [
     inquirer.List('option',
                     message="Select an option",
-                    choices=['Binance Order Flow',"Trending tokens"],
+                    choices=['Binance Order Flow',"Trending tokens","Companies holding crypto"],
                     carousel=True
                 ),
     ]
@@ -106,7 +106,9 @@ def crypto_menu():
         crypto_impl.plot_binance_flows_for_asset(input("Select a symbol:").upper())
     if crypto_menu_pick["option"] == "Trending tokens":
         crypto_impl.get_trending_tokens()
-
+    if crypto_menu_pick["option"] == "Companies holding crypto":
+        crypto_impl.get_companies_holding_crypto()
+        
     main()
 
 def links_menu():

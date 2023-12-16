@@ -174,3 +174,10 @@ def plot_net_asset_taker(symbol:str):
 
 def get_trending_tokens():
     tabulate_lib.tabulate_dict(coingecko_lib.get_trending_coins())
+
+def get_companies_holding_crypto():
+    list_tokens =["bitcoin","ethereum"]
+    for token in list_tokens:
+
+        print(f"\n Companies Holding {token}\n")
+        tabulate_lib.tabulate_dict(coingecko_lib.get_companies_holding_crypto(token))

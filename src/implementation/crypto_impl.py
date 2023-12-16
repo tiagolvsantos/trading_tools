@@ -5,3 +5,6 @@ def plot_binance_flows_for_asset(symbol):
 
 def get_trending_tokens():
     cryptopedia.get_trending_tokens()
+
+def get_companies_holding_crypto(symbol):
+    cryptopedia.get_companies_holding_crypto(symbol)
