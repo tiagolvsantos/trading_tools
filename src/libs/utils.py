@@ -43,6 +43,9 @@ def get_todays_date(date_format:str):
 def get_yesterdays_date(date_format:str):
     return (datetime.now() - timedelta(days=1)).strftime(f'{date_format}')
 
+def get_last_n_days_date(date_format:str, n:int):
+    return (datetime.now() - timedelta(days=n)).strftime(f'{date_format}')
+
 def print_formated_numbers(num):
     magnitude = 0
     while abs(num) >= 1000:

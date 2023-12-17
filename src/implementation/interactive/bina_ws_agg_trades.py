@@ -27,9 +27,7 @@ def on_message(ws, message):
     
     get_position_delta(message,side)
     if float(size)> float(threshold):
-        print(f'{bcolors.Red if side == "SELL" else bcolors.Green}{message["s"]} {side} Size:{size} @{message["p"]}')
-    
-
+        print(f'{bcolors.Red if side == "SELL" else bcolors.Green}{message["s"]} {side} Size: {size} @{message["p"]}')
     if counter_occurence/occurence == 1:
         counter_occurence = 0
         print_position_delta()

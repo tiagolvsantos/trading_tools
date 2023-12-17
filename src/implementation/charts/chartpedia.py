@@ -3,7 +3,9 @@ from src.libs import yfinance_lib
 from src.libs import technical_indicators_lib
 from src.libs import binance_lib
 from src.libs import yfinance_lib
+from src.libs import etf_com_lib
 
+import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
@@ -496,3 +498,22 @@ def plot_sr_tradefi(symbol:str,):
             print("That symbol does not exist!")
         if len(df_data) >1:
             _plot_sr_chart(df_data, symbol, interval)
+
+
+def plot_etf_flows(symbol):
+    df_data = pd.DataFrame(etf_com_lib.get_etf_flow_data(symbol))
+    df_data["Color"] = np.where(df_data["Value"]<0, 'red', 'green')
+    cumulative_flows = round(df_data["Value"].sum(),2)
+
+    fig = go.Figure()
+    fig.add_trace(
+        go.Bar(name='Net',
+            x=df_data['Date'],
+            y=df_data['Value'],
+            marker_color=df_data['Color']))
+    fig.update_layout(title_text=f"{symbol} ETF Flows in Millions | Cumulative {cumulative_flows} M", template="plotly_dark", font=dict(
+        family="Courier New, monospace",
+        size=18,  # Set the font size here
+        color="grey"
+    ))
+    fig.show()
