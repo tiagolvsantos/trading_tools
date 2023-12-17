@@ -74,8 +74,10 @@ def get_etf_top_holdings(symbol):
 
 def get_options_ratios():
     json_data = CBOE_lib.get_options_ratios()
-    if json_data != "":
+    if len(json_data) != 0:
         tabulate_lib.print_it_line_title(" \n OPTIONS RATIOS \n ")
         for ratio in json_data["ratios"]:
             tabulate_lib.print_it_line(f"{ratio['name']}: {ratio['value']} ")
-        print("\n")
+    else:
+        print("No data on weekends!")
+    print("\n")

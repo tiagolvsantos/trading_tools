@@ -4,6 +4,9 @@ from src.libs import technical_indicators_lib
 from src.libs import binance_lib
 from src.libs import yfinance_lib
 from src.libs import etf_com_lib
+from src.libs import alternative_lib
+from src.libs import dataviz_lib
+
 
 import numpy as np
 import pandas as pd
@@ -515,5 +518,51 @@ def plot_etf_flows(symbol):
         family="Courier New, monospace",
         size=18,  # Set the font size here
         color="grey"
+    ))
+    fig.show()
+
+def plot_crypto_fear_greed_index():
+    df_data = pd.DataFrame(alternative_lib.get_crypto_fear_greed_index()["data"])
+    fear_greed_value = float(df_data["value"][0]) /100
+
+    fig = go.Figure(go.Indicator(
+    mode = "gauge+number+delta",
+    delta = {'reference': 100},
+    gauge = {'axis': {'range': [None, 100]},
+             'bar': {'color': "orange"},
+             'steps' : [
+                 {'range': [0, 250], 'color': "lightgray"},
+                 {'range': [250, 400], 'color': "gray"}],
+             'threshold' : {'line': {'color': "green", 'width': 30}, 'thickness': 1, 'value': 60}},
+    value = float(df_data["value"][0]) ,
+    domain = {'x': [0, fear_greed_value], 'y': [0, fear_greed_value]}))
+    delta = {'reference': 380},
+    fig.update_layout(title_text=f"Crypto Fear Greed Index is: {df_data['value_classification'][0]}", template="plotly_dark", font=dict(
+        family="Courier New, monospace",
+        size=18,  # Set the font size here
+        color="grey",
+    ))
+    fig.show()
+
+def plot_fear_greed_index():
+    df_data = pd.DataFrame(dataviz_lib.get_fear_greed_actual())
+    fear_greed_value = float(df_data["score"]) /100
+
+    fig = go.Figure(go.Indicator(
+    mode = "gauge+number+delta",
+    delta = {'reference': 100},
+    gauge = {'axis': {'range': [None, 100]},
+             'bar': {'color': "orange"},
+             'steps' : [
+                 {'range': [0, 250], 'color': "lightgray"},
+                 {'range': [250, 400], 'color': "gray"}],
+             'threshold' : {'line': {'color': "green", 'width': 30}, 'thickness': 1, 'value': 60}},
+    value = float(df_data["score"]) ,
+    domain = {'x': [0, fear_greed_value], 'y': [0, fear_greed_value]}))
+    delta = {'reference': 380},
+    fig.update_layout(title_text=f"Crypto Fear Greed Index is: {df_data['rating'].to_string().replace('1','').replace('    ','')}", template="plotly_dark", font=dict(
+        family="Courier New, monospace",
+        size=18,  # Set the font size here
+        color="grey",
     ))
     fig.show()

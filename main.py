@@ -22,7 +22,7 @@ def tradefi_menu():
     inquirer.List('option',
                     message="Select an option",
                     choices=['Market Breath', 'Top gainers', 'Top loosers', 'Most active equity Options', 'Most active index options',
-                             'Intraday top volume','Stock ratings','ETF top holdings','Options ratios'],
+                             'Intraday top volume','Stock ratings','ETF top holdings','Options ratios','Fear Greed Index'],
                     carousel=True
                 ),
     ]
@@ -45,7 +45,9 @@ def tradefi_menu():
         tradefi_impl.get_etf_top_holdings(input("Select a symbol:"))
     if tradefi_menu_pick["option"] == "Options ratios":
         tradefi_impl.get_options_ratios()   
-
+    if tradefi_menu_pick["option"] == "Fear Greed Index":
+        charts_impl.chart_fear_greed() 
+        
     main()
 
 def interactive_menu():
@@ -104,7 +106,7 @@ def crypto_menu():
     crypto_menu = [
     inquirer.List('option',
                     message="Select an option",
-                    choices=['Binance Order Flow',"Trending tokens","Companies holding crypto"],
+                    choices=['Binance Order Flow',"Trending tokens","Companies holding crypto","Fear Greed index"],
                     carousel=True
                 ),
     ]
@@ -115,7 +117,8 @@ def crypto_menu():
         crypto_impl.get_trending_tokens()
     if crypto_menu_pick["option"] == "Companies holding crypto":
         crypto_impl.get_companies_holding_crypto()
-
+    if crypto_menu_pick["option"] == "Fear Greed index":
+        charts_impl.chart_crypto_fear_greed()
     main()
 
 def links_menu():
