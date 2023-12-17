@@ -26,3 +26,6 @@ def get_etf_top_holdings(symbol):
 
 def get_options_ratios():
     tradefipedia.get_options_ratios()
+
+def get_wsb_trending_stocks():
+    tradefipedia.get_wsb_trending_stocks()

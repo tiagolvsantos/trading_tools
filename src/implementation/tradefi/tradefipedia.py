@@ -4,6 +4,7 @@ from src.libs import openbb_lib
 from src.libs import CBOE_lib
 from src.libs import webull_lib
 from src.libs import trackinsight_lib
+from src.libs import swaggystocks_lib
 import pandas as pd
 
 
@@ -81,3 +82,6 @@ def get_options_ratios():
     else:
         print("No data on weekends!")
     print("\n")
+
+def get_wsb_trending_stocks():
+    tabulate_lib.tabulate_it("WSB Trending stocks for the last 12h", swaggystocks_lib.get_wsb_buzz_stocks())
