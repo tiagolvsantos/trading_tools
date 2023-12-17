@@ -36,12 +36,12 @@ def process_volume_average(market):
 def process_rsi_oversold():
     list_symbols = sqlite_lib.get_stock_symbols_list()
     for symbol in list_symbols:
-        reportpedia.report_rsi_oversold(symbol[0])
+        reportpedia.report_rsi_oversold(symbol[0],"tradefi")
 
 def process_rsi_overbought():
     list_symbols = sqlite_lib.get_stock_symbols_list()
     for symbol in list_symbols:
-        reportpedia.report_rsi_overbought(symbol[0])
+        reportpedia.report_rsi_overbought(symbol[0],"tradefi")
 
 def run_jobs():
     print("Running jobs.....")

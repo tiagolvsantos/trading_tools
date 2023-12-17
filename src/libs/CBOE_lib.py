@@ -1,8 +1,8 @@
+import datetime
 import pandas as pd
 import requests
 from io import StringIO
-import warnings
-warnings.filterwarnings("ignore")
+
 
 def get_fx_volatility():
     try:
@@ -45,3 +45,10 @@ def get_equity_active_options():
 def parse_cbe_list(list_cboe: list):
     df_data = pd.DataFrame()
     return df_data.append(list_cboe, ignore_index = True)
+
+def get_options_ratios():
+    date = datetime.datetime.now()
+    if date.isoweekday() not in range(1, 6):
+        return {}
+    url = f"https://cdn.cboe.com/data/us/options/market_statistics/daily/{date.strftime('%Y-%m-%d')}_daily_options"
+    return requests.get(url).json()

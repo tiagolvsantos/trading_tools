@@ -34,3 +34,6 @@ def chart_sr_crypto(symbol):
 
 def chart_sr_tradefi(symbol):
     chartpedia.plot_sr_tradefi(symbol)
+
+def chart_etf_flows(symbol):
+    chartpedia.plot_etf_flows(symbol)

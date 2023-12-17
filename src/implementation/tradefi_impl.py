@@ -23,3 +23,6 @@ def get_stock_ratings(symbol):
 
 def get_etf_top_holdings(symbol):
     tradefipedia.get_etf_top_holdings(symbol)
+
+def get_options_ratios():
+    tradefipedia.get_options_ratios()

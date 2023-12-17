@@ -71,3 +71,11 @@ def get_stock_ratings(symbol):
 
 def get_etf_top_holdings(symbol):
     tabulate_lib.tabulate_dict(trackinsight_lib.get_etf_x_ray(symbol))
+
+def get_options_ratios():
+    json_data = CBOE_lib.get_options_ratios()
+    if json_data != "":
+        tabulate_lib.print_it_line_title(" \n OPTIONS RATIOS \n ")
+        for ratio in json_data["ratios"]:
+            tabulate_lib.print_it_line(f"{ratio['name']}: {ratio['value']} ")
+        print("\n")

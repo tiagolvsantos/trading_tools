@@ -22,7 +22,7 @@ def tradefi_menu():
     inquirer.List('option',
                     message="Select an option",
                     choices=['Market Breath', 'Top gainers', 'Top loosers', 'Most active equity Options', 'Most active index options',
-                             'Intraday top volume','Stock ratings','ETF top holdings'],
+                             'Intraday top volume','Stock ratings','ETF top holdings','Options ratios'],
                     carousel=True
                 ),
     ]
@@ -43,7 +43,9 @@ def tradefi_menu():
         tradefi_impl.get_stock_ratings(input("Select a symbol:"))
     if tradefi_menu_pick["option"] == "ETF top holdings":
         tradefi_impl.get_etf_top_holdings(input("Select a symbol:"))
-       
+    if tradefi_menu_pick["option"] == "Options ratios":
+        tradefi_impl.get_options_ratios()   
+
     main()
 
 def interactive_menu():
@@ -66,7 +68,7 @@ def charts_menu():
     inquirer.List('option',
                     message="Select an option",
                     choices=["TA", "MAG7","Asset profile","Cross asset corr",
-                             "SPX/VIX ratio","SPX 2D RSI", "VIX 1 ATR","Futures curve","Crypto CVD","S/R TradeFi","S/R Crypto"],
+                             "SPX/VIX ratio","SPX 2D RSI", "VIX 1 ATR","Futures curve", "ETF Flows","Crypto CVD","S/R TradeFi","S/R Crypto"],
                     carousel=True
                 ),
     ]
@@ -93,6 +95,9 @@ def charts_menu():
         charts_impl.chart_sr_tradefi(input("Select a symbol:").upper())
     if charts_menu_pick["option"] == "S/R Crypto":
         charts_impl.chart_sr_crypto(input("Select a symbol:").upper())
+    if charts_menu_pick["option"] == "ETF Flows":
+        charts_impl.chart_etf_flows(input("Select a symbol:").upper())
+        
     main()
 
 def crypto_menu():
@@ -177,8 +182,10 @@ def main():
         links_menu()
     if main_menu_pick["option"] == "Jobs":
         jobs_menu()
+    print("\n")
 
 if __name__ == "__main__":
     #configure_env_vars()
     main()
+    print("\n")
   
