@@ -24,7 +24,7 @@ def binance_abnormal_trading():
 
         for index, row in df_data.iterrows():
              df_data.at[index,'sendTimestamp']= str(epoch_to_datetime(int(row['sendTimestamp'])))
-             
+             df_data.at[index,'priceChange']= f"{(round(float(row['priceChange']),2)*100)}%"
         table = tabulate(df_data, headers='keys', tablefmt='github', showindex=False)
         print(table)
         print('\n')
@@ -33,6 +33,3 @@ def binance_abnormal_trading():
 def main():
     while True:
         binance_abnormal_trading()
-
-if __name__ == "__main__":
-    main()
