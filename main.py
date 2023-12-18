@@ -57,7 +57,7 @@ def interactive_menu():
     interactive_menu = [
     inquirer.List('option',
                     message="Select an option",
-                    choices=['Binance abnormal Trading', 'Binance Agg Trades','Main menu'],
+                    choices=['Binance abnormal Trading', 'Binance Agg Trades', 'BitMEX Agg Trades','Main menu'],
                     carousel=True
                 ),
     ]
@@ -66,6 +66,8 @@ def interactive_menu():
        interactive_impl.bina_abnormal_trading_impl()
     if interactive_menu_pick["option"] == "Binance Agg Trades":
         interactive_impl.bina_ws_agg_trades_impl(input("Select a symbol:"),input("Select a threshold:"))
+    if interactive_menu_pick["option"] == "BitMEX Agg Trades":
+        interactive_impl.bitmex_ws_agg_trades_impl(input("Select a symbol:"))
     if interactive_menu_pick["option"] == "Main menu":
         main()
     main()
