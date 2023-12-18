@@ -96,15 +96,14 @@ def get_open_interest_statiistics(symbol: str, interval: str):
     return df_quote if len(df_quote)>0 else pd.DataFrame()
 
 def get_order_book_depth(symbol:str):
-    r = requests.get("https://api.binance.com/api/v3/depth?limit=1000",
+    r = requests.get("https://api.binance.com/api/v3/depth?limit=5000",
                     params=dict(symbol=symbol))
     results = r.json()
     frames = {side: pd.DataFrame(data=results[side], columns=["price", "quantity"],
                                 dtype=float)
             for side in ["bids", "asks"]}
-    frames_list = [frames[side].assign(side=side) for side in frames]
-    return pd.concat(frames_list, axis="index", 
-                    ignore_index=True, sort=True)
+    return [frames[side].assign(side=side) for side in frames]
+
 
 def get_daily_aggtrades(symbol: str):
     header_list = ["id","price","qty","a","b","date","isBuyerMaker","isBestMatch"]

@@ -3,6 +3,7 @@ from src.libs import binance_lib
 from src.libs import coingecko_lib
 from src.libs import tabulate_lib
 import requests
+import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -181,3 +182,21 @@ def get_companies_holding_crypto():
 
         print(f"\n Companies Holding {token}\n")
         tabulate_lib.tabulate_dict(coingecko_lib.get_companies_holding_crypto(token))
+
+
+def get_floor_ceiling_orderbook(symbol):
+    frames = binance_lib.get_order_book_depth(symbol)
+
+    bids = _get_floor_ceiling_orderbook_handling(frames, 0)
+    asks = _get_floor_ceiling_orderbook_handling(frames, 1)
+    print(bids)
+    print(asks)
+
+def _get_floor_ceiling_orderbook_handling(frames, arg1):
+    df = frames[arg1]
+    #df['price'] = df['price'].astype(float).astype(int)
+    #df_sum = df.groupby('price').agg({'quantity': 'sum'}).reset_index()
+    interval = 100
+    return (df.groupby(np.trunc(df['price'] / interval) * interval, sort=False)).max()
+  
+

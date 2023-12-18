@@ -28,7 +28,7 @@ def process_volume_average(market):
         to_tail = 30
     elif market == "crypto":
         list_symbols = sqlite_lib.get_crypto_symbols_list()
-        to_tail = 15
+        to_tail = 30
 
     for symbol in list_symbols:
         reportpedia.report_volume_up_average(symbol[0], market, to_tail)

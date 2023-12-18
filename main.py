@@ -77,7 +77,7 @@ def charts_menu():
     inquirer.List('option',
                     message="Select an option",
                     choices=["TA", "MAG7","Asset profile","Cross asset corr",
-                             "SPX/VIX ratio","SPX 2D RSI", "VIX 1 ATR","Futures curve", "ETF Flows","Crypto CVD","S/R TradeFi","S/R Crypto",'Main menu'],
+                             "SPX/VIX ratio","SPX 2D RSI", "VIX 1 ATR","Futures curve", "ETF Flows","Crypto CVD","S/R TradeFi","S/R Crypto", 'ShortVol chart', 'Main menu'],
                     carousel=True
                 ),
     ]
@@ -106,6 +106,8 @@ def charts_menu():
         charts_impl.chart_sr_crypto(input("Select a symbol:").upper())
     if charts_menu_pick["option"] == "ETF Flows":
         charts_impl.chart_etf_flows(input("Select a symbol:").upper())
+    if charts_menu_pick["option"] == "ShortVol chart":
+        charts_impl.chart_simple_chart('^SHORTVOL')
     if charts_menu_pick["option"] == "Main menu":
         main()
     main()

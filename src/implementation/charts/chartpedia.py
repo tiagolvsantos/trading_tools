@@ -566,3 +566,6 @@ def plot_fear_greed_index():
         color="grey",
     ))
     fig.show()
+
+def plot_simple_chart(symbol):
+    openbb_lib.plot_asset_chart(symbol)

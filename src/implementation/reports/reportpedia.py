@@ -3,6 +3,7 @@ from src.libs import sqlite_lib
 from src.libs import technical_indicators_lib
 from src.libs import tabulate_lib
 from src.libs import binance_lib
+from src.libs import utils
 from datetime import datetime
 import pandas as pd
 
@@ -46,7 +47,7 @@ def report_volume_up_average(symbol, market, to_tail):
     last_volume = float(df_data["volume"].tail(1))
     avg_volume = float(df_data["volume"].tail(to_tail).mean())
     if last_volume>avg_volume:
-        print(f"Volume bigger than average for {symbol}  {round(last_volume,2)} > {round(avg_volume,2)}")
+        print(f"Volume bigger than average for {symbol}  Actual:{utils.print_formated_numbers(round(last_volume,2))}   Avg:{utils.print_formated_numbers(round(avg_volume,2))}")
 
 def report_rsi_oversold(symbol, market):
     if market == "tradefi":

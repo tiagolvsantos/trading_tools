@@ -1,4 +1,5 @@
 from openbb_terminal.sdk import openbb
+from src.libs import utils
 import pandas as pd
 import datetime
 import os
@@ -269,13 +270,17 @@ def get_etf_holdings(symbol: str):
 
 # PLOTS
 def plot_indices_list(indices_list: list):
-    return openbb.economy.index_chart(indices = indices_list)
+    return openbb.economy.index_chart(indices = indices_list, start_date=f"{datetime.now().year }-01-01")
 
 # Interval -> (in minutes) to get data 1, 5, 15, 30, 60 or 1440
 # prepost -> Pre and After hours data
 # https://docs.openbb.co/sdk/reference/stocks/candle
 def plot_ma_asset_chart(symbol :str, interval: int, prepost:bool):
     return openbb.stocks.candle(symbol, ma = [50,100,200], add_trend= True, interval = interval, prepost=prepost, start_date= f"{datetime.now().year -1}-01-01")
+
+def plot_asset_chart(symbol :str, interval: int, prepost:bool):
+    return openbb.stocks.candle(symbol, add_trend= True, interval = interval, prepost=prepost, start_date= f"{datetime.now().year -1}-01-01")
+
 
 def plot_ma_fx_chart(df_data ,to_currency:str, from_currency:str ):
     return openbb.forex.candle(df_data, to_currency , from_currency,  [50,100,200],  None,  True,  False, "linear")
