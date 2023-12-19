@@ -5,6 +5,7 @@ from src.libs import CBOE_lib
 from src.libs import webull_lib
 from src.libs import trackinsight_lib
 from src.libs import swaggystocks_lib
+from src.libs import finviz_lib
 import pandas as pd
 
 
@@ -85,3 +86,12 @@ def get_options_ratios():
 
 def get_wsb_trending_stocks():
     tabulate_lib.tabulate_it("WSB Trending stocks for the last 12h", swaggystocks_lib.get_wsb_buzz_stocks())
+
+def get_stock_news(symbol):
+    tabulate_lib.tabulate_it(f'News for {symbol}',finviz_lib.symbol_news((symbol)))
+
+def get_stock_insider_trading(symbol):
+    tabulate_lib.tabulate_it(f'Insider trading for {symbol}',finviz_lib.symbol_insider_trading((symbol)))
+
+def get_sp500_technicals():
+    tabulate_lib.tabulate_it('SP500 technicals',finviz_lib.get_technicals())
