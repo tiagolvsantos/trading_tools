@@ -185,20 +185,8 @@ def _plot_crypto_cvd_chart(df_data, symbol, df_oi,to_tail):
 def plot_ma_chart(symbol:str):
     openbb_lib.plot_ma_asset_chart(symbol, 1440, True)
 
-def plot_asset_profile(symbol:str):
-  
-    df_data = yfinance_lib.get_symbol_historical_data(symbol)
-   
-    if len(df_data) < 1:
-        print(f"No data for {symbol}")
-        return
 
-    df_data["close"] = pd.to_numeric(df_data["close"])
-    df_data["volume"] = pd.to_numeric(df_data["volume"])
-
-    df_data = df_data.tail(500)
-    df_data_5_trading_years = df_data.tail(2520)
-    
+def _plot_price_profile(df_data, df_data_5_trading_years, symbol):
     fig = make_subplots(vertical_spacing = 0, rows=3, cols=1, row_heights=[4, 0.2, 2])
     fig.add_trace(go.Candlestick(x=df_data['date'],
                                 open=df_data['open'],
@@ -233,11 +221,7 @@ def plot_asset_profile(symbol:str):
     cs.decreasing.line.color = '#FF9F00'
     fig.show()
 
-    df_data = df_data.set_index('date')
-    df_data.index = pd.to_datetime(df_data.index)
-    df_data_5_trading_years = df_data_5_trading_years.set_index('date')
-    df_data_5_trading_years.index = pd.to_datetime(df_data_5_trading_years.index)
-
+def _plot_asset_returns(df_data, symbol):
     ## RETURNS
     r = df_data["close"].pct_change()
 
@@ -269,8 +253,7 @@ def plot_asset_profile(symbol:str):
     plt.style.use('dark_background')
     plt.show()
 
-
-
+def _plot_asset_sesonality(df_data_5_trading_years, symbol):
     ## SEASONALITY  
     decomposition = seasonal_decompose(df_data_5_trading_years['close'], model='cummulative', period=30)
     fig = plt.figure()
@@ -294,6 +277,99 @@ def plot_asset_profile(symbol:str):
     plt.title(f'{symbol} Seasonality for {datetime.date.today().year}', fontsize=18, fontweight='bold')
     plt.legend()
     plt.show()
+
+def _plot_mr_reversions(df_data, symbol):
+    mr30 = round(technical_indicators_lib.moving_average(df_data,30).iloc[0]["MA_30"],3)
+    mr90 = round(technical_indicators_lib.moving_average(df_data,90).iloc[0]["MA_90"],3)
+    mr180 = round(technical_indicators_lib.moving_average(df_data,180).iloc[0]["MA_180"],3)
+
+    # Plot chart
+    fig = go.Figure()
+
+    fig.add_traces([
+    go.Scatter(
+        x=df_data["date"],
+        y=df_data['close'],
+        name= symbol,
+        line={
+            'color': 'rgb(204, 102, 0)',
+            'width': 1
+        }
+    ), 
+    go.Scatter(
+        x=[min(df_data["date"]),max(df_data["date"])],
+        y=[float(mr180),float(mr180)], 
+        line={
+            'color': 'rgb(0, 102, 204)',
+            'width': 4,
+            'dash': 'longdash',
+        }, name='180d MR'
+    ), 
+    go.Scatter(
+        x=[min(df_data["date"]),max(df_data["date"])],
+        y=[float(mr90),float(mr90)], 
+        line={
+            'color': 'rgb(153, 51, 255)',
+            'width': 3,
+            'dash': 'longdash',
+        }, name='90d MR'
+    ), 
+    go.Scatter(
+        x=[min(df_data["date"]),max(df_data["date"])],
+        y=[float(mr30),float(mr30)], 
+        line={
+            'color': 'rgb(153, 153, 0)',
+            'width': 3,
+            'dash': 'longdash',
+        }, name='30d MR'
+    )
+    ])
+
+    # Add figure title
+    fig.update_layout(title_text=f"{symbol} Mean Reversions", template="plotly_dark", font=dict(
+        family="Courier New, monospace",
+        size=18,  # Set the font size here
+        color="white"
+    ))
+    # Set x-axis title
+    fig.update_xaxes(
+        title_text=f'180dMR: {float(mr180)} | 90dMR: {float(mr90)} | 30dMR: {float(mr30)}'
+    )
+
+
+    fig.show()
+
+
+def plot_asset_profile(symbol:str):
+  
+    df_data = yfinance_lib.get_symbol_historical_data(symbol)
+   
+    if len(df_data) < 1:
+        print(f"No data for {symbol}")
+        return
+
+    df_data["close"] = pd.to_numeric(df_data["close"])
+    df_data["volume"] = pd.to_numeric(df_data["volume"])
+
+    df_data = df_data.tail(500)
+    df_data_5_trading_years = df_data.tail(2520)
+    
+    _plot_price_profile(df_data, df_data_5_trading_years, symbol)
+
+    _plot_mr_reversions(df_data, symbol)
+    
+    df_data = df_data.set_index('date')
+    df_data.index = pd.to_datetime(df_data.index)
+    df_data_5_trading_years = df_data_5_trading_years.set_index('date')
+    df_data_5_trading_years.index = pd.to_datetime(df_data_5_trading_years.index)
+
+    _plot_asset_returns(df_data, symbol)
+
+    _plot_asset_sesonality(df_data_5_trading_years, symbol)
+
+
+
+  
 
 def plot_cross_asset_correlation(to_tail=180):
     list_corrs = ["ES=F","GC=F","NQ=F","CL=F","DX-Y.NYB","^VIX","^RUT","HG=F","NG=F","RB=F","ZN=F","^STOXX50E","^N225","ZT=F","EURUSD=x","USDJPY=x","HYG","JNK"]
@@ -360,7 +436,7 @@ def plot_sp500_vix_ratio():
         showlegend=True, font=dict(
         family="Courier New, monospace",
         size=18,  # Set the font size here
-        color="grey"
+        color="white"
     )
     )
 
@@ -415,8 +491,8 @@ def plot_vix_atr_1():
     fig.update_xaxes(rangeslider_visible=False)
     fig.update_layout(title_text="SP500 VS VIX ATR < 1 = Brace for impact!", template="plotly_dark", font=dict(
         family="Courier New, monospace",
-        size=18,  # Set the font size here
-        color="grey"
+        size=15,  # Set the font size here
+        color="white"
     ))
     fig.show()
 
@@ -472,7 +548,7 @@ def _plot_crypto_cvd_chart(df_data, symbol, df_oi,to_tail):
     fig.update_layout(title_text=f"{symbol} CVD + OI + OI in $ for {to_tail} Trading periods", template="plotly_dark", font=dict(
         family="Courier New, monospace",
         size=18,  # Set the font size here
-        color="grey"
+        color="white"
     ))
     fig.show()
 
@@ -505,21 +581,22 @@ def plot_sr_tradefi(symbol:str,):
 
 def plot_etf_flows(symbol):
     df_data = pd.DataFrame(etf_com_lib.get_etf_flow_data(symbol))
-    df_data["Color"] = np.where(df_data["Value"]<0, 'red', 'green')
-    cumulative_flows = round(df_data["Value"].sum(),2)
+    if len(df_data) >=1:
+        df_data["Color"] = np.where(df_data["Value"]<0, 'red', 'green')
+        cumulative_flows = round(df_data["Value"].sum(),2)
 
-    fig = go.Figure()
-    fig.add_trace(
-        go.Bar(name='Net',
-            x=df_data['Date'],
-            y=df_data['Value'],
-            marker_color=df_data['Color']))
-    fig.update_layout(title_text=f"{symbol} ETF Flows in Millions | Cumulative {cumulative_flows} M", template="plotly_dark", font=dict(
-        family="Courier New, monospace",
-        size=18,  # Set the font size here
-        color="grey"
-    ))
-    fig.show()
+        fig = go.Figure()
+        fig.add_trace(
+            go.Bar(name='Net',
+                x=df_data['Date'],
+                y=df_data['Value'],
+                marker_color=df_data['Color']))
+        fig.update_layout(title_text=f"{symbol} ETF Flows in Millions | Cumulative {cumulative_flows} M", template="plotly_dark", font=dict(
+            family="Courier New, monospace",
+            size=18,  # Set the font size here
+            color="white"
+        ))
+        fig.show()
 
 def plot_crypto_fear_greed_index():
     df_data = pd.DataFrame(alternative_lib.get_crypto_fear_greed_index()["data"])
@@ -540,7 +617,7 @@ def plot_crypto_fear_greed_index():
     fig.update_layout(title_text=f"Crypto Fear Greed Index is: {df_data['value_classification'][0]}", template="plotly_dark", font=dict(
         family="Courier New, monospace",
         size=18,  # Set the font size here
-        color="grey",
+        color="white"
     ))
     fig.show()
 
@@ -563,7 +640,7 @@ def plot_fear_greed_index():
     fig.update_layout(title_text=f"Crypto Fear Greed Index is: {df_data['rating'].to_string().replace('1','').replace('    ','')}", template="plotly_dark", font=dict(
         family="Courier New, monospace",
         size=18,  # Set the font size here
-        color="grey",
+        color="white"
     ))
     fig.show()
 
