@@ -207,7 +207,7 @@ def _plot_price_profile(df_data, df_data_5_trading_years, symbol):
         showlegend=False, font=dict(
         family="Courier New, monospace",
         size=18,  # Set the font size here
-        color="grey"
+        color="white"
     )
     )
 

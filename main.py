@@ -152,13 +152,19 @@ def reports_menu():
     reports_menu = [
     inquirer.List('option',
                     message="Select an option",
-                    choices=['50 MA up/down','Volume bigger than average TradeFi','Volume bigger than average Crypto','RSI Overbought','RSI Oversold','Main menu'],
+                    choices=['50 MA up/down TradeFi','50 MA up/down Crypto','200 EMA up/down TradeFi','200 EMA up/down Crypto','Volume bigger than average TradeFi','Volume bigger than average Crypto','RSI Overbought','RSI Oversold','Main menu'],
                     carousel=True
                 ),
     ]
     reports_menu_pick = inquirer.prompt(reports_menu)
-    if reports_menu_pick["option"] == "50 MA up/down":
-        reports_impl.report_ma(50)
+    if reports_menu_pick["option"] == "50 MA up/down TradeFi":
+        reports_impl.report_ma(50, "tradefi")
+    if reports_menu_pick["option"] == "50 MA up/down Crypto":
+        reports_impl.report_ma(50, "crypto")
+    if reports_menu_pick["option"] == "200 EMA up/down Crypto":
+        reports_impl.report_ema(200, "crypto")
+    if reports_menu_pick["option"] == "200 EMA up/down TradeFi":
+        reports_impl.report_ema(200, "tradefi")
     if reports_menu_pick["option"] == "Volume bigger than average TradeFi":
         reports_impl.process_volume_average("tradefi")
     if reports_menu_pick["option"] == "Volume bigger than average Crypto":
@@ -175,12 +181,12 @@ def jobs_menu():
     jobs_menu = [
     inquirer.List('option',
                     message="Select an option",
-                    choices=['Reports MA','main'],
+                    choices=['Process strategies','main'],
                     carousel=True
                 ),
     ]
     jobs_menu_pick = inquirer.prompt(jobs_menu)
-    if jobs_menu_pick["option"] == "Reports MA":
+    if jobs_menu_pick["option"] == "Process strategies":
         reports_impl.run_jobs()
     if jobs_menu_pick["option"] == "Main menu":
         main()
