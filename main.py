@@ -160,7 +160,10 @@ def reports_menu():
     reports_menu = [
     inquirer.List('option',
                     message="Select an option",
-                    choices=['50 MA up/down TradeFi','50 MA up/down Crypto','200 EMA up/down TradeFi','200 EMA up/down Crypto','Volume bigger than average TradeFi','Volume bigger than average Crypto','RSI Overbought','RSI Oversold','Main menu'],
+                    choices=['50 MA up/down TradeFi','50 MA up/down Crypto','200 EMA up/down TradeFi',
+                             '200 EMA up/down Crypto','Volume bigger than average TradeFi',
+                             'Volume bigger than average Crypto','RSI Overbought',
+                             'RSI Oversold','CoT Reports','Main menu'],
                     carousel=True
                 ),
     ]
@@ -181,8 +184,11 @@ def reports_menu():
         reports_impl.process_rsi_overbought()
     if reports_menu_pick["option"] == "RSI Oversold":
         reports_impl.process_rsi_oversold()
+    if reports_menu_pick["option"] == "CoT Reports":
+        reports_impl.process_cot_reports()
     if reports_menu_pick["option"] == "Main menu":
         main()
+
     main()
 
 def jobs_menu():

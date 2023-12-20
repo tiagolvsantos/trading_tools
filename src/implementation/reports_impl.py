@@ -1,4 +1,5 @@
 from src.implementation.reports import reportpedia
+from src.implementation.charts import chartpedia
 from src.libs import sqlite_lib
 
 
@@ -62,4 +63,26 @@ def run_jobs():
     _run_jobs("crypto")
     print("Running jobs done!")
 
+def process_cot_reports():
+    list_commodities= {'WTI': 'CFTC/06742U_FO_ALL', 
+                       'GOLD': 'CFTC/088691_FO_ALL', 
+                       'NATGAS': 'CFTC/0233AT_FO_ALL', 
+                       'COPPER': 'CFTC/085692_FO_ALL', 
+                       'RBOB': 'CFTC/111659_FO_ALL', 
+                       'SILVER': 'CFTC/084691_FO_ALL', 
+                       'CORN': 'CFTC/002602_FO_ALL', 
+                       'SOYBEANS': 'CFTC/005602_FO_ALL', 
+                       'WHEAT': 'CFTC/001612_FO_ALL'}
+    chartpedia.plot_cot_report(list_commodities)
+
+    list_indices= { 'BTC': 'CFTC/133741_F_ALL', 
+                    'SPX': 'CFTC/13874P_FO_ALL', 
+                    'NASDAQ100': 'CFTC/20974P_FO_ALL', 
+                    'RUSSELL2000': 'CFTC/239742_FO_ALL', 
+                    'VIX': 'CFTC/1170E1_FO_ALL', 
+                    'USD': 'CFTC/098662_FO_ALL', 
+                    'EUR': 'CFTC/099741_FO_ALL', 
+                    'YEN': 'CFTC/097741_FO_ALL', 
+                    'GBP': 'CFTC/096742_FO_ALL'}
+    chartpedia.plot_cot_report(list_indices)
 

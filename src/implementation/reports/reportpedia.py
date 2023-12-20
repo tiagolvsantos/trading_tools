@@ -106,4 +106,3 @@ def report_rsi_overbought(symbol, market):
     rsi = technical_indicators_lib.rsi(df_data)
     if round(float(rsi.tail(1)),2)>=70:
         print(f"RSI for {symbol} is Overbought!")
-

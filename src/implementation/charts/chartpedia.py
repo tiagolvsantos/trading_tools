@@ -6,7 +6,7 @@ from src.libs import yfinance_lib
 from src.libs import etf_com_lib
 from src.libs import alternative_lib
 from src.libs import dataviz_lib
-
+from src.libs import quandl_lib
 
 import numpy as np
 import pandas as pd
@@ -646,3 +646,52 @@ def plot_fear_greed_index():
 
 def plot_simple_chart(symbol):
     openbb_lib.plot_asset_chart(symbol)
+
+
+def plot_cot_report(list_commodities):
+    for k, v in list_commodities.items():
+        df_data = quandl_lib.get_quandl_data(v).reset_index().tail(100)
+        df_data["Net Positions"] = df_data["Total Reportable Longs"] - df_data["Total Reportable Shorts"]
+        
+        fig = make_subplots(specs=[[{"secondary_y": True}]])
+
+        # Add traces
+        fig.add_trace(
+            go.Scatter(x=pd.to_datetime(df_data["Date"]), y=pd.to_numeric(df_data["Total Reportable Longs"]), name="Longs", line={
+                'color': 'rgb(0, 102, 0)',
+                'width': 1
+            }),
+            secondary_y=False,
+        )
+
+        fig.add_trace(
+            go.Scatter(x=pd.to_datetime(df_data["Date"]), y=pd.to_numeric(df_data["Total Reportable Shorts"]), name="Shorts", line={
+                'color': 'rgb(153, 0, 0)',
+                'width': 1
+            }),
+            secondary_y=False,
+        )
+
+        fig.add_trace(
+            go.Scatter(x=pd.to_datetime(df_data["Date"]), y=pd.to_numeric(df_data["Net Positions"]), name="Net", line={
+                'color': 'rgb(204, 102, 0)',
+                'width': 1
+            }),
+            secondary_y=True,
+        )
+        # Add figure title
+        fig.update_layout(title_text=f"{k} COT", template="plotly_dark", font=dict(
+            family="Courier New, monospace",
+            size=18,  # Set the font size here
+            color="white",
+            
+        ))
+
+        # Set x-axis title
+        fig.update_xaxes(title_text="")
+
+        # Set y-axes titles
+        fig.update_yaxes(title_text="Qty Futures contracts", secondary_y=False)
+        fig.update_yaxes(title_text="Net contracts", secondary_y=True)
+
+        fig.show()
