@@ -695,3 +695,119 @@ def plot_cot_report(list_commodities):
         fig.update_yaxes(title_text="Net contracts", secondary_y=True)
 
         fig.show()
+
+def get_options_chart(symbol: str, expire : int):
+    # Get expiration dates
+    lst_options_expirations = yfinance_lib.get_options_chain_expirations(symbol)
+
+    if len(lst_options_expirations)<=0:
+        return print(f"No expiration for {symbol}")
+    
+    (pd.DataFrame(lst_options_expirations)).rename(columns={0:"expirations"})
+
+    last_price = str(round(float(yfinance_lib.get_symbol_last_quote(symbol)), 2))
+
+    # Compute data
+    # Options charting PUTS + CALLS
+    df_options = pd.DataFrame()
+    for indx, period in enumerate(lst_options_expirations):
+        options_puts = yfinance_lib.get_put_options(symbol, int(indx))
+        options_puts["Option"] = "PUT"
+
+        options_calls = yfinance_lib.get_call_options(symbol, int(indx))
+        options_calls["Option"]="CALL"
+
+        df_options = pd.concat([options_calls, options_puts], axis=0)
+
+    total_volume = df_options['volume'].sum()
+    volume_calls = df_options.loc[df_options['Option'] == "CALL", 'volume'].sum()
+    volume_puts = df_options.loc[df_options['Option'] == "PUT", 'volume'].sum()
+
+    print(f"{total_volume} Options where traded for {symbol}." )
+    print(f"{volume_calls} Options Call volume. {round((volume_calls * 100)/ total_volume,2)}%" )
+    print(f"{volume_puts} Options Put volume. {round((volume_puts * 100)/ total_volume,2)}%" )
+
+    # Near expiration options set to 5 expirations  indx = 5
+    df_options_near_expiration = pd.DataFrame()
+    for indx, period in enumerate(lst_options_expirations):
+        if indx > expire:
+            break
+        options_puts = yfinance_lib.get_put_options(symbol, int(indx))
+        options_puts["Option"] = "PUT"
+
+        options_calls = yfinance_lib.get_call_options(symbol, int(indx))
+        options_calls["Option"]="CALL"
+
+        df_options_near_expiration = pd.concat([options_calls, options_puts], axis=0)
+
+
+    ##### Charts
+    ## AGGREGATED
+    # Options Volume
+    fig = px.bar(df_options, x="strike", y="volume", color="Option", color_discrete_map = {'PUT': '#FF3333', 'CALL': '#408B66'})
+    fig.update_layout(title_text=f"All expirations aggregated {symbol} Options Volume | Last quote: {last_price}", 
+                      template="plotly_dark", font=dict(
+    family="Courier New, monospace",
+    size=18,  # Set the font size here
+    color="white",
+    
+    ))
+    fig.show()
+
+    # Options Open Interest
+    fig = px.bar(df_options, x="strike", y="openInterest", color="Option", color_discrete_map = {'PUT': '#FF3333', 'CALL': '#408B66'})
+    fig.update_layout(title_text=f"All expirations aggregated {symbol} Options Open Interest | Last quote: {last_price}", 
+                      template="plotly_dark", font=dict(
+    family="Courier New, monospace",
+    size=18,  # Set the font size here
+    color="white",
+    
+    ))
+    fig.show()
+
+    # Options Implied Volatility
+    fig = px.bar(df_options, x="strike", y="impliedVolatility", color="Option", color_discrete_map = {'PUT': '#FF3333', 'CALL': '#408B66'})
+    fig.update_layout(title_text=f"All expirations aggregated {symbol} Options Implied Volatility | Last quote: {last_price}", 
+                      template="plotly_dark", font=dict(
+    family="Courier New, monospace",
+    size=18,  # Set the font size here
+    color="white",
+    
+    ))
+    fig.show()
+
+
+    ## NEAR EXPIRATION
+    # Options Volume
+    fig = px.bar(df_options_near_expiration, x="strike", y="volume", color="Option", color_discrete_map = {'PUT': '#FF3333', 'CALL': '#408B66'})
+    fig.update_layout(title_text=f"Near {expire}  expirations aggregated {symbol} Options Implied Volatility | Last quote: {last_price}", 
+                      template="plotly_dark", font=dict(
+    family="Courier New, monospace",
+    size=18,  # Set the font size here
+    color="white",
+    
+    ))
+    fig.show()
+
+
+    # Options Open Interest
+    fig = px.bar(df_options_near_expiration, x="strike", y="openInterest", color="Option", color_discrete_map = {'PUT': '#FF3333', 'CALL': '#408B66'})
+    fig.update_layout(title_text=f"Near {expire}  expirations aggregated {symbol}  Options Open Interest | Last quote: {last_price}", 
+                      template="plotly_dark", font=dict(
+    family="Courier New, monospace",
+    size=18,  # Set the font size here
+    color="white",
+    
+    ))
+    fig.show()
+
+    # Options Implied Volatility
+    fig = px.bar(df_options_near_expiration, x="strike", y="impliedVolatility", color="Option", color_discrete_map = {'PUT': '#FF3333', 'CALL': '#408B66'})
+    fig.update_layout(title_text=f"Near {expire}  expirations aggregated {symbol}  Options Implied Volatility | Last quote: {last_price}", 
+                      template="plotly_dark", font=dict(
+    family="Courier New, monospace",
+    size=18,  # Set the font size here
+    color="white",
+    
+    ))
+    fig.show()

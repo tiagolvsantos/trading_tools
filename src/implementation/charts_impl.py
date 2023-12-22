@@ -46,3 +46,6 @@ def chart_fear_greed():
 
 def chart_simple_chart(symbol):
     chartpedia.plot_simple_chart(symbol)
+
+def chart_options_data(symbol):
+    chartpedia.get_options_chart(symbol)
