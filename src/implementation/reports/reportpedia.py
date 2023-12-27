@@ -74,7 +74,7 @@ def report_ema(ema, market):
     search_data = sqlite_lib.get_record_query(search_query)
     tabulate_lib.tabulate_it(f"Updated EMA {ema}", pd.DataFrame(search_data, columns=['symbol', 'ema','signal','updated', 'market']))
 
-def report_volume_up_average(symbol, market, to_tail):
+def report_volume_up_average(symbol, market, to_tail, name=""):
     if market == "tradefi":
         df_data = yfinance_lib.get_download_data(symbol, "1y")
     elif market == "crypto":
@@ -85,9 +85,9 @@ def report_volume_up_average(symbol, market, to_tail):
     last_volume = float(df_data["volume"].tail(1))
     avg_volume = float(df_data["volume"].tail(to_tail).mean())
     if last_volume>avg_volume:
-        print(f"Volume bigger than average for {symbol}  Actual:{utils.print_formated_numbers(round(last_volume,2))}   Avg:{utils.print_formated_numbers(round(avg_volume,2))}")
+        print(f"Volume bigger than average for {name} {symbol}  Actual:{utils.print_formated_numbers(round(last_volume,2))}   Avg:{utils.print_formated_numbers(round(avg_volume,2))}")
 
-def report_rsi_oversold(symbol, market):
+def report_rsi_oversold(symbol, market, name=""):
     if market == "tradefi":
         df_data = yfinance_lib.get_download_data(symbol, "1y")
     elif market == "crypto":
@@ -95,9 +95,9 @@ def report_rsi_oversold(symbol, market):
    
     rsi = technical_indicators_lib.rsi(df_data)
     if round(float(rsi.tail(1)),2)<=30:
-        print(f"RSI for {symbol} is Oversold!")
+        print(f"RSI for {name} <b>{symbol}<b> is Oversold!")
 
-def report_rsi_overbought(symbol, market):
+def report_rsi_overbought(symbol, market, name=""):
     if market == "tradefi":
         df_data = yfinance_lib.get_download_data(symbol, "1y")
     elif market == "crypto":
@@ -105,4 +105,4 @@ def report_rsi_overbought(symbol, market):
    
     rsi = technical_indicators_lib.rsi(df_data)
     if round(float(rsi.tail(1)),2)>=70:
-        print(f"RSI for {symbol} is Overbought!")
+        print(f"RSI for {name} <b>{symbol}<b> is Overbought!")

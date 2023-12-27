@@ -87,7 +87,7 @@ def charts_menu():
                     choices=["TA", "MAG7","Asset profile","Cross asset corr",
                              "SPX/VIX ratio","SPX 2D RSI", "VIX 1 ATR","Futures curve", 
                              "ETF Flows","Crypto CVD","S/R TradeFi","S/R Crypto", 'ShortVol chart',
-                             'Options charts', 
+                             'Options charts', 'Srategic Petroleum Reserve','Google trends',
                              'Main menu'],
                     carousel=True
                 ),
@@ -119,6 +119,12 @@ def charts_menu():
         charts_impl.chart_etf_flows(input("Select a symbol:").upper())
     if charts_menu_pick["option"] == "ShortVol chart":
         charts_impl.chart_simple_chart('^SHORTVOL')
+    if charts_menu_pick["option"] == "Srategic Petroleum Reserve":
+        charts_impl.chart_spr()
+    if charts_menu_pick["option"] == "Google trends":
+        input_string = input('Enter elements to search separated by space \n')
+        lst_keywords = input_string.split()
+        charts_impl.chart_google_trends(lst_keywords)
     if charts_menu_pick["option"] == "Options charts":
         charts_impl.chart_options_data(input("Select a symbol:").upper())
     if charts_menu_pick["option"] == "Main menu":

@@ -18,7 +18,11 @@ argon2-cffi==23.1.0
 
 argon2-cffi-bindings==21.2.0
 
+eiapy==0.1.6
+
 ascii-magic==1.6
+
+xlrd==2.0.1
 
 astor==0.8.1
 

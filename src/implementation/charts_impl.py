@@ -49,3 +49,9 @@ def chart_simple_chart(symbol):
 
 def chart_options_data(symbol):
     chartpedia.get_options_chart(symbol)
+
+def chart_spr():
+    chartpedia.plot_spr_chart()
+
+def chart_google_trends(list_keywords_trend: list):
+    chartpedia.chart_google_trends(list_keywords_trend)

@@ -7,6 +7,8 @@ from src.libs import etf_com_lib
 from src.libs import alternative_lib
 from src.libs import dataviz_lib
 from src.libs import quandl_lib
+from src.libs import eia_lib
+from src.libs import google_trends_lib
 
 import numpy as np
 import pandas as pd
@@ -811,3 +813,39 @@ def get_options_chart(symbol: str, expire : int):
     
     ))
     fig.show()
+
+
+def plot_spr_chart():
+    df_data = eia_lib.get_spr()
+    df_data.columns =["date","value"]
+    # Get expiration dates
+    fig = go.Figure()
+
+    fig.add_traces([
+    go.Scatter(
+        x=df_data["date"],
+        y=df_data["value"],
+        name= "SPR"
+    )
+    ])
+
+    # Add figure title
+    fig.update_layout(
+        title_text= "Weekly U.S. Ending Stocks of Crude Oil in SPR (Thousand Barrels)",
+        template="plotly_dark",
+        showlegend=True, font=dict(
+        family="Courier New, monospace",
+        size=18,  # Set the font size here
+        color="white"
+    )
+    )
+
+    fig.show()
+
+def chart_google_trends(list_keywords_trend: list):
+    df_data = google_trends_lib.get_keywords_trend(list_keywords_trend)
+
+    for column in df_data:
+        if column not in ["date", "isPartial"]:
+            fig = px.line(df_data, x="date", y=column, title=f'Web search interest over time for {column.upper()}', template="plotly_dark")
+            fig.show() 

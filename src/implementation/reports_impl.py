@@ -42,20 +42,20 @@ def process_volume_average(market):
         to_tail = 30
     elif market == "crypto":
         list_symbols = sqlite_lib.get_crypto_symbols_list()
-        to_tail = 30
+        to_tail = 15
 
     for symbol in list_symbols:
-        reportpedia.report_volume_up_average(symbol[0], market, to_tail)
+        reportpedia.report_volume_up_average(symbol[0], market, to_tail, symbol[1])
 
 def process_rsi_oversold():
     list_symbols = sqlite_lib.get_stock_symbols_list()
     for symbol in list_symbols:
-        reportpedia.report_rsi_oversold(symbol[0],"tradefi")
+        reportpedia.report_rsi_oversold(symbol[0],"tradefi", symbol[1])
 
 def process_rsi_overbought():
     list_symbols = sqlite_lib.get_stock_symbols_list()
     for symbol in list_symbols:
-        reportpedia.report_rsi_overbought(symbol[0],"tradefi")
+        reportpedia.report_rsi_overbought(symbol[0],"tradefi", symbol[1])
 
 def run_jobs():
     print("Running jobs.....")
