@@ -87,7 +87,7 @@ def charts_menu():
                     choices=["TA", "MAG7","Asset profile","Cross asset corr",
                              "SPX/VIX ratio","SPX 2D RSI", "VIX 1 ATR","Futures curve", 
                              "ETF Flows","Crypto CVD","S/R TradeFi","S/R Crypto", 'ShortVol chart',
-                             'Options charts', 'Srategic Petroleum Reserve','Google trends', 'Year on Year comparrison'
+                             'Options charts', 'Srategic Petroleum Reserve','Google trends', 'Year on Year comparrison',
                              'Main menu'],
                     carousel=True
                 ),

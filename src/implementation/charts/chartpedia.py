@@ -887,6 +887,7 @@ def chart_year_comparisson_chart(symbol:str,target_year:str):
     ax2.plot(df_target_year.date, df_target_year.close,color="orange",marker="o")
     ax.set_facecolor("black")
     ax2.set_ylabel(f"{target_year}",color="orange",fontsize=14)
+    plt.title(f"{symbol} comparisson between {now.year} vs {target_year}") 
     plt.show()
     ax.get_xaxis().set_visible(False)
     
