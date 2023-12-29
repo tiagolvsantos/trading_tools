@@ -661,7 +661,7 @@ def zscore(df_data: pd.DataFrame):
     return pd.DataFrame(stats.zscore(pd.to_numeric(df_data.close)))
 
 
-def bollinger_bands(df, period, multiplier):
+def bollinger_bands(df, period=20, multiplier=2):
     df['UpperBand'] = df['close'].rolling(period).mean() + df['close'].rolling(period).std() * multiplier
     df['LowerBand'] = df['close'].rolling(period).mean() - df['close'].rolling(period).std() * multiplier
 
