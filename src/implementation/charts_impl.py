@@ -9,6 +9,7 @@ def chart_general_ta_mag7_impl():
         chartpedia.plot_ma_chart(symbol)
 
 def chart_asset_profile_impl(symbol):
+    chartpedia.plot_ma_chart(symbol)
     chartpedia.plot_asset_profile(symbol)
 
 def chart_cross_asset_correlation_impl():
@@ -55,3 +56,6 @@ def chart_spr():
 
 def chart_google_trends(list_keywords_trend: list):
     chartpedia.chart_google_trends(list_keywords_trend)
+
+def chart_year_on_year_comparisson(symbol, year):
+    chartpedia.chart_year_comparisson_chart(symbol, year)

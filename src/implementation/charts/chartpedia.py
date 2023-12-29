@@ -10,6 +10,7 @@ from src.libs import quandl_lib
 from src.libs import eia_lib
 from src.libs import google_trends_lib
 
+from dateutil.relativedelta import relativedelta
 import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
@@ -849,3 +850,43 @@ def chart_google_trends(list_keywords_trend: list):
         if column not in ["date", "isPartial"]:
             fig = px.line(df_data, x="date", y=column, title=f'Web search interest over time for {column.upper()}', template="plotly_dark")
             fig.show() 
+
+def chart_year_comparisson_chart(symbol:str,target_year:str):
+    df_data = yfinance_lib.get_symbol_historical_data(symbol)
+
+    df_data["close"] = pd.to_numeric(df_data["close"])
+    df_data["volume"] = pd.to_numeric(df_data["volume"])
+
+    rcParams['figure.figsize'] = 20, 10
+
+    df_current_year = df_data[(df_data['date'] > f"{datetime.date.today().year}-01-01") & (df_data['date'] < f"{datetime.date.today().year}-12-31")]
+    df_target_year = df_data[(df_data['date'] > f"{target_year}-01-01") & (df_data['date'] < f"{target_year}-12-31")]
+
+    target_base_date = datetime.datetime(int(target_year),5,20,0,0,0,0)
+    now = datetime.datetime.now()
+    difference = relativedelta(now, target_base_date)
+  
+    df_target_year['date']  = df_target_year['date'] + pd.Timedelta(days = 365*difference.years)
+
+
+    fig,ax = plt.subplots()
+    # make a plot
+    ax.plot(df_current_year.date,
+            df_current_year.close,
+            color="white", 
+            marker="o")
+    # set x-axis label
+    ax.set_xlabel("", fontsize = 14)
+    # set y-axis label
+    ax.set_ylabel(f"{datetime.date.today().year}",
+                color="white",
+                fontsize=14)
+
+    ax2=ax.twinx()
+    # make a plot with different y-axis using second axis object
+    ax2.plot(df_target_year.date, df_target_year.close,color="orange",marker="o")
+    ax.set_facecolor("black")
+    ax2.set_ylabel(f"{target_year}",color="orange",fontsize=14)
+    plt.show()
+    ax.get_xaxis().set_visible(False)
+    

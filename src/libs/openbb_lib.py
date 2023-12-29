@@ -278,7 +278,7 @@ def plot_indices_list(indices_list: list):
 def plot_ma_asset_chart(symbol :str, interval: int, prepost:bool):
     return openbb.stocks.candle(symbol, ma = [50,100,200], add_trend= True, interval = interval, prepost=prepost, start_date= f"{datetime.now().year -1}-01-01")
 
-def plot_asset_chart(symbol :str, interval: int, prepost:bool):
+def plot_asset_chart(symbol :str, interval=1440, prepost=True):
     return openbb.stocks.candle(symbol, add_trend= True, interval = interval, prepost=prepost, start_date= f"{datetime.now().year -1}-01-01")
 
 

@@ -87,7 +87,7 @@ def charts_menu():
                     choices=["TA", "MAG7","Asset profile","Cross asset corr",
                              "SPX/VIX ratio","SPX 2D RSI", "VIX 1 ATR","Futures curve", 
                              "ETF Flows","Crypto CVD","S/R TradeFi","S/R Crypto", 'ShortVol chart',
-                             'Options charts', 'Srategic Petroleum Reserve','Google trends',
+                             'Options charts', 'Srategic Petroleum Reserve','Google trends', 'Year on Year comparrison'
                              'Main menu'],
                     carousel=True
                 ),
@@ -127,6 +127,8 @@ def charts_menu():
         charts_impl.chart_google_trends(lst_keywords)
     if charts_menu_pick["option"] == "Options charts":
         charts_impl.chart_options_data(input("Select a symbol:").upper())
+    if charts_menu_pick["option"] == "Year on Year comparrison":
+        charts_impl.chart_year_on_year_comparisson(input("Select a symbol:").upper(),input("Select a year:").upper())
     if charts_menu_pick["option"] == "Main menu":
         main()
     main()
