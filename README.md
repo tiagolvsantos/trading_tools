@@ -14,4 +14,6 @@ For this, I agree with the principle 'It works on my machine'. Don't hesitate to
 
 # how to
 - install packages on the requirements.txt 
+    pip install -r requirements.txt
+- Copy configs_template.py and rename it to configs.py. Fill with the required keys
 - run main.py and fingers crossed. 

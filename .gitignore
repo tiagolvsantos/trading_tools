@@ -167,3 +167,4 @@ env_keys_configure.ps1
 env_vars.py
 did.bin
 configs.py
+config.py
