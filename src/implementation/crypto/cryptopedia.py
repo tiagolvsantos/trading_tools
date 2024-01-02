@@ -3,10 +3,7 @@ from src.libs import binance_lib
 from src.libs import coingecko_lib
 from src.libs import tabulate_lib
 import requests
-<<<<<<< HEAD
 import numpy as np
-=======
->>>>>>> 54dc1b5f4b469803081b4d5b4f4a47ea5239136b
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -85,14 +82,11 @@ def get_crypto_order_flow(symbol:str):
     # BID ASK RATIO  ranges from -1 to 1.
     # The ratio essentially shows which side is stronger and by how much. So let's say bids = 5million and asks = 2.5million. bid ask ratio = (5 - 2.5) / (5 + 2.5) = 0.33. --> implying, more demand than supply.
 
-<<<<<<< HEAD
 
     df_data = df_data.reset_index()
     df_data = df_data.drop('index', axis=1)
  
 
-=======
->>>>>>> 54dc1b5f4b469803081b4d5b4f4a47ea5239136b
     bid_total = 0
     ask_total = 0
     for  index, row in df_data.iterrows():
