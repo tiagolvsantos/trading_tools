@@ -439,7 +439,11 @@ def plot_sp500_vix_ratio():
         showlegend=True, font=dict(
         family="Courier New, monospace",
         size=18,  # Set the font size here
+<<<<<<< HEAD
         color="white"
+=======
+        color="grey"
+>>>>>>> 54dc1b5f4b469803081b4d5b4f4a47ea5239136b
     )
     )
 
@@ -494,8 +498,13 @@ def plot_vix_atr_1():
     fig.update_xaxes(rangeslider_visible=False)
     fig.update_layout(title_text="SP500 VS VIX ATR < 1 = Brace for impact!", template="plotly_dark", font=dict(
         family="Courier New, monospace",
+<<<<<<< HEAD
         size=15,  # Set the font size here
         color="white"
+=======
+        size=18,  # Set the font size here
+        color="grey"
+>>>>>>> 54dc1b5f4b469803081b4d5b4f4a47ea5239136b
     ))
     fig.show()
 
@@ -551,7 +560,11 @@ def _plot_crypto_cvd_chart(df_data, symbol, df_oi,to_tail):
     fig.update_layout(title_text=f"{symbol} CVD + OI + OI in $ for {to_tail} Trading periods", template="plotly_dark", font=dict(
         family="Courier New, monospace",
         size=18,  # Set the font size here
+<<<<<<< HEAD
         color="white"
+=======
+        color="grey"
+>>>>>>> 54dc1b5f4b469803081b4d5b4f4a47ea5239136b
     ))
     fig.show()
 
