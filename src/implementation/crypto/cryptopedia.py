@@ -82,6 +82,11 @@ def get_crypto_order_flow(symbol:str):
     # BID ASK RATIO  ranges from -1 to 1.
     # The ratio essentially shows which side is stronger and by how much. So let's say bids = 5million and asks = 2.5million. bid ask ratio = (5 - 2.5) / (5 + 2.5) = 0.33. --> implying, more demand than supply.
 
+
+    df_data = df_data.reset_index()
+    df_data = df_data.drop('index', axis=1)
+ 
+
     bid_total = 0
     ask_total = 0
     for  index, row in df_data.iterrows():
@@ -185,18 +190,21 @@ def get_companies_holding_crypto():
 
 
 def get_floor_ceiling_orderbook(symbol):
-    frames = binance_lib.get_order_book_depth(symbol)
+    df_data = binance_lib.get_order_book_depth(symbol)
 
-    bids = _get_floor_ceiling_orderbook_handling(frames, 0)
-    asks = _get_floor_ceiling_orderbook_handling(frames, 1)
-    print(bids)
-    print(asks)
+    bids = _get_floor_ceiling_orderbook_handling(df_data, "bids")
+    asks = _get_floor_ceiling_orderbook_handling(df_data, "asks")
+    tabulate_lib.tabulate_it(f"Bids ladder for {symbol}",bids)
+    tabulate_lib.tabulate_it(f"Asks ladder for {symbol}",asks)
 
-def _get_floor_ceiling_orderbook_handling(frames, arg1):
-    df = frames[arg1]
-    #df['price'] = df['price'].astype(float).astype(int)
-    #df_sum = df.groupby('price').agg({'quantity': 'sum'}).reset_index()
-    interval = 100
-    return (df.groupby(np.trunc(df['price'] / interval) * interval, sort=False)).max()
+def _get_floor_ceiling_orderbook_handling(df_data, side):
+    df_sorted = pd.DataFrame()
+
+    for  index, row in df_data.iterrows():
+        if row["side"] == side:
+            df_sorted = df_sorted.append(row)
+
+    interval = 50
+    return (df_sorted.groupby(np.trunc(df_sorted['price'] / interval) * interval, sort=False)).max()
   
 

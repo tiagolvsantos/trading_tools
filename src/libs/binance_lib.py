@@ -99,10 +99,16 @@ def get_order_book_depth(symbol:str):
     r = requests.get("https://api.binance.com/api/v3/depth?limit=5000",
                     params=dict(symbol=symbol))
     results = r.json()
-    frames = {side: pd.DataFrame(data=results[side], columns=["price", "quantity"],
-                                dtype=float)
-            for side in ["bids", "asks"]}
-    return [frames[side].assign(side=side) for side in frames]
+
+    df_bids = pd.DataFrame(results["bids"])
+    df_bids["side"] = "bids"
+    df_asks = pd.DataFrame(results["asks"])
+    df_asks["side"] = "asks"
+    df_orders = pd.concat([df_bids, df_asks], axis=0)
+    df_orders.columns = ["price","quantity","side"]
+    df_orders["price"] = pd.to_numeric(df_orders["price"])
+    df_orders["quantity"] = pd.to_numeric(df_orders["quantity"])
+    return df_orders
 
 
 def get_daily_aggtrades(symbol: str):
