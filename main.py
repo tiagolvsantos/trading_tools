@@ -11,7 +11,7 @@ def main_menu():
     main_menu = [
     inquirer.List('option',
                     message="Select an option",
-                    choices=['TradeFi', 'Crypto', 'Charts', 'Reports', 'Interactive','Links','Jobs'],
+                    choices=['TradeFi', 'Crypto', 'Charts', 'Reports', 'Interactive','Links','Jobs','Exit'],
                     carousel=True
                 ),
     ]
@@ -22,7 +22,9 @@ def tradefi_menu():
     inquirer.List('option',
                     message="Select an option",
                     choices=['Market Breath', 'Top gainers', 'Top loosers', 'Most active equity Options', 'Most active index options',
-                             'Intraday top volume','Stock ratings','ETF top holdings','Options ratios','Fear Greed Index'],
+                             'Intraday top volume','Stock ratings','ETF top holdings','Options ratios','Fear Greed Index',
+                             'WSB Trending stocks for the last 12h', "Stock News", "Stock insider trading","SP500 stocks technicals",
+                             'Main menu'],
                     carousel=True
                 ),
     ]
@@ -41,20 +43,29 @@ def tradefi_menu():
         tradefi_impl.get_intraday_top_volume()
     if tradefi_menu_pick["option"] == "Stock ratings":
         tradefi_impl.get_stock_ratings(input("Select a symbol:"))
+    if tradefi_menu_pick["option"] == "Stock News":
+        tradefi_impl.get_stock_news(input("Select a symbol:"))
+    if tradefi_menu_pick["option"] == "Stock insider trading":
+        tradefi_impl.get_stock_insider_trading(input("Select a symbol:"))
+    if tradefi_menu_pick["option"] == "SP500 stocks technicals":
+        tradefi_impl.get_sp500_technicals()
     if tradefi_menu_pick["option"] == "ETF top holdings":
         tradefi_impl.get_etf_top_holdings(input("Select a symbol:"))
     if tradefi_menu_pick["option"] == "Options ratios":
         tradefi_impl.get_options_ratios()   
     if tradefi_menu_pick["option"] == "Fear Greed Index":
-        charts_impl.chart_fear_greed() 
-        
+        charts_impl.chart_fear_greed()
+    if tradefi_menu_pick["option"] == "WSB Trending stocks for the last 12h":
+        tradefi_impl.get_wsb_trending_stocks()
+    if tradefi_menu_pick["option"] == "Main menu":
+        main()
     main()
 
 def interactive_menu():
     interactive_menu = [
     inquirer.List('option',
                     message="Select an option",
-                    choices=['Binance abnormal Trading', 'Binance Agg Trades'],
+                    choices=['Binance abnormal Trading', 'Binance Agg Trades', 'BitMEX Agg Trades','Main menu'],
                     carousel=True
                 ),
     ]
@@ -63,6 +74,10 @@ def interactive_menu():
        interactive_impl.bina_abnormal_trading_impl()
     if interactive_menu_pick["option"] == "Binance Agg Trades":
         interactive_impl.bina_ws_agg_trades_impl(input("Select a symbol:"),input("Select a threshold:"))
+    if interactive_menu_pick["option"] == "BitMEX Agg Trades":
+        interactive_impl.bitmex_ws_agg_trades_impl(input("Select a symbol:"))
+    if interactive_menu_pick["option"] == "Main menu":
+        main()
     main()
 
 def charts_menu():
@@ -70,7 +85,10 @@ def charts_menu():
     inquirer.List('option',
                     message="Select an option",
                     choices=["TA", "MAG7","Asset profile","Cross asset corr",
-                             "SPX/VIX ratio","SPX 2D RSI", "VIX 1 ATR","Futures curve", "ETF Flows","Crypto CVD","S/R TradeFi","S/R Crypto"],
+                             "SPX/VIX ratio","SPX 2D RSI", "VIX 1 ATR","Futures curve", 
+                             "ETF Flows","Crypto CVD","S/R TradeFi","S/R Crypto", 'ShortVol chart',
+                             'Options charts', 'Srategic Petroleum Reserve','Google trends', 'Year on Year comparrison',
+                             'Main menu'],
                     carousel=True
                 ),
     ]
@@ -99,14 +117,27 @@ def charts_menu():
         charts_impl.chart_sr_crypto(input("Select a symbol:").upper())
     if charts_menu_pick["option"] == "ETF Flows":
         charts_impl.chart_etf_flows(input("Select a symbol:").upper())
-        
+    if charts_menu_pick["option"] == "ShortVol chart":
+        charts_impl.chart_simple_chart('^SHORTVOL')
+    if charts_menu_pick["option"] == "Srategic Petroleum Reserve":
+        charts_impl.chart_spr()
+    if charts_menu_pick["option"] == "Google trends":
+        input_string = input('Enter elements to search separated by space \n')
+        lst_keywords = input_string.split()
+        charts_impl.chart_google_trends(lst_keywords)
+    if charts_menu_pick["option"] == "Options charts":
+        charts_impl.chart_options_data(input("Select a symbol:").upper())
+    if charts_menu_pick["option"] == "Year on Year comparrison":
+        charts_impl.chart_year_on_year_comparisson(input("Select a symbol:").upper(),input("Select a year:").upper())
+    if charts_menu_pick["option"] == "Main menu":
+        main()
     main()
-
+    
 def crypto_menu():
     crypto_menu = [
     inquirer.List('option',
                     message="Select an option",
-                    choices=['Binance Order Flow',"Trending tokens","Companies holding crypto","Fear Greed index"],
+                    choices=['Binance Order Flow',"Trending tokens","Companies holding crypto","Fear Greed index",'Main menu'],
                     carousel=True
                 ),
     ]
@@ -119,33 +150,45 @@ def crypto_menu():
         crypto_impl.get_companies_holding_crypto()
     if crypto_menu_pick["option"] == "Fear Greed index":
         charts_impl.chart_crypto_fear_greed()
+    if crypto_menu_pick["option"] == "Main menu":
+        main()
     main()
 
 def links_menu():
     links_menu = [
     inquirer.List('option',
                     message="Select an option",
-                    choices=['Research links'],
+                    choices=['Research links','Main menu'],
                     carousel=True
                 ),
     ]
     links_menu_pick = inquirer.prompt(links_menu)
     if links_menu_pick["option"] == "Research links":
         links_impl.get_links_list()
-
+    if links_menu_pick["option"] == "Main menu":
+        main()
     main()
 
 def reports_menu():
     reports_menu = [
     inquirer.List('option',
                     message="Select an option",
-                    choices=['50 MA up/down','Volume bigger than average TradeFi','Volume bigger than average Crypto','RSI Overbought','RSI Oversold'],
+                    choices=['50 MA up/down TradeFi','50 MA up/down Crypto','200 EMA up/down TradeFi',
+                             '200 EMA up/down Crypto','Volume bigger than average TradeFi',
+                             'Volume bigger than average Crypto','RSI Overbought',
+                             'RSI Oversold','CoT Reports','Main menu'],
                     carousel=True
                 ),
     ]
     reports_menu_pick = inquirer.prompt(reports_menu)
-    if reports_menu_pick["option"] == "50 MA up/down":
-        reports_impl.report_ma(50)
+    if reports_menu_pick["option"] == "50 MA up/down TradeFi":
+        reports_impl.report_ma(50, "tradefi")
+    if reports_menu_pick["option"] == "50 MA up/down Crypto":
+        reports_impl.report_ma(50, "crypto")
+    if reports_menu_pick["option"] == "200 EMA up/down Crypto":
+        reports_impl.report_ema(200, "crypto")
+    if reports_menu_pick["option"] == "200 EMA up/down TradeFi":
+        reports_impl.report_ema(200, "tradefi")
     if reports_menu_pick["option"] == "Volume bigger than average TradeFi":
         reports_impl.process_volume_average("tradefi")
     if reports_menu_pick["option"] == "Volume bigger than average Crypto":
@@ -154,21 +197,28 @@ def reports_menu():
         reports_impl.process_rsi_overbought()
     if reports_menu_pick["option"] == "RSI Oversold":
         reports_impl.process_rsi_oversold()
+    if reports_menu_pick["option"] == "CoT Reports":
+        reports_impl.process_cot_reports()
+    if reports_menu_pick["option"] == "Main menu":
+        main()
+
     main()
 
 def jobs_menu():
-    reports_menu = [
+    jobs_menu = [
     inquirer.List('option',
                     message="Select an option",
-                    choices=['Reports MA'],
+                    choices=['Process strategies','main'],
                     carousel=True
                 ),
     ]
-    reports_menu_pick = inquirer.prompt(reports_menu)
-    if reports_menu_pick["option"] == "Reports MA":
+    jobs_menu_pick = inquirer.prompt(jobs_menu)
+    if jobs_menu_pick["option"] == "Process strategies":
         reports_impl.run_jobs()
-
+    if jobs_menu_pick["option"] == "Main menu":
+        main()
     main()
+
 def main():
     main_menu_pick = main_menu()
     if main_menu_pick["option"] == "TradeFi":
@@ -185,6 +235,8 @@ def main():
         links_menu()
     if main_menu_pick["option"] == "Jobs":
         jobs_menu()
+    if main_menu_pick["option"] == "Exit":
+        exit()
     print("\n")
 
 if __name__ == "__main__":

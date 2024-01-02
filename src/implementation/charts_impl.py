@@ -9,6 +9,7 @@ def chart_general_ta_mag7_impl():
         chartpedia.plot_ma_chart(symbol)
 
 def chart_asset_profile_impl(symbol):
+    chartpedia.plot_ma_chart(symbol)
     chartpedia.plot_asset_profile(symbol)
 
 def chart_cross_asset_correlation_impl():
@@ -43,3 +44,18 @@ def chart_crypto_fear_greed():
 
 def chart_fear_greed():
     chartpedia.plot_fear_greed_index()
+
+def chart_simple_chart(symbol):
+    chartpedia.plot_simple_chart(symbol)
+
+def chart_options_data(symbol):
+    chartpedia.get_options_chart(symbol)
+
+def chart_spr():
+    chartpedia.plot_spr_chart()
+
+def chart_google_trends(list_keywords_trend: list):
+    chartpedia.chart_google_trends(list_keywords_trend)
+
+def chart_year_on_year_comparisson(symbol, year):
+    chartpedia.chart_year_comparisson_chart(symbol, year)

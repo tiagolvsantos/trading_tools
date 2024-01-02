@@ -45,7 +45,7 @@ def print_it_line_title(title: str):
 
 def tabulate_it(title: str, data: DataFrame):
     print(f'{bcolors.HEADER} {bcolors.BOLD}  {title}')
-    print(bcolors.White + tb.tabulate(data, headers='keys', tablefmt='github'))
+    print(bcolors.White + tb.tabulate(data, headers='keys', tablefmt='fancy_outline', showindex="never"))
 
 def tabulate_dict(dic_data):
-    print(tb.tabulate(dic_data, headers="keys"))
+    print(tb.tabulate(dic_data, headers="keys", tablefmt='fancy_outline'))

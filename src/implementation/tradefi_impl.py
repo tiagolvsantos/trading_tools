@@ -26,3 +26,15 @@ def get_etf_top_holdings(symbol):
 
 def get_options_ratios():
     tradefipedia.get_options_ratios()
+
+def get_wsb_trending_stocks():
+    tradefipedia.get_wsb_trending_stocks()
+
+def get_stock_news(symbol):
+    tradefipedia.get_stock_news(symbol)
+
+def get_stock_insider_trading(symbol):
+    tradefipedia.get_stock_insider_trading(symbol)
+
+def get_sp500_technicals():
+    tradefipedia.get_sp500_technicals()

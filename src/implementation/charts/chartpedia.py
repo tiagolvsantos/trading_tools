@@ -6,8 +6,11 @@ from src.libs import yfinance_lib
 from src.libs import etf_com_lib
 from src.libs import alternative_lib
 from src.libs import dataviz_lib
+from src.libs import quandl_lib
+from src.libs import eia_lib
+from src.libs import google_trends_lib
 
-
+from dateutil.relativedelta import relativedelta
 import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
@@ -185,20 +188,8 @@ def _plot_crypto_cvd_chart(df_data, symbol, df_oi,to_tail):
 def plot_ma_chart(symbol:str):
     openbb_lib.plot_ma_asset_chart(symbol, 1440, True)
 
-def plot_asset_profile(symbol:str):
-  
-    df_data = yfinance_lib.get_symbol_historical_data(symbol)
-   
-    if len(df_data) < 1:
-        print(f"No data for {symbol}")
-        return
 
-    df_data["close"] = pd.to_numeric(df_data["close"])
-    df_data["volume"] = pd.to_numeric(df_data["volume"])
-
-    df_data = df_data.tail(500)
-    df_data_5_trading_years = df_data.tail(2520)
-    
+def _plot_price_profile(df_data, df_data_5_trading_years, symbol):
     fig = make_subplots(vertical_spacing = 0, rows=3, cols=1, row_heights=[4, 0.2, 2])
     fig.add_trace(go.Candlestick(x=df_data['date'],
                                 open=df_data['open'],
@@ -219,7 +210,7 @@ def plot_asset_profile(symbol:str):
         showlegend=False, font=dict(
         family="Courier New, monospace",
         size=18,  # Set the font size here
-        color="grey"
+        color="white"
     )
     )
 
@@ -233,11 +224,7 @@ def plot_asset_profile(symbol:str):
     cs.decreasing.line.color = '#FF9F00'
     fig.show()
 
-    df_data = df_data.set_index('date')
-    df_data.index = pd.to_datetime(df_data.index)
-    df_data_5_trading_years = df_data_5_trading_years.set_index('date')
-    df_data_5_trading_years.index = pd.to_datetime(df_data_5_trading_years.index)
-
+def _plot_asset_returns(df_data, symbol):
     ## RETURNS
     r = df_data["close"].pct_change()
 
@@ -269,8 +256,7 @@ def plot_asset_profile(symbol:str):
     plt.style.use('dark_background')
     plt.show()
 
-
-
+def _plot_asset_sesonality(df_data_5_trading_years, symbol):
     ## SEASONALITY  
     decomposition = seasonal_decompose(df_data_5_trading_years['close'], model='cummulative', period=30)
     fig = plt.figure()
@@ -294,6 +280,99 @@ def plot_asset_profile(symbol:str):
     plt.title(f'{symbol} Seasonality for {datetime.date.today().year}', fontsize=18, fontweight='bold')
     plt.legend()
     plt.show()
+
+def _plot_mr_reversions(df_data, symbol):
+    mr30 = round(technical_indicators_lib.moving_average(df_data,30).iloc[0]["MA_30"],3)
+    mr90 = round(technical_indicators_lib.moving_average(df_data,90).iloc[0]["MA_90"],3)
+    mr180 = round(technical_indicators_lib.moving_average(df_data,180).iloc[0]["MA_180"],3)
+
+    # Plot chart
+    fig = go.Figure()
+
+    fig.add_traces([
+    go.Scatter(
+        x=df_data["date"],
+        y=df_data['close'],
+        name= symbol,
+        line={
+            'color': 'rgb(204, 102, 0)',
+            'width': 1
+        }
+    ), 
+    go.Scatter(
+        x=[min(df_data["date"]),max(df_data["date"])],
+        y=[float(mr180),float(mr180)], 
+        line={
+            'color': 'rgb(0, 102, 204)',
+            'width': 4,
+            'dash': 'longdash',
+        }, name='180d MR'
+    ), 
+    go.Scatter(
+        x=[min(df_data["date"]),max(df_data["date"])],
+        y=[float(mr90),float(mr90)], 
+        line={
+            'color': 'rgb(153, 51, 255)',
+            'width': 3,
+            'dash': 'longdash',
+        }, name='90d MR'
+    ), 
+    go.Scatter(
+        x=[min(df_data["date"]),max(df_data["date"])],
+        y=[float(mr30),float(mr30)], 
+        line={
+            'color': 'rgb(153, 153, 0)',
+            'width': 3,
+            'dash': 'longdash',
+        }, name='30d MR'
+    )
+    ])
+
+    # Add figure title
+    fig.update_layout(title_text=f"{symbol} Mean Reversions", template="plotly_dark", font=dict(
+        family="Courier New, monospace",
+        size=18,  # Set the font size here
+        color="white"
+    ))
+    # Set x-axis title
+    fig.update_xaxes(
+        title_text=f'180dMR: {float(mr180)} | 90dMR: {float(mr90)} | 30dMR: {float(mr30)}'
+    )
+
+
+    fig.show()
+
+
+def plot_asset_profile(symbol:str):
+  
+    df_data = yfinance_lib.get_symbol_historical_data(symbol)
+   
+    if len(df_data) < 1:
+        print(f"No data for {symbol}")
+        return
+
+    df_data["close"] = pd.to_numeric(df_data["close"])
+    df_data["volume"] = pd.to_numeric(df_data["volume"])
+
+    df_data = df_data.tail(500)
+    df_data_5_trading_years = df_data.tail(2520)
+    
+    _plot_price_profile(df_data, df_data_5_trading_years, symbol)
+
+    _plot_mr_reversions(df_data, symbol)
+    
+    df_data = df_data.set_index('date')
+    df_data.index = pd.to_datetime(df_data.index)
+    df_data_5_trading_years = df_data_5_trading_years.set_index('date')
+    df_data_5_trading_years.index = pd.to_datetime(df_data_5_trading_years.index)
+
+    _plot_asset_returns(df_data, symbol)
+
+    _plot_asset_sesonality(df_data_5_trading_years, symbol)
+
+
+
+  
 
 def plot_cross_asset_correlation(to_tail=180):
     list_corrs = ["ES=F","GC=F","NQ=F","CL=F","DX-Y.NYB","^VIX","^RUT","HG=F","NG=F","RB=F","ZN=F","^STOXX50E","^N225","ZT=F","EURUSD=x","USDJPY=x","HYG","JNK"]
@@ -360,7 +439,11 @@ def plot_sp500_vix_ratio():
         showlegend=True, font=dict(
         family="Courier New, monospace",
         size=18,  # Set the font size here
+<<<<<<< HEAD
+        color="white"
+=======
         color="grey"
+>>>>>>> 54dc1b5f4b469803081b4d5b4f4a47ea5239136b
     )
     )
 
@@ -415,8 +498,13 @@ def plot_vix_atr_1():
     fig.update_xaxes(rangeslider_visible=False)
     fig.update_layout(title_text="SP500 VS VIX ATR < 1 = Brace for impact!", template="plotly_dark", font=dict(
         family="Courier New, monospace",
+<<<<<<< HEAD
+        size=15,  # Set the font size here
+        color="white"
+=======
         size=18,  # Set the font size here
         color="grey"
+>>>>>>> 54dc1b5f4b469803081b4d5b4f4a47ea5239136b
     ))
     fig.show()
 
@@ -472,7 +560,11 @@ def _plot_crypto_cvd_chart(df_data, symbol, df_oi,to_tail):
     fig.update_layout(title_text=f"{symbol} CVD + OI + OI in $ for {to_tail} Trading periods", template="plotly_dark", font=dict(
         family="Courier New, monospace",
         size=18,  # Set the font size here
+<<<<<<< HEAD
+        color="white"
+=======
         color="grey"
+>>>>>>> 54dc1b5f4b469803081b4d5b4f4a47ea5239136b
     ))
     fig.show()
 
@@ -505,21 +597,22 @@ def plot_sr_tradefi(symbol:str,):
 
 def plot_etf_flows(symbol):
     df_data = pd.DataFrame(etf_com_lib.get_etf_flow_data(symbol))
-    df_data["Color"] = np.where(df_data["Value"]<0, 'red', 'green')
-    cumulative_flows = round(df_data["Value"].sum(),2)
+    if len(df_data) >=1:
+        df_data["Color"] = np.where(df_data["Value"]<0, 'red', 'green')
+        cumulative_flows = round(df_data["Value"].sum(),2)
 
-    fig = go.Figure()
-    fig.add_trace(
-        go.Bar(name='Net',
-            x=df_data['Date'],
-            y=df_data['Value'],
-            marker_color=df_data['Color']))
-    fig.update_layout(title_text=f"{symbol} ETF Flows in Millions | Cumulative {cumulative_flows} M", template="plotly_dark", font=dict(
-        family="Courier New, monospace",
-        size=18,  # Set the font size here
-        color="grey"
-    ))
-    fig.show()
+        fig = go.Figure()
+        fig.add_trace(
+            go.Bar(name='Net',
+                x=df_data['Date'],
+                y=df_data['Value'],
+                marker_color=df_data['Color']))
+        fig.update_layout(title_text=f"{symbol} ETF Flows in Millions | Cumulative {cumulative_flows} M", template="plotly_dark", font=dict(
+            family="Courier New, monospace",
+            size=18,  # Set the font size here
+            color="white"
+        ))
+        fig.show()
 
 def plot_crypto_fear_greed_index():
     df_data = pd.DataFrame(alternative_lib.get_crypto_fear_greed_index()["data"])
@@ -540,7 +633,7 @@ def plot_crypto_fear_greed_index():
     fig.update_layout(title_text=f"Crypto Fear Greed Index is: {df_data['value_classification'][0]}", template="plotly_dark", font=dict(
         family="Courier New, monospace",
         size=18,  # Set the font size here
-        color="grey",
+        color="white"
     ))
     fig.show()
 
@@ -563,6 +656,251 @@ def plot_fear_greed_index():
     fig.update_layout(title_text=f"Crypto Fear Greed Index is: {df_data['rating'].to_string().replace('1','').replace('    ','')}", template="plotly_dark", font=dict(
         family="Courier New, monospace",
         size=18,  # Set the font size here
-        color="grey",
+        color="white"
     ))
     fig.show()
+
+def plot_simple_chart(symbol):
+    openbb_lib.plot_asset_chart(symbol)
+
+
+def plot_cot_report(list_commodities):
+    for k, v in list_commodities.items():
+        df_data = quandl_lib.get_quandl_data(v).reset_index().tail(100)
+        df_data["Net Positions"] = df_data["Total Reportable Longs"] - df_data["Total Reportable Shorts"]
+        
+        fig = make_subplots(specs=[[{"secondary_y": True}]])
+
+        # Add traces
+        fig.add_trace(
+            go.Scatter(x=pd.to_datetime(df_data["Date"]), y=pd.to_numeric(df_data["Total Reportable Longs"]), name="Longs", line={
+                'color': 'rgb(0, 102, 0)',
+                'width': 1
+            }),
+            secondary_y=False,
+        )
+
+        fig.add_trace(
+            go.Scatter(x=pd.to_datetime(df_data["Date"]), y=pd.to_numeric(df_data["Total Reportable Shorts"]), name="Shorts", line={
+                'color': 'rgb(153, 0, 0)',
+                'width': 1
+            }),
+            secondary_y=False,
+        )
+
+        fig.add_trace(
+            go.Scatter(x=pd.to_datetime(df_data["Date"]), y=pd.to_numeric(df_data["Net Positions"]), name="Net", line={
+                'color': 'rgb(204, 102, 0)',
+                'width': 1
+            }),
+            secondary_y=True,
+        )
+        # Add figure title
+        fig.update_layout(title_text=f"{k} COT", template="plotly_dark", font=dict(
+            family="Courier New, monospace",
+            size=18,  # Set the font size here
+            color="white",
+            
+        ))
+
+        # Set x-axis title
+        fig.update_xaxes(title_text="")
+
+        # Set y-axes titles
+        fig.update_yaxes(title_text="Qty Futures contracts", secondary_y=False)
+        fig.update_yaxes(title_text="Net contracts", secondary_y=True)
+
+        fig.show()
+
+def get_options_chart(symbol: str, expire : int):
+    # Get expiration dates
+    lst_options_expirations = yfinance_lib.get_options_chain_expirations(symbol)
+
+    if len(lst_options_expirations)<=0:
+        return print(f"No expiration for {symbol}")
+    
+    (pd.DataFrame(lst_options_expirations)).rename(columns={0:"expirations"})
+
+    last_price = str(round(float(yfinance_lib.get_symbol_last_quote(symbol)), 2))
+
+    # Compute data
+    # Options charting PUTS + CALLS
+    df_options = pd.DataFrame()
+    for indx, period in enumerate(lst_options_expirations):
+        options_puts = yfinance_lib.get_put_options(symbol, int(indx))
+        options_puts["Option"] = "PUT"
+
+        options_calls = yfinance_lib.get_call_options(symbol, int(indx))
+        options_calls["Option"]="CALL"
+
+        df_options = pd.concat([options_calls, options_puts], axis=0)
+
+    total_volume = df_options['volume'].sum()
+    volume_calls = df_options.loc[df_options['Option'] == "CALL", 'volume'].sum()
+    volume_puts = df_options.loc[df_options['Option'] == "PUT", 'volume'].sum()
+
+    print(f"{total_volume} Options where traded for {symbol}." )
+    print(f"{volume_calls} Options Call volume. {round((volume_calls * 100)/ total_volume,2)}%" )
+    print(f"{volume_puts} Options Put volume. {round((volume_puts * 100)/ total_volume,2)}%" )
+
+    # Near expiration options set to 5 expirations  indx = 5
+    df_options_near_expiration = pd.DataFrame()
+    for indx, period in enumerate(lst_options_expirations):
+        if indx > expire:
+            break
+        options_puts = yfinance_lib.get_put_options(symbol, int(indx))
+        options_puts["Option"] = "PUT"
+
+        options_calls = yfinance_lib.get_call_options(symbol, int(indx))
+        options_calls["Option"]="CALL"
+
+        df_options_near_expiration = pd.concat([options_calls, options_puts], axis=0)
+
+
+    ##### Charts
+    ## AGGREGATED
+    # Options Volume
+    fig = px.bar(df_options, x="strike", y="volume", color="Option", color_discrete_map = {'PUT': '#FF3333', 'CALL': '#408B66'})
+    fig.update_layout(title_text=f"All expirations aggregated {symbol} Options Volume | Last quote: {last_price}", 
+                      template="plotly_dark", font=dict(
+    family="Courier New, monospace",
+    size=18,  # Set the font size here
+    color="white",
+    
+    ))
+    fig.show()
+
+    # Options Open Interest
+    fig = px.bar(df_options, x="strike", y="openInterest", color="Option", color_discrete_map = {'PUT': '#FF3333', 'CALL': '#408B66'})
+    fig.update_layout(title_text=f"All expirations aggregated {symbol} Options Open Interest | Last quote: {last_price}", 
+                      template="plotly_dark", font=dict(
+    family="Courier New, monospace",
+    size=18,  # Set the font size here
+    color="white",
+    
+    ))
+    fig.show()
+
+    # Options Implied Volatility
+    fig = px.bar(df_options, x="strike", y="impliedVolatility", color="Option", color_discrete_map = {'PUT': '#FF3333', 'CALL': '#408B66'})
+    fig.update_layout(title_text=f"All expirations aggregated {symbol} Options Implied Volatility | Last quote: {last_price}", 
+                      template="plotly_dark", font=dict(
+    family="Courier New, monospace",
+    size=18,  # Set the font size here
+    color="white",
+    
+    ))
+    fig.show()
+
+
+    ## NEAR EXPIRATION
+    # Options Volume
+    fig = px.bar(df_options_near_expiration, x="strike", y="volume", color="Option", color_discrete_map = {'PUT': '#FF3333', 'CALL': '#408B66'})
+    fig.update_layout(title_text=f"Near {expire}  expirations aggregated {symbol} Options Implied Volatility | Last quote: {last_price}", 
+                      template="plotly_dark", font=dict(
+    family="Courier New, monospace",
+    size=18,  # Set the font size here
+    color="white",
+    
+    ))
+    fig.show()
+
+
+    # Options Open Interest
+    fig = px.bar(df_options_near_expiration, x="strike", y="openInterest", color="Option", color_discrete_map = {'PUT': '#FF3333', 'CALL': '#408B66'})
+    fig.update_layout(title_text=f"Near {expire}  expirations aggregated {symbol}  Options Open Interest | Last quote: {last_price}", 
+                      template="plotly_dark", font=dict(
+    family="Courier New, monospace",
+    size=18,  # Set the font size here
+    color="white",
+    
+    ))
+    fig.show()
+
+    # Options Implied Volatility
+    fig = px.bar(df_options_near_expiration, x="strike", y="impliedVolatility", color="Option", color_discrete_map = {'PUT': '#FF3333', 'CALL': '#408B66'})
+    fig.update_layout(title_text=f"Near {expire}  expirations aggregated {symbol}  Options Implied Volatility | Last quote: {last_price}", 
+                      template="plotly_dark", font=dict(
+    family="Courier New, monospace",
+    size=18,  # Set the font size here
+    color="white",
+    
+    ))
+    fig.show()
+
+
+def plot_spr_chart():
+    df_data = eia_lib.get_spr()
+    df_data.columns =["date","value"]
+    # Get expiration dates
+    fig = go.Figure()
+
+    fig.add_traces([
+    go.Scatter(
+        x=df_data["date"],
+        y=df_data["value"],
+        name= "SPR"
+    )
+    ])
+
+    # Add figure title
+    fig.update_layout(
+        title_text= "Weekly U.S. Ending Stocks of Crude Oil in SPR (Thousand Barrels)",
+        template="plotly_dark",
+        showlegend=True, font=dict(
+        family="Courier New, monospace",
+        size=18,  # Set the font size here
+        color="white"
+    )
+    )
+
+    fig.show()
+
+def chart_google_trends(list_keywords_trend: list):
+    df_data = google_trends_lib.get_keywords_trend(list_keywords_trend)
+
+    for column in df_data:
+        if column not in ["date", "isPartial"]:
+            fig = px.line(df_data, x="date", y=column, title=f'Web search interest over time for {column.upper()}', template="plotly_dark")
+            fig.show() 
+
+def chart_year_comparisson_chart(symbol:str,target_year:str):
+    df_data = yfinance_lib.get_symbol_historical_data(symbol)
+
+    df_data["close"] = pd.to_numeric(df_data["close"])
+    df_data["volume"] = pd.to_numeric(df_data["volume"])
+
+    rcParams['figure.figsize'] = 20, 10
+
+    df_current_year = df_data[(df_data['date'] > f"{datetime.date.today().year}-01-01") & (df_data['date'] < f"{datetime.date.today().year}-12-31")]
+    df_target_year = df_data[(df_data['date'] > f"{target_year}-01-01") & (df_data['date'] < f"{target_year}-12-31")]
+
+    target_base_date = datetime.datetime(int(target_year),5,20,0,0,0,0)
+    now = datetime.datetime.now()
+    difference = relativedelta(now, target_base_date)
+  
+    df_target_year['date']  = df_target_year['date'] + pd.Timedelta(days = 365*difference.years)
+
+
+    fig,ax = plt.subplots()
+    # make a plot
+    ax.plot(df_current_year.date,
+            df_current_year.close,
+            color="white", 
+            marker="o")
+    # set x-axis label
+    ax.set_xlabel("", fontsize = 14)
+    # set y-axis label
+    ax.set_ylabel(f"{datetime.date.today().year}",
+                color="white",
+                fontsize=14)
+
+    ax2=ax.twinx()
+    # make a plot with different y-axis using second axis object
+    ax2.plot(df_target_year.date, df_target_year.close,color="orange",marker="o")
+    ax.set_facecolor("black")
+    ax2.set_ylabel(f"{target_year}",color="orange",fontsize=14)
+    plt.title(f"{symbol} comparisson between {now.year} vs {target_year}") 
+    plt.show()
+    ax.get_xaxis().set_visible(False)
+    

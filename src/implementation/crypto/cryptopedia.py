@@ -3,6 +3,10 @@ from src.libs import binance_lib
 from src.libs import coingecko_lib
 from src.libs import tabulate_lib
 import requests
+<<<<<<< HEAD
+import numpy as np
+=======
+>>>>>>> 54dc1b5f4b469803081b4d5b4f4a47ea5239136b
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -81,6 +85,14 @@ def get_crypto_order_flow(symbol:str):
     # BID ASK RATIO  ranges from -1 to 1.
     # The ratio essentially shows which side is stronger and by how much. So let's say bids = 5million and asks = 2.5million. bid ask ratio = (5 - 2.5) / (5 + 2.5) = 0.33. --> implying, more demand than supply.
 
+<<<<<<< HEAD
+
+    df_data = df_data.reset_index()
+    df_data = df_data.drop('index', axis=1)
+ 
+
+=======
+>>>>>>> 54dc1b5f4b469803081b4d5b4f4a47ea5239136b
     bid_total = 0
     ask_total = 0
     for  index, row in df_data.iterrows():
@@ -181,3 +193,24 @@ def get_companies_holding_crypto():
 
         print(f"\n Companies Holding {token}\n")
         tabulate_lib.tabulate_dict(coingecko_lib.get_companies_holding_crypto(token))
+
+
+def get_floor_ceiling_orderbook(symbol):
+    df_data = binance_lib.get_order_book_depth(symbol)
+
+    bids = _get_floor_ceiling_orderbook_handling(df_data, "bids")
+    asks = _get_floor_ceiling_orderbook_handling(df_data, "asks")
+    tabulate_lib.tabulate_it(f"Bids ladder for {symbol}",bids)
+    tabulate_lib.tabulate_it(f"Asks ladder for {symbol}",asks)
+
+def _get_floor_ceiling_orderbook_handling(df_data, side):
+    df_sorted = pd.DataFrame()
+
+    for  index, row in df_data.iterrows():
+        if row["side"] == side:
+            df_sorted = df_sorted.append(row)
+
+    interval = 50
+    return (df_sorted.groupby(np.trunc(df_sorted['price'] / interval) * interval, sort=False)).max()
+  
+

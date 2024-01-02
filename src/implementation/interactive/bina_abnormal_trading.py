@@ -1,7 +1,7 @@
+from src.libs import tabulate_lib
 
 import json
 from websocket import create_connection
-from tabulate import tabulate
 import pandas as pd
 import time
 
@@ -23,11 +23,10 @@ def binance_abnormal_trading():
         df_data = pd.DataFrame([data["data"]])
 
         for index, row in df_data.iterrows():
-             df_data.at[index,'sendTimestamp']= str(epoch_to_datetime(int(row['sendTimestamp'])))
-             df_data.at[index,'priceChange']= f"{(round(float(row['priceChange']),2)*100)}%"
-        table = tabulate(df_data, headers='keys', tablefmt='github', showindex=False)
-        print(table)
-        print('\n')
+            df_data.at[index,'sendTimestamp']= str(epoch_to_datetime(int(row['sendTimestamp'])))
+            df_data.at[index,'priceChange']= f"{(round(float(row['priceChange']),2)*100)}%"
+            tabulate_lib.tabulate_it("",df_data)
+            print('\n')
    
 
 def main():
