@@ -566,7 +566,7 @@ def plot_sr_crypto(symbol:str,):
         if len(df_data) >1:
             _plot_sr_chart(df_data, symbol, interval)
 
-def plot_sr_tradefi(symbol:str,):
+def plot_sr_tradfi(symbol:str,):
     lst_intervals =["1wk"] # "1d","1wk","1mo"
     for interval in lst_intervals:
         df_data = yfinance_lib.get_download_data(symbol= symbol,interval=interval)

@@ -13,7 +13,7 @@ def _run_jobs(market):
 
 
 def process_ma(market, ma):
-    if market == "tradefi":
+    if market == "tradfi":
         list_symbols = sqlite_lib.get_stock_symbols_list()
     elif market == "crypto":
         list_symbols = sqlite_lib.get_crypto_symbols_list()
@@ -22,7 +22,7 @@ def process_ma(market, ma):
         reportpedia.process_ma_up_down(symbol[0], ma, market)
 
 def process_ema(market, ema):
-    if market == "tradefi":
+    if market == "tradfi":
         list_symbols = sqlite_lib.get_stock_symbols_list()
     elif market == "crypto":
         list_symbols = sqlite_lib.get_crypto_symbols_list()
@@ -37,7 +37,7 @@ def report_ema(ma, market):
     reportpedia.report_ema(ma, market)
 
 def process_volume_average(market):
-    if market == "tradefi":
+    if market == "tradfi":
         list_symbols = sqlite_lib.get_stock_symbols_list()
         to_tail = 30
     elif market == "crypto":
@@ -50,16 +50,16 @@ def process_volume_average(market):
 def process_rsi_oversold():
     list_symbols = sqlite_lib.get_stock_symbols_list()
     for symbol in list_symbols:
-        reportpedia.report_rsi_oversold(symbol[0],"tradefi", symbol[1])
+        reportpedia.report_rsi_oversold(symbol[0],"tradfi", symbol[1])
 
 def process_rsi_overbought():
     list_symbols = sqlite_lib.get_stock_symbols_list()
     for symbol in list_symbols:
-        reportpedia.report_rsi_overbought(symbol[0],"tradefi", symbol[1])
+        reportpedia.report_rsi_overbought(symbol[0],"tradfi", symbol[1])
 
 def run_jobs():
     print("Running jobs.....")
-    _run_jobs("tradefi")
+    _run_jobs("tradfi")
     _run_jobs("crypto")
     print("Running jobs done!")
 

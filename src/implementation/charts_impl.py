@@ -33,8 +33,8 @@ def chart_binance_symbol_cvd(symbol,interval,to_tail):
 def chart_sr_crypto(symbol):
     chartpedia.plot_sr_crypto(symbol)
 
-def chart_sr_tradefi(symbol):
-    chartpedia.plot_sr_tradefi(symbol)
+def chart_sr_tradfi(symbol):
+    chartpedia.plot_sr_tradfi(symbol)
 
 def chart_etf_flows(symbol):
     chartpedia.plot_etf_flows(symbol)

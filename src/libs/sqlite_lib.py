@@ -28,7 +28,7 @@ def get_record_query(search_query):
 
 
 def get_stock_symbols_list():
-    return get_record_query("select * from tradefi_stocks_symbols")
+    return get_record_query("select * from tradfi_stocks_symbols")
 
 def get_crypto_symbols_list():
     return get_record_query("select * from crypto_asset_symbols")
@@ -36,10 +36,10 @@ def get_crypto_symbols_list():
 
 def insert_from_csv():
     df_data = pd.read_csv(r"C:\Users\User\Downloads\etf-constituents-12-17-2023.csv")
-    search_query = "select * from tradefi_stocks_symbols"
+    search_query = "select * from tradfi_stocks_symbols"
     df_search_result = pd.DataFrame(get_record_query(search_query))
     df_data.columns=["Symbol","Name"]
     for index, row in df_data.iterrows():
         if len(df_search_result) == 0 or len(df_search_result[df_search_result[0].str.contains(row["Symbol"])])==0:
-            query = "insert into tradefi_stocks_symbols (Symbol, Name) VALUES('"+row["Symbol"]+"','"+row["Name"]+"')"
+            query = "insert into tradfi_stocks_symbols (Symbol, Name) VALUES('"+row["Symbol"]+"','"+row["Name"]+"')"
             create_update_query(query)

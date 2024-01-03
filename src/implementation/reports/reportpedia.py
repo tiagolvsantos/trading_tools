@@ -8,7 +8,7 @@ from datetime import datetime
 import pandas as pd
 
 def process_ma_up_down(symbol, ma_period, market):
-    if market == "tradefi":
+    if market == "tradfi":
         df_data = yfinance_lib.get_download_data(symbol, "1y")
     elif market == "crypto":
         df_data =binance_lib.get_quotes(symbol)
@@ -35,7 +35,7 @@ def process_ma_up_down(symbol, ma_period, market):
         sqlite_lib.create_update_query(update_query)
 
 def process_ema_up_down(symbol, ma_period, market ):
-    if market == "tradefi":
+    if market == "tradfi":
         df_data = yfinance_lib.get_download_data(symbol, "1y")
     elif market == "crypto":
         df_data =binance_lib.get_quotes(symbol)
@@ -75,7 +75,7 @@ def report_ema(ema, market):
     tabulate_lib.tabulate_it(f"Updated EMA {ema}", pd.DataFrame(search_data, columns=['symbol', 'ema','signal','updated', 'market']))
 
 def report_volume_up_average(symbol, market, to_tail, name=""):
-    if market == "tradefi":
+    if market == "tradfi":
         df_data = yfinance_lib.get_download_data(symbol, "1y")
     elif market == "crypto":
         df_data =binance_lib.get_quotes(symbol)
@@ -88,21 +88,21 @@ def report_volume_up_average(symbol, market, to_tail, name=""):
         print(f"Volume bigger than average for {name} {symbol}  Actual:{utils.print_formated_numbers(round(last_volume,2))}   Avg:{utils.print_formated_numbers(round(avg_volume,2))}")
 
 def report_rsi_oversold(symbol, market, name=""):
-    if market == "tradefi":
+    if market == "tradfi":
         df_data = yfinance_lib.get_download_data(symbol, "1y")
     elif market == "crypto":
         df_data =binance_lib.get_quotes(symbol)
    
     rsi = technical_indicators_lib.rsi(df_data)
     if round(float(rsi.tail(1)),2)<=30:
-        print(f"RSI for {name} <b>{symbol}<b> is Oversold!")
+        print(f"RSI for {name} {symbol} is Oversold!")
 
 def report_rsi_overbought(symbol, market, name=""):
-    if market == "tradefi":
+    if market == "tradfi":
         df_data = yfinance_lib.get_download_data(symbol, "1y")
     elif market == "crypto":
         df_data =binance_lib.get_quotes(symbol)
    
     rsi = technical_indicators_lib.rsi(df_data)
     if round(float(rsi.tail(1)),2)>=70:
-        print(f"RSI for {name} <b>{symbol}<b> is Overbought!")
+        print(f"RSI for {name} {symbol} is Overbought!")
