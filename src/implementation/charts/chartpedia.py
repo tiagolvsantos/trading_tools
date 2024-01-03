@@ -705,7 +705,7 @@ def get_options_chart(symbol: str, expire : int):
 
     if len(lst_options_expirations)<=0:
         return print(f"No expiration for {symbol}")
-    
+
     (pd.DataFrame(lst_options_expirations)).rename(columns={0:"expirations"})
 
     last_price = str(round(float(yfinance_lib.get_symbol_last_quote(symbol)), 2))
@@ -733,7 +733,7 @@ def get_options_chart(symbol: str, expire : int):
     # Near expiration options set to 5 expirations  indx = 5
     df_options_near_expiration = pd.DataFrame()
     for indx, period in enumerate(lst_options_expirations):
-        if indx > expire:
+        if indx > int(expire):
             break
         options_puts = yfinance_lib.get_put_options(symbol, int(indx))
         options_puts["Option"] = "PUT"
@@ -753,7 +753,7 @@ def get_options_chart(symbol: str, expire : int):
     family="Courier New, monospace",
     size=18,  # Set the font size here
     color="white",
-    
+
     ))
     fig.show()
 
@@ -764,7 +764,7 @@ def get_options_chart(symbol: str, expire : int):
     family="Courier New, monospace",
     size=18,  # Set the font size here
     color="white",
-    
+
     ))
     fig.show()
 
@@ -775,7 +775,7 @@ def get_options_chart(symbol: str, expire : int):
     family="Courier New, monospace",
     size=18,  # Set the font size here
     color="white",
-    
+
     ))
     fig.show()
 
@@ -788,7 +788,7 @@ def get_options_chart(symbol: str, expire : int):
     family="Courier New, monospace",
     size=18,  # Set the font size here
     color="white",
-    
+
     ))
     fig.show()
 
@@ -800,7 +800,7 @@ def get_options_chart(symbol: str, expire : int):
     family="Courier New, monospace",
     size=18,  # Set the font size here
     color="white",
-    
+
     ))
     fig.show()
 
@@ -811,7 +811,7 @@ def get_options_chart(symbol: str, expire : int):
     family="Courier New, monospace",
     size=18,  # Set the font size here
     color="white",
-    
+
     ))
     fig.show()
 

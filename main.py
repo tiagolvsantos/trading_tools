@@ -126,7 +126,7 @@ def charts_menu():
         lst_keywords = input_string.split()
         charts_impl.chart_google_trends(lst_keywords)
     if charts_menu_pick["option"] == "Options charts":
-        charts_impl.chart_options_data(input("Select a symbol:").upper())
+        charts_impl.chart_options_data(input("Select a symbol:").upper(),input("Select an expiration:"))
     if charts_menu_pick["option"] == "Year on Year comparrison":
         charts_impl.chart_year_on_year_comparisson(input("Select a symbol:").upper(),input("Select a year:").upper())
     if charts_menu_pick["option"] == "Main menu":

@@ -48,8 +48,8 @@ def chart_fear_greed():
 def chart_simple_chart(symbol):
     chartpedia.plot_simple_chart(symbol)
 
-def chart_options_data(symbol):
-    chartpedia.get_options_chart(symbol)
+def chart_options_data(symbol, expiration):
+    chartpedia.get_options_chart(symbol, expiration)
 
 def chart_spr():
     chartpedia.plot_spr_chart()
