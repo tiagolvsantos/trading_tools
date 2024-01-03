@@ -47,13 +47,13 @@ For this, I agree with the principle 'It works on my machine'. Don't hesitate to
 
 # Features
 Menu
-![Alt text](pics\menu.jpg)
+![Alt text](https://github.com/tiagolvsantos/trading_tools/blob/main/pics/menu.jpg?raw=true)
 
 - Charts
-![Alt text](pics\chart_trend.jpg)
-![Alt text](pics\chart_mean_reversions.jpg)
+![Alt text](https://github.com/tiagolvsantos/trading_tools/blob/main/pics/chart_trend.jpg?raw=true)
+![Alt text](https://github.com/tiagolvsantos/trading_tools/blob/main/pics/chart_mean_reversions.jpg?raw=true)
 - Strategies
 - Reports
-![Alt text](pics\report_volume.jpg)
+![Alt text](https://github.com/tiagolvsantos/trading_tools/blob/main/pics/report_volume.jpg?raw=true)
 - TradFi
 - Crypto
