@@ -374,8 +374,7 @@ def plot_asset_profile(symbol:str):
 
   
 
-def plot_cross_asset_correlation(to_tail=180):
-    list_corrs = ["ES=F","GC=F","NQ=F","CL=F","DX-Y.NYB","^VIX","^RUT","HG=F","NG=F","RB=F","ZN=F","^STOXX50E","^N225","ZT=F","EURUSD=x","USDJPY=x","HYG","JNK"]
+def plot_cross_asset_correlation( list_corrs, title, to_tail=180):
     df_final = pd.DataFrame()
 
     for asset in list_corrs:
@@ -386,13 +385,13 @@ def plot_cross_asset_correlation(to_tail=180):
             df_data_new = pd.DataFrame(df_data["close"]).rename({'close': asset[0]}, axis=1)
             df_final = pd.concat([df_final, df_data_new.tail(to_tail)], axis=1)
 
-    df_final.columns = ['SP500', 'GOLD', 'NASDAQ100', 'WTI', 'DXY', 'VIX', 'RUSSELL2000', 'COPPER', 'NATGAS', 'RBOB', '10-Year T-Note Futures', 'STOXX50', 'NIKKEI25', '2-Year T-Note Futures',"EURUSD","USDJPY","HYG","JNK"]
+    df_final.columns = list_corrs
     fig = px.imshow(
         df_final.corr(),
         aspect="auto",
         color_continuous_scale="spectral",
         template="plotly_dark",
-        title='CrossAsset correlation matrix',
+        title=title,
     )
     fig.show()
 

@@ -1,30 +1,33 @@
 from src.implementation.charts import chartpedia
 
-def chart_general_ta_impl(symbol):
+def chart_general_ta(symbol):
     chartpedia.plot_ma_chart(symbol)
 
-def chart_general_ta_mag7_impl():
+def chart_general_ta_mag7():
     lst_mag7 = ["MSFT","META","GOOGL","NVDA","TSLA","AAPL","AMZN"]
     for symbol in lst_mag7:
         chartpedia.plot_ma_chart(symbol)
 
-def chart_asset_profile_impl(symbol):
+def chart_asset_profile(symbol):
     chartpedia.plot_ma_chart(symbol)
     chartpedia.plot_asset_profile(symbol)
 
-def chart_cross_asset_correlation_impl():
-    chartpedia.plot_cross_asset_correlation()
+def chart_cross_asset_correlation():
+    chartpedia.plot_cross_asset_correlation(["ES=F","GC=F","NQ=F","CL=F","DX-Y.NYB","^VIX","^RUT","HG=F","NG=F","RB=F","ZN=F","^STOXX50E","^N225","ZT=F","EURUSD=x","USDJPY=x","HYG","TLT" ,"JNK"], "CrossAsset correlation matrix")
 
-def chart_sp500_vix_impl():
+def chart_cross_sector_correlation():
+    chartpedia.plot_cross_asset_correlation(["XLY","XLP","XLE","XLF","XLV","XLI","XLB","XLRE","XLK","XLC","XLU","GDX","GDXJ","MOO","FDN","KIE","KRE","TAN","JETS","IBB","OIH","SMH"], "Sector correlation matrix")
+
+def chart_sp500_vix():
     chartpedia.plot_sp500_vix_ratio()
 
-def chart_spx_2d_rsi_impl():
+def chart_spx_2d_rsi():
     chartpedia.plot_spx_2d_rsi()
 
-def chart_vix_atr_1_impl():
+def chart_vix_atr_1():
     chartpedia.plot_vix_atr_1()
 
-def chart_futures_curve_impl(symbol):
+def chart_futures_curve(symbol):
     chartpedia.plot_futures_curve(symbol)
 
 def chart_binance_symbol_cvd(symbol,interval,to_tail):

@@ -84,7 +84,7 @@ def charts_menu():
     charts_menu = [
     inquirer.List('option',
                     message="Select an option",
-                    choices=["TA", "MAG7","Asset profile","Cross asset corr",
+                    choices=["TA", "MAG7","Asset profile","Cross asset corr", "Cross sector corr",
                              "SPX/VIX ratio","SPX 2D RSI", "VIX 1 ATR","Futures curve", 
                              "ETF Flows","Crypto CVD","S/R TradFi","S/R Crypto", 'ShortVol chart',
                              'Options charts', 'Srategic Petroleum Reserve','Google trends', 'Year on Year comparrison',
@@ -94,21 +94,23 @@ def charts_menu():
     ]
     charts_menu_pick = inquirer.prompt(charts_menu)
     if charts_menu_pick["option"] == "TA":
-        charts_impl.chart_general_ta_impl(input("Select a symbol:").upper())
+        charts_impl.chart_general_ta(input("Select a symbol:").upper())
     if charts_menu_pick["option"] == "MAG7":
-        charts_impl.chart_general_ta_mag7_impl()
+        charts_impl.chart_general_ta_mag7()
     if charts_menu_pick["option"] == "Asset profile":
-        charts_impl.chart_asset_profile_impl(input("Select a symbol:").upper())
+        charts_impl.chart_asset_profile(input("Select a symbol:").upper())
     if charts_menu_pick["option"] == "Cross asset corr":
-        charts_impl.chart_cross_asset_correlation_impl()
+        charts_impl.chart_cross_asset_correlation()
+    if charts_menu_pick["option"] == "Cross sector corr":
+        charts_impl.chart_cross_sector_correlation()
     if charts_menu_pick["option"] == "SPX/VIX ratio":
-        charts_impl.chart_sp500_vix_impl()
+        charts_impl.chart_sp500_vix()
     if charts_menu_pick["option"] == "SPX 2D RSI":
-        charts_impl.chart_spx_2d_rsi_impl()
+        charts_impl.chart_spx_2d_rsi()
     if charts_menu_pick["option"] == "VIX 1 ATR":
-        charts_impl.chart_vix_atr_1_impl()
+        charts_impl.chart_vix_atr_1()
     if charts_menu_pick["option"] == "Futures curve":
-        charts_impl.chart_futures_curve_impl(input("Select a symbol:").upper())
+        charts_impl.chart_futures_curve(input("Select a symbol:").upper())
     if charts_menu_pick["option"] == "Crypto CVD":
         charts_impl.chart_binance_symbol_cvd(input("Select a symbol:").upper(),"1d",180)
     if charts_menu_pick["option"] == "S/R TradFi":

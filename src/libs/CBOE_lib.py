@@ -51,4 +51,5 @@ def get_options_ratios():
     if date.isoweekday() not in range(1, 6):
         return {}
     url = f"https://cdn.cboe.com/data/us/options/market_statistics/daily/{date.strftime('%Y-%m-%d')}_daily_options"
-    return requests.get(url).json()
+    response = requests.get(url)
+    return {} if response.status_code == 403 else requests.get(url).json
