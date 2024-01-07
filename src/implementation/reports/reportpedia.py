@@ -92,10 +92,10 @@ def report_rsi_oversold(symbol, market, name=""):
         df_data = yfinance_lib.get_download_data(symbol, "1y")
     elif market == "crypto":
         df_data =binance_lib.get_quotes(symbol)
-   
+        
     rsi = technical_indicators_lib.rsi(df_data)
     if round(float(rsi.tail(1)),2)<=30:
-        print(f"RSI for {name} {symbol} is Oversold!")
+        print(f"RSI for {name} {symbol} is Oversold {round(float(rsi.tail(1)),2)} !")
 
 def report_rsi_overbought(symbol, market, name=""):
     if market == "tradfi":
@@ -105,4 +105,4 @@ def report_rsi_overbought(symbol, market, name=""):
    
     rsi = technical_indicators_lib.rsi(df_data)
     if round(float(rsi.tail(1)),2)>=70:
-        print(f"RSI for {name} {symbol} is Overbought!")
+        print(f"RSI for {name} {symbol} is Overbought {round(float(rsi.tail(1)),2)} !")
