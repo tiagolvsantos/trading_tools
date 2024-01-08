@@ -22,10 +22,11 @@ def get_market_tape_data():
     
 def get_skew():
     try:
-        req=requests.get(url='https://www.cboe.com/publish/scheduledtask/mktdata/datahouse/skewdailyprices.csv').content 
+        req=requests.get(url='https://cdn.cboe.com/api/global/us_indices/daily_prices/SKEW_History.csv').content 
         data= pd.read_csv(StringIO(req.decode('utf8')),skiprows=1)
-        data=data.reset_index()
-        return data
+        df_data=data.reset_index()
+        df_data.columns = ['index', 'date', 'last']
+        return df_data
     except NameError:
         return NameError
 

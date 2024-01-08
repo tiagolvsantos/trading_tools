@@ -9,6 +9,7 @@ from src.libs import dataviz_lib
 from src.libs import quandl_lib
 from src.libs import eia_lib
 from src.libs import google_trends_lib
+from src.libs import CBOE_lib
 
 from dateutil.relativedelta import relativedelta
 import numpy as np
@@ -890,3 +891,32 @@ def chart_year_comparisson_chart(symbol:str,target_year:str):
     plt.show()
     ax.get_xaxis().set_visible(False)
     
+def chart_skew():
+    df_skew = CBOE_lib.get_skew().tail(180)
+    df_data = yfinance_lib.get_symbol_historical_data("ES=F").tail(180)
+
+    df_data["close"] = pd.to_numeric(df_data["close"])
+    df_skew["last"] = pd.to_numeric(df_skew["last"])
+    df_data["date"] = pd.to_datetime(df_data["date"])
+    df_skew["date"] = pd.to_datetime(df_skew["date"])
+    fig,ax = plt.subplots()
+    # make a plot
+    ax.plot(df_skew["date"],
+            df_skew["last"],
+            color="white", 
+            marker="o")
+    # set x-axis label
+    ax.set_xlabel("", fontsize = 14)
+    # set y-axis label
+    ax.set_ylabel("skew",
+                color="white",
+                fontsize=14)
+
+    ax2=ax.twinx()
+    # make a plot with different y-axis using second axis object
+    ax2.plot(df_data["date"], df_data["close"],color="orange",marker="o")
+    ax.set_facecolor("black")
+    ax2.set_ylabel("SP500 Futures",color="orange",fontsize=14)
+    plt.title(f"") 
+    plt.show()
+    ax.get_xaxis().set_visible(False)

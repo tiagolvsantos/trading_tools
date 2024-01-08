@@ -62,3 +62,6 @@ def chart_google_trends(list_keywords_trend: list):
 
 def chart_year_on_year_comparisson(symbol, year):
     chartpedia.chart_year_comparisson_chart(symbol, year)
+
+def chart_skew_sp500():
+    chartpedia.chart_skew()
