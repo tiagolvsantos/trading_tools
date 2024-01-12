@@ -164,15 +164,17 @@ def get_symbol_historical_data_from(symbol,since_date, interval ="1d"):
 # period  1d,5d,1mo,3mo,6mo,1y,2y,5y,10y,ytd,max
 def get_download_data(symbol,period = "ytd", interval ="1d"):
     try:
-        time.sleep(1.5)
+        time.sleep(0.1)
         df_data = (yf.download(tickers=symbol,period=period,interval=interval,progress=False).dropna())
         df_data.reset_index(level=0, inplace=True)
         df_data["Date"] = df_data["Date"].dt.tz_localize(None)
         if len(df_data.columns) > 0 and len(df_data.columns) == 7:
             df_data.columns = ['date', 'open', 'high', 'low','close','adj close','volume']
+   
             return df_data
         elif  len(df_data.columns) > 0 and len(df_data.columns) == 9:
-            df_data.columns = ['date', 'open', 'high', 'low','close','volume','dividends','stock split', 'capital gains'] 
+            df_data.columns = ['date', 'open', 'high', 'low','close','volume','dividends','stock split', 'capital gains']
+            
             return df_data
         else:
             pd.DataFrame()
