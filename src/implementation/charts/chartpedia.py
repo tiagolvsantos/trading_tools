@@ -917,6 +917,6 @@ def chart_skew():
     ax2.plot(df_data["date"], df_data["close"],color="orange",marker="o")
     ax.set_facecolor("black")
     ax2.set_ylabel("SP500 Futures",color="orange",fontsize=14)
-    plt.title(f"") 
+    plt.title("SKEW - Measure demand for Puts vs Calls. High = demand for puts | Low = demand for calls") 
     plt.show()
     ax.get_xaxis().set_visible(False)
