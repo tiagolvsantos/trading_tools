@@ -49,3 +49,9 @@ def tabulate_it(title: str, data: DataFrame):
 
 def tabulate_dict(dic_data):
     print(tb.tabulate(dic_data, headers="keys", tablefmt='fancy_outline'))
+
+def print_it_line_red(text: str):
+    print(f'{bcolors.Red} {text}')
+
+def print_it_line_green(text: str):
+    print(f'{bcolors.Green} {text}')

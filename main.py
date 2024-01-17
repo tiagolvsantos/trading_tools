@@ -178,10 +178,14 @@ def reports_menu():
     reports_menu = [
     inquirer.List('option',
                     message="Select an option",
-                    choices=['50 MA up/down TradFi','50 MA up/down Crypto','200 EMA up/down TradFi',
-                             '200 EMA up/down Crypto','Volume bigger than average TradFi',
+                    choices=['50 MA up/down TradFi','50 MA up/down Crypto',
+                             '200 EMA up/down TradFi','200 EMA up/down Crypto',
+                             'Bollinger Bands outside range TradFi',
+                             'Bollinger Bands outside range Crypto',
+                             'Volume bigger than average TradFi',
                              'Volume bigger than average Crypto','RSI Overbought',
-                             'RSI Oversold','CoT Reports','Main menu'],
+                             'RSI Oversold','CoT Reports',
+                             'Main menu'],
                     carousel=True
                 ),
     ]
@@ -194,6 +198,10 @@ def reports_menu():
         reports_impl.report_ema(200, "crypto")
     if reports_menu_pick["option"] == "200 EMA up/down TradFi":
         reports_impl.report_ema(200, "tradfi")
+    if reports_menu_pick["option"] == "Bollinger Bands outside range TradFi":
+        reports_impl.process_bb_outside_range("tradfi")
+    if reports_menu_pick["option"] == "Bollinger Bands outside range Crypto":
+        reports_impl.process_bb_outside_range("crypto")
     if reports_menu_pick["option"] == "Volume bigger than average TradFi":
         reports_impl.process_volume_average("tradfi")
     if reports_menu_pick["option"] == "Volume bigger than average Crypto":

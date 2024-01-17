@@ -86,3 +86,11 @@ def process_cot_reports():
                     'GBP': 'CFTC/096742_FO_ALL'}
     chartpedia.plot_cot_report(list_indices)
 
+def process_bb_outside_range(market):
+    if market == "tradfi":
+        list_symbols = sqlite_lib.get_stock_symbols_list()
+    elif market == "crypto":
+        list_symbols = sqlite_lib.get_crypto_symbols_list()
+
+    for symbol in list_symbols:
+        reportpedia.report_bb_bands_outside(symbol[0], market, symbol[1])

@@ -167,7 +167,11 @@ def get_download_data(symbol,period = "ytd", interval ="1d"):
         time.sleep(0.1)
         df_data = (yf.download(tickers=symbol,period=period,interval=interval,progress=False).dropna())
         df_data.reset_index(level=0, inplace=True)
-        df_data["Date"] = df_data["Date"].dt.tz_localize(None)
+
+        if len(df_data)>0:
+            df_data["Date"] = df_data["Date"].dt.tz_localize(None)
+        else:
+            pd.DataFrame()
         if len(df_data.columns) > 0 and len(df_data.columns) == 7:
             df_data.columns = ['date', 'open', 'high', 'low','close','adj close','volume']
    

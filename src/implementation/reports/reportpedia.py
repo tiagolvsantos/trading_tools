@@ -6,6 +6,7 @@ from src.libs import binance_lib
 from src.libs import utils
 from datetime import datetime
 import pandas as pd
+import math
 
 def process_ma_up_down(symbol, ma_period, market):
     if market == "tradfi":
@@ -28,9 +29,11 @@ def process_ma_up_down(symbol, ma_period, market):
     signal = "Below" if ma > last else "Above"
 
     if len(search_data) == 0:
+        print(f"Insert {symbol} for {ma_period} MA strategy")
         insert_query = f"INSERT INTO strat_moving_average (symbol, ma, signal, updated, market) VALUES('{symbol}', '{ma_period}', '{signal}', '{datetime.now().strftime('%Y-%m-%d')}','{market}');"
         sqlite_lib.create_update_query(insert_query)
     elif search_data[0][2] != signal:
+        print(f"Update {symbol} for {ma_period} MA strategy")
         update_query = f"UPDATE strat_moving_average SET signal='{signal}', updated='{datetime.now().strftime('%Y-%m-%d')}' WHERE symbol ='{symbol}' and ma = '{ma_period}';"
         sqlite_lib.create_update_query(update_query)
 
@@ -55,9 +58,11 @@ def process_ema_up_down(symbol, ma_period, market ):
     search_data = sqlite_lib.get_record_query(search_query)
 
     if len(search_data) == 0:
+        print(f"Insert {symbol} for {ma_period} EMA strategy")
         insert_query = f"INSERT INTO strat_exponential_moving_average (symbol, ema, signal, updated, market) VALUES('{symbol}', '{ma_period}', '{signal}', '{datetime.now().strftime('%Y-%m-%d')}','{market}');"
         sqlite_lib.create_update_query(insert_query)
     elif search_data[0][2] != signal:
+        print(f"Update {symbol} for {ma_period} EMA strategy")
         update_query = f"UPDATE strat_exponential_moving_average SET signal='{signal}', updated='{datetime.now().strftime('%Y-%m-%d')}' WHERE symbol ='{symbol}' and ema = '{ma_period}';"
         sqlite_lib.create_update_query(update_query)
 
@@ -106,3 +111,23 @@ def report_rsi_overbought(symbol, market, name=""):
     rsi = technical_indicators_lib.rsi(df_data)
     if round(float(rsi.tail(1)),2)>=70:
         print(f"RSI for {name} {symbol} is Overbought {round(float(rsi.tail(1)),2)} !")
+
+def report_bb_bands_outside(symbol, market, name=""):
+    if market == "tradfi":
+        df_data = yfinance_lib.get_download_data(symbol, "1y")
+    elif market == "crypto":
+        df_data =binance_lib.get_quotes(symbol)
+        df_data.rename(columns={"open time": "date"})
+        df_data["close"] = pd.to_numeric(df_data["close"])
+        df_data["volume"] = pd.to_numeric(df_data["volume"])
+   
+    if len(df_data) <0:
+        return pd.DataFrame()
+    
+    df_bb = technical_indicators_lib.bollinger_bands(df_data)
+    avg_volume = round(df_bb["volume"].mean(),2)
+
+    if float(df_bb.tail(1)["close"]) > float(df_bb.tail(1)["UpperBand"]) and float(df_bb.tail(1)["volume"]) > avg_volume:
+        tabulate_lib.print_it_line_red(f"Price for {symbol} is above Upper Bollinger Band.")
+    if float(df_bb.tail(1)["close"]) < float(df_bb.tail(1)["LowerBand"]) and float(df_bb.tail(1)["volume"]) > avg_volume:
+        tabulate_lib.print_it_line_green(f"Price for {symbol} is below Lower Bollinger Band.")

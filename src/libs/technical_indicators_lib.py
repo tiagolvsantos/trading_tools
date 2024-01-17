@@ -2,6 +2,7 @@ import logging
 import pandas as pd
 import numpy as np
 import math
+import pandas_ta as ta
 from scipy import stats
 
 log = logging.getLogger(__name__)
@@ -698,3 +699,7 @@ def cumulative_volume_delta(df):
         if count != 1:
             df.loc[index , 'cumulative_delta'] =  df.loc[index -1 , 'delta'] +  df.loc[index , 'delta'] 
     return df
+
+# SUPERT (trend), SUPERTd (direction), SUPERTl (long), SUPERTs (short)
+def supertrend(df_data):
+    return ta.supertrend(df_data['high'], df_data['low'], df_data['close'], length=10, multiplier=3)
