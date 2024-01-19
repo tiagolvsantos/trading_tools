@@ -98,3 +98,7 @@ def process_bb_outside_range(market):
 def process_momentum(market, to_measure):
     print(f"Running momentum report for {market} ....")
     reportpedia.report_momentum(market, to_measure)
+
+def process_candles(market):
+    print(f"Running candles report for {market} ....")
+    reportpedia.report_candles(market)

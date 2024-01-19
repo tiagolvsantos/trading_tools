@@ -171,3 +171,82 @@ def report_momentum(market:str, to_measure:int):
 
     file_path =f"generated_reports\\{market}_momentum.xlsx"
     utils.export_excel(file_path, df_momentum)
+
+
+def report_candles(market:str):
+    if market == "tradfi":
+        df_symbols = sqlite_lib.get_stock_symbols_list()
+    elif market == "crypto":
+        df_symbols = sqlite_lib.get_crypto_symbols_list()
+
+    df_candles=pd.DataFrame(columns = [
+        "symbol",   
+        "Bullish swing",
+        "Bearish swing",
+        "Bearish pinbar",
+        "Inside bar",
+        "Outside bar",  
+        "Bullish engulfing",
+        "Bearish engulfing" 
+        ])
+
+
+    for symbol in df_symbols:
+
+        if market == "tradfi":
+            df_data = yfinance_lib.get_download_data(symbol[0], "1mo")
+        elif market == "crypto":
+            df_data =binance_lib.get_quotes(symbol[0])
+
+        # Parse data columns
+        df_data["open"] = pd.to_numeric(df_data["open"])
+        df_data["close"] = pd.to_numeric(df_data["close"])
+        df_data["low"] = pd.to_numeric(df_data["low"])
+        df_data["high"] = pd.to_numeric(df_data["high"])
+
+        # Compute Strategy
+        for i in range(2,df_data.shape[0]):
+            current = df_data.iloc[i,:]
+            prev = df_data.iloc[i-1,:]
+            prev_2 = df_data.iloc[i-2,:]
+            realbody = abs(current['open'] - current['close'])
+            candle_range = current['high'] - current['low']
+            idx = df_data.index[i]
+
+            ## Bulllish Swing
+            df_data.loc[idx,'Bullish swing'] = current['low'] > prev['low'] and prev['low'] < prev_2['low']
+
+            ## Bearish Swing
+            df_data.loc[idx,'Bearish swing'] = current['high'] < prev['high'] and prev['high'] > prev_2['high']
+
+            ## Bearish pinbar
+            df_data.loc[idx,'Bearish pinbar'] = realbody <= candle_range/3 and max(current['open'] , current['close']) < (current['low'] + current['low'])/2 and current['high'] > prev['high']
+
+            ## Inside bar
+            df_data.loc[idx,'Inside bar'] = current['high'] < prev['high'] and current['low'] > prev['low']
+
+            ## Outside bar
+            df_data.loc[idx,'Outside bar'] = current['high'] > prev['high'] and current['low'] < prev['low']
+
+            ## Bullish engulfing
+            df_data.loc[idx,'Bullish engulfing'] = current['high'] > prev['high'] and current['low'] < prev['low'] and realbody >= 0.8 * candle_range and current['close'] > current['open']
+
+            ## Bearish engulfing
+            df_data.loc[idx,'Bearish engulfing'] = current['high'] > prev['high'] and current['low'] < prev['low'] and realbody >= 0.8 * candle_range and current['close'] < current['open']
+
+            df_data.fillna(False, inplace=True)
+
+        newRow= pd.DataFrame (
+            {  
+                "symbol": symbol[0],   
+                "Bullish swing": str(df_data.tail(1)["Bullish swing"].bool()),
+                "Bearish swing": str(df_data.tail(1)["Bearish swing"].bool()),
+                "Bearish pinbar": str(df_data.tail(1)["Bearish pinbar"].bool()),
+                "Inside bar": str(df_data.tail(1)["Inside bar"].bool()),
+                "Outside bar": str(df_data.tail(1)["Outside bar"].bool()),  
+                "Bullish engulfing": str(df_data.tail(1)["Bullish engulfing"].bool()),
+                "Bearish engulfing": str(df_data.tail(1)["Bearish engulfing"].bool()) 
+            }, index=[0])
+        df_candles = pd.concat([df_candles,newRow])
+    file_path =f"generated_reports\\{market}_candles.xlsx"
+    utils.export_excel(file_path, df_candles)
