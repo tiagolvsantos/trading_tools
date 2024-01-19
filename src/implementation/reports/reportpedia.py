@@ -6,7 +6,7 @@ from src.libs import binance_lib
 from src.libs import utils
 from datetime import datetime
 import pandas as pd
-import math
+
 
 def process_ma_up_down(symbol, ma_period, market):
     if market == "tradfi":
@@ -131,3 +131,43 @@ def report_bb_bands_outside(symbol, market, name=""):
         tabulate_lib.print_it_line_red(f"Price for {symbol} is above Upper Bollinger Band.")
     if float(df_bb.tail(1)["close"]) < float(df_bb.tail(1)["LowerBand"]) and float(df_bb.tail(1)["volume"]) > avg_volume:
         tabulate_lib.print_it_line_green(f"Price for {symbol} is below Lower Bollinger Band.")
+
+
+def report_momentum(market:str, to_measure:int):
+    if market == "tradfi":
+        df_symbols = sqlite_lib.get_stock_symbols_list()
+    elif market == "crypto":
+        df_symbols = sqlite_lib.get_crypto_symbols_list()
+
+    df_momentum=pd.DataFrame(columns = [
+        "symbol",   
+        "trend",
+        "momentum_value",
+        "period",
+        "region"
+        ])
+
+    for symbol in df_symbols:
+        if market == "tradfi":
+            df_data = yfinance_lib.get_download_data(symbol[0], "1y")
+        elif market == "crypto":
+            df_data =binance_lib.get_quotes(symbol[0])
+
+
+        last_price = round(float(df_data['close'].head(1)),2)
+        to_measure_days_price = round(float((df_data['close'].head(20)).tail(1)),2)
+
+        momentum = round((last_price / to_measure_days_price) * 100, 3)
+        momentum_text = "Bull" if momentum >= 100 else "Bear"
+
+        newRow= pd.DataFrame (
+            {   "symbol": symbol[0], 
+                "trend": momentum_text,
+                "momentum_value":momentum,
+                "period": f"{to_measure} days",
+                "region": symbol[2]
+            }, index=[0])
+        df_momentum = pd.concat([df_momentum,newRow])
+
+    file_path =f"generated_reports\\{market}_momentum.xlsx"
+    utils.export_excel(file_path, df_momentum)

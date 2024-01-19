@@ -94,3 +94,7 @@ def process_bb_outside_range(market):
 
     for symbol in list_symbols:
         reportpedia.report_bb_bands_outside(symbol[0], market, symbol[1])
+
+def process_momentum(market, to_measure):
+    print(f"Running momentum report for {market} ....")
+    reportpedia.report_momentum(market, to_measure)

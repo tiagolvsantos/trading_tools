@@ -2,6 +2,8 @@ from datetime import datetime, timedelta
 import time
 import datetime
 from datetime import datetime
+import pandas as pd
+import os
 
 def current_datetime_to_epoc(days_to_subtract: int):
     date_period = datetime.now() - timedelta(days=days_to_subtract)
@@ -53,3 +55,9 @@ def print_formated_numbers(num):
         num /= 1000.0
     # add more suffixes if you need them
     return '%.2f%s' % (num, ['', 'K', 'M', 'G', 'T', 'P'][magnitude])
+
+def export_excel(file_path, df_data):
+    if os.path.exists(file_path):
+        os.remove(file_path)
+
+    df_data.to_excel (file_path, index = None, header=True) 
