@@ -66,13 +66,10 @@ def process_ema_up_down(symbol, ma_period, market ):
         update_query = f"UPDATE strat_exponential_moving_average SET signal='{signal}', updated='{datetime.now().strftime('%Y-%m-%d')}' WHERE symbol ='{symbol}' and ema = '{ma_period}';"
         sqlite_lib.create_update_query(update_query)
 
-
-
 def report_ma(ma, market):
     search_query = f"select * from  strat_moving_average where ma='{ma}' and market = '{market}' and updated= '{datetime.now().strftime('%Y-%m-%d')}'"
     search_data = sqlite_lib.get_record_query(search_query)
     tabulate_lib.tabulate_it(f"Updated MA {ma}", pd.DataFrame(search_data, columns=['symbol', 'ma','signal','updated', 'market']))
-
 
 def report_ema(ema, market):
     search_query = f"select * from  strat_exponential_moving_average where ema='{ema}' and market = '{market}' and updated= '{datetime.now().strftime('%Y-%m-%d')}'"
@@ -132,7 +129,6 @@ def report_bb_bands_outside(symbol, market, name=""):
     if float(df_bb.tail(1)["close"]) < float(df_bb.tail(1)["LowerBand"]) and float(df_bb.tail(1)["volume"]) > avg_volume:
         tabulate_lib.print_it_line_green(f"Price for {symbol} is below Lower Bollinger Band.")
 
-
 def report_momentum(market:str, to_measure:int):
     if market == "tradfi":
         df_symbols = sqlite_lib.get_stock_symbols_list()
@@ -171,7 +167,6 @@ def report_momentum(market:str, to_measure:int):
 
     file_path =f"generated_reports\\{market}_momentum.xlsx"
     utils.export_excel(file_path, df_momentum)
-
 
 def report_candles(market:str):
     if market == "tradfi":
@@ -250,3 +245,22 @@ def report_candles(market:str):
         df_candles = pd.concat([df_candles,newRow])
     file_path =f"generated_reports\\{market}_candles.xlsx"
     utils.export_excel(file_path, df_candles)
+
+
+def report_harmonics(market:str):
+    if market == "tradfi":
+        df_symbols = sqlite_lib.get_stock_symbols_list()
+    elif market == "crypto":
+        df_symbols = sqlite_lib.get_crypto_symbols_list()
+
+    for symbol in df_symbols:
+        if market == "tradfi":
+            df_data = yfinance_lib.get_download_data(symbol[0], "2y")
+        elif market == "crypto":
+            df_data =binance_lib.get_quotes(symbol[0])
+
+        a = technical_indicators_lib.harmonics(df_data, symbol)
+
+
+
+

@@ -4,6 +4,8 @@ import numpy as np
 import math
 import pandas_ta as ta
 from scipy import stats
+from scipy.signal import argrelextrema
+#import matplotlib.pyplot as plt
 
 log = logging.getLogger(__name__)
 
@@ -703,3 +705,194 @@ def cumulative_volume_delta(df):
 # SUPERT (trend), SUPERTd (direction), SUPERTl (long), SUPERTs (short)
 def supertrend(df_data):
     return ta.supertrend(df_data['high'], df_data['low'], df_data['close'], length=10, multiplier=3)
+
+
+def _peak_detect(price):
+    # Find our relative extrema
+    # Return the max indexes of the extrema
+    max_idx = list(argrelextrema(price, np.greater, order=10)[0])
+    # Return the min indexes of the extrema
+    min_idx = list(argrelextrema(price, np.less, order=10)[0])
+    idx = max_idx + min_idx + [len(price) - 1]
+    idx.sort()
+    current_idx = idx[-5:]
+
+    start = min(current_idx)
+    end = max(current_idx)
+
+    current_pat = price[current_idx]
+    return current_idx, current_pat, start, end
+
+def _is_Gartley(moves, err_allowed):
+    XA = moves[0]
+    AB = moves[1]
+    BC = moves[2]
+    CD = moves[3]
+
+    AB_range = np.array([0.618 - err_allowed, 0.618 + err_allowed]) * abs(XA)
+    BC_range = np.array([0.382 - err_allowed, 0.886 + err_allowed]) * abs(AB)
+    CD_range = np.array([1.27 - err_allowed, 1.618 + err_allowed]) * abs(BC)
+
+    if XA>0 and AB<0 and BC>0 and CD<0:
+        if AB_range[0] < abs(AB) < AB_range[1] and BC_range[0] < abs(BC) < BC_range[1] and CD_range[0] < abs(CD) < CD_range[1]:
+           return 1
+            # plt.plot(np.arange(start, i+15), price.values[start:i+15])
+            # plt.scatter(idx, current_pat, c='r')
+            # plt.show()
+        else:
+            return np.NaN
+    elif XA<0 and AB>0 and BC<0 and CD>0:
+        # AB_range = np.array([0.618 - err_allowed, 0.618 + err_allowed]) * abs(XA)
+        # BC_range = np.array([0.382 - err_allowed, 0.886 + err_allowed]) * abs(AB)
+        # CD_range = np.array([1.27 - err_allowed, 1.618 + err_allowed]) * abs(BC)
+        if AB_range[0] < abs(AB) < AB_range[1] and BC_range[0] < abs(BC) < BC_range[1] and CD_range[0] < abs(CD) < \
+                CD_range[1]:
+            return -1
+            # plt.plot(np.arange(start, i+15), price.values[start:i+15])
+            # plt.scatter(idx, current_pat, c='r')
+            # plt.show()
+        else:
+            return np.NaN
+    else:
+        return np.NaN
+
+def _is_Butterfly(moves, err_allowed):
+    XA = moves[0]
+    AB = moves[1]
+    BC = moves[2]
+    CD = moves[3]
+
+    AB_range = np.array([0.786 - err_allowed, 0.786 + err_allowed]) * abs(XA)
+    BC_range = np.array([0.382 - err_allowed, 0.886 + err_allowed]) * abs(AB)
+    CD_range = np.array([1.618 - err_allowed, 2.618 + err_allowed]) * abs(BC)
+
+    if XA>0 and AB<0 and BC>0 and CD<0:
+        if AB_range[0] < abs(AB) < AB_range[1] and BC_range[0] < abs(BC) < BC_range[1] and CD_range[0] < abs(CD) < CD_range[1]:
+           return 1
+            # plt.plot(np.arange(start, i+15), price.values[start:i+15])
+            # plt.scatter(idx, current_pat, c='r')
+            # plt.show()
+        else:
+            return np.NaN
+    elif XA<0 and AB>0 and BC<0 and CD>0:
+        # AB_range = np.array([0.618 - err_allowed, 0.618 + err_allowed]) * abs(XA)
+        # BC_range = np.array([0.382 - err_allowed, 0.886 + err_allowed]) * abs(AB)
+        # CD_range = np.array([1.27 - err_allowed, 1.618 + err_allowed]) * abs(BC)
+        if AB_range[0] < abs(AB) < AB_range[1] and BC_range[0] < abs(BC) < BC_range[1] and CD_range[0] < abs(CD) < \
+                CD_range[1]:
+            return -1
+            # plt.plot(np.arange(start, i+15), price.values[start:i+15])
+            # plt.scatter(idx, current_pat, c='r')
+            # plt.show()
+        else:
+            return np.NaN
+    else:
+        return np.NaN
+
+def _is_Bat(moves, err_allowed):
+    XA = moves[0]
+    AB = moves[1]
+    BC = moves[2]
+    CD = moves[3]
+
+    AB_range = np.array([0.382 - err_allowed, 0.5 + err_allowed]) * abs(XA)
+    BC_range = np.array([0.382 - err_allowed, 0.886 + err_allowed]) * abs(AB)
+    CD_range = np.array([1.618 - err_allowed, 2.618 + err_allowed]) * abs(BC)
+
+    if XA>0 and AB<0 and BC>0 and CD<0:
+        if AB_range[0] < abs(AB) < AB_range[1] and BC_range[0] < abs(BC) < BC_range[1] and CD_range[0] < abs(CD) < CD_range[1]:
+           return 1
+            # plt.plot(np.arange(start, i+15), price.values[start:i+15])
+            # plt.scatter(idx, current_pat, c='r')
+            # plt.show()
+        else:
+            return np.NaN
+    elif XA<0 and AB>0 and BC<0 and CD>0:
+        # AB_range = np.array([0.618 - err_allowed, 0.618 + err_allowed]) * abs(XA)
+        # BC_range = np.array([0.382 - err_allowed, 0.886 + err_allowed]) * abs(AB)
+        # CD_range = np.array([1.27 - err_allowed, 1.618 + err_allowed]) * abs(BC)
+        if AB_range[0] < abs(AB) < AB_range[1] and BC_range[0] < abs(BC) < BC_range[1] and CD_range[0] < abs(CD) < \
+                CD_range[1]:
+            return -1
+            # plt.plot(np.arange(start, i+15), price.values[start:i+15])
+            # plt.scatter(idx, current_pat, c='r')
+            # plt.show()
+        else:
+            return np.NaN
+    else:
+        return np.NaN
+
+def _is_Crab(moves, err_allowed):
+    XA = moves[0]
+    AB = moves[1]
+    BC = moves[2]
+    CD = moves[3]
+
+    AB_range = np.array([0.382 - err_allowed, 0.618 + err_allowed]) * abs(XA)
+    BC_range = np.array([0.382 - err_allowed, 0.886 + err_allowed]) * abs(AB)
+    CD_range = np.array([2.24 - err_allowed, 3.618 + err_allowed]) * abs(BC)
+
+    if XA>0 and AB<0 and BC>0 and CD<0:
+        if AB_range[0] < abs(AB) < AB_range[1] and BC_range[0] < abs(BC) < BC_range[1] and CD_range[0] < abs(CD) < CD_range[1]:
+           return 1
+            # plt.plot(np.arange(start, i+15), price.values[start:i+15])
+            # plt.scatter(idx, current_pat, c='r')
+            # plt.show()
+        else:
+            return np.NaN
+    elif XA<0 and AB>0 and BC<0 and CD>0:
+        # AB_range = np.array([0.618 - err_allowed, 0.618 + err_allowed]) * abs(XA)
+        # BC_range = np.array([0.382 - err_allowed, 0.886 + err_allowed]) * abs(AB)
+        # CD_range = np.array([1.27 - err_allowed, 1.618 + err_allowed]) * abs(BC)
+        if AB_range[0] < abs(AB) < AB_range[1] and BC_range[0] < abs(BC) < BC_range[1] and CD_range[0] < abs(CD) < \
+                CD_range[1]:
+            return -1
+            # plt.plot(np.arange(start, i+15), price.values[start:i+15])
+            # plt.scatter(idx, current_pat, c='r')
+            # plt.show()
+        else:
+            return np.NaN
+    else:
+        return np.NaN
+def harmonics(df, symbol):
+    err_allowed = 10.0/100
+    # data = df
+    # data['date'] = pd.to_datetime(data['date'], format='%d.%m.%Y %H:%M:%S.%f')
+    # data = data.set_index(data['date'])
+    # data = data.drop_duplicates(keep=False)
+    # price = data['close'].copy()
+    # # Find peaks
+    # for i in range(100, len(price)):
+    #     current_idx, current_pat, start, end = _peak_detect(price.values[:i])
+
+    #     XA = current_pat[1] - current_pat[0]
+    #     AB = current_pat[2] - current_pat[1]
+    #     BC = current_pat[3] - current_pat[2]
+    #     CD = current_pat[4] - current_pat[3]
+
+    #     moves = [XA, AB, BC, CD]
+
+    #     gartley = _is_Gartley(moves, err_allowed)
+    #     butterfly = _is_Butterfly(moves, err_allowed)
+    #     bat = _is_Bat(moves, err_allowed)
+    #     crab = _is_Crab(moves, err_allowed)
+
+    #     harmonics = np.array([gartley, butterfly, bat, crab])
+    #     if np.any(harmonics == 1) or np.any(harmonics == -1):
+    #         labels = [
+    #             'Gartley',
+    #             'Butterfly',
+    #             'Bat',
+    #             'Crab'
+    #         ]
+
+    #         for j in range(len(harmonics)):
+    #             if harmonics[j] in [1, -1]:
+    #                 sense = 'Bearish ' if harmonics[j] == -1 else 'Bullish '
+    #                 label = f"{symbol[0]} {symbol[1]}  {sense} {labels[j]}" 
+
+    #                 plt.title(label)
+    #                 plt.plot(np.arange(start, i+15), price.values[start:i+15])
+    #                 plt.scatter(current_idx, current_pat, c='r')
+    #                 plt.show()
+
