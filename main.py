@@ -6,6 +6,7 @@ from src.implementation import tradfi_impl
 from src.implementation import crypto_impl
 from src.implementation import links_impl
 from src.implementation import reports_impl
+from src.implementation import jobs_impl
 ## Menus
 def main_menu():
     main_menu = [
@@ -86,7 +87,7 @@ def charts_menu():
                     message="Select an option",
                     choices=["TA", "MAG7","Asset profile","Cross asset corr", "Cross sector corr",
                              "SPX/VIX ratio","SPX 2D RSI", "VIX 1 ATR","Futures curve", 
-                             "ETF Flows","Crypto CVD","S/R TradFi","S/R Crypto", 'ShortVol chart',
+                             "ETF Flows","Stock Flows","Crypto CVD","S/R TradFi","S/R Crypto", 'ShortVol chart',
                              'Options charts', 'Srategic Petroleum Reserve','Google trends', 'Year on Year comparrison',
                              'SKEW',
                              'Main menu'],
@@ -120,6 +121,8 @@ def charts_menu():
         charts_impl.chart_sr_crypto(input("Select a symbol:").upper())
     if charts_menu_pick["option"] == "ETF Flows":
         charts_impl.chart_etf_flows(input("Select a symbol:").upper())
+    if charts_menu_pick["option"] == "Stock Flows":
+        charts_impl.chart_stock_flows(input("Select a symbol:").upper())
     if charts_menu_pick["option"] == "ShortVol chart":
         charts_impl.chart_simple_chart('^SHORTVOL')
     if charts_menu_pick["option"] == "Srategic Petroleum Reserve":
@@ -231,13 +234,13 @@ def jobs_menu():
     jobs_menu = [
     inquirer.List('option',
                     message="Select an option",
-                    choices=['Process strategies','main'],
+                    choices=['Job collection','main'],
                     carousel=True
                 ),
     ]
     jobs_menu_pick = inquirer.prompt(jobs_menu)
-    if jobs_menu_pick["option"] == "Process strategies":
-        reports_impl.run_jobs()
+    if jobs_menu_pick["option"] == "Job collection":
+        jobs_impl.run_jobs()
     if jobs_menu_pick["option"] == "Main menu":
         main()
     main()

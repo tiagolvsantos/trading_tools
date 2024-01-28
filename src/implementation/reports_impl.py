@@ -3,32 +3,6 @@ from src.implementation.charts import chartpedia
 from src.libs import sqlite_lib
 
 
-def _run_jobs(market):
-    print(f"Running MA jobs {market}.....")
-    process_ma(market, 50)
-    process_ma(market, 100)
-    process_ma(market, 200)
-    print(f"Running EMA jobs {market}.....")
-    process_ema(market, 200)
-
-
-def process_ma(market, ma):
-    if market == "tradfi":
-        list_symbols = sqlite_lib.get_stock_symbols_list()
-    elif market == "crypto":
-        list_symbols = sqlite_lib.get_crypto_symbols_list()
-
-    for symbol in list_symbols:
-        reportpedia.process_ma_up_down(symbol[0], ma, market)
-
-def process_ema(market, ema):
-    if market == "tradfi":
-        list_symbols = sqlite_lib.get_stock_symbols_list()
-    elif market == "crypto":
-        list_symbols = sqlite_lib.get_crypto_symbols_list()
-    for symbol in list_symbols:
-        reportpedia.process_ema_up_down(symbol[0], ema, market)
-
 
 def report_ma(ma, market):
     reportpedia.report_ma(ma, market)
@@ -56,12 +30,6 @@ def process_rsi_overbought():
     list_symbols = sqlite_lib.get_stock_symbols_list()
     for symbol in list_symbols:
         reportpedia.report_rsi_overbought(symbol[0],"tradfi", symbol[1])
-
-def run_jobs():
-    print("Running jobs.....")
-    _run_jobs("tradfi")
-    _run_jobs("crypto")
-    print("Running jobs done!")
 
 def process_cot_reports():
     list_commodities= {'WTI': 'CFTC/06742U_FO_ALL', 

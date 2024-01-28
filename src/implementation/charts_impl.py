@@ -65,3 +65,6 @@ def chart_year_on_year_comparisson(symbol, year):
 
 def chart_skew_sp500():
     chartpedia.chart_skew()
+
+def chart_stock_flows(symbol):
+    chartpedia.plot_stock_flows(symbol)

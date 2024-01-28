@@ -10,6 +10,8 @@ from src.libs import quandl_lib
 from src.libs import eia_lib
 from src.libs import google_trends_lib
 from src.libs import CBOE_lib
+from src.libs import webull_lib
+from src.libs import utils
 
 from dateutil.relativedelta import relativedelta
 import numpy as np
@@ -343,7 +345,6 @@ def _plot_mr_reversions(df_data, symbol):
 
     fig.show()
 
-
 def plot_asset_profile(symbol:str):
   
     df_data = yfinance_lib.get_symbol_historical_data(symbol)
@@ -370,10 +371,6 @@ def plot_asset_profile(symbol:str):
     _plot_asset_returns(df_data, symbol)
 
     _plot_asset_sesonality(df_data_5_trading_years, symbol)
-
-
-
-  
 
 def plot_cross_asset_correlation( list_corrs, title, to_tail=180):
     df_final = pd.DataFrame()
@@ -520,7 +517,6 @@ def plot_crypto_cvd(symbol, interval="1d",to_tail=30):
     else:
         print("NO DATA!")
 
-
 def _plot_crypto_cvd_chart(df_data, symbol, df_oi,to_tail):
     df_data.columns = ['date', 'open', 'high', 'low','close','volume','close time','asset volume', 'number of trades' ,'taker buy asset volume','taker buy quote volume', 'ignore']
     df_cvd = technical_indicators_lib.cumulative_volume_delta(df_data.tail(to_tail))
@@ -580,7 +576,6 @@ def plot_sr_tradfi(symbol:str,):
             print("That symbol does not exist!")
         if len(df_data) >1:
             _plot_sr_chart(df_data, symbol, interval)
-
 
 def plot_etf_flows(symbol):
     df_data = pd.DataFrame(etf_com_lib.get_etf_flow_data(symbol))
@@ -920,3 +915,45 @@ def chart_skew():
     plt.title("SKEW - Measure demand for Puts vs Calls. High = demand for puts | Low = demand for calls") 
     plt.show()
     ax.get_xaxis().set_visible(False)
+
+def plot_stock_flows(symbol):
+    df_data = webull_lib.get_capital_flow(symbol)["historical"]
+
+    
+    df_flow = pd.DataFrame(columns = [
+        "date",   
+        "superLargeNetFlow",
+        "largeNetFlow",
+        "mediumNetFlow",
+        "smallNetFlow",
+        "majorNetFlow",
+        "net"
+        ])
+    if len(df_data) >=1:
+        for record in df_data:
+            newRow= pd.DataFrame (
+                {   "date": datetime.datetime.strptime(record["date"], '%Y%m%d'), 
+                    "superLargeNetFlow": record["item"]["superLargeNetFlow"],
+                    "largeNetFlow":record["item"]["largeNetFlow"],
+                    "mediumNetFlow": record["item"]["mediumNetFlow"],
+                    "smallNetFlow": record["item"]["smallNetFlow"],
+                    "majorNetFlow":record["item"]["majorNetFlow"],
+                    "net":  record["item"]["superLargeNetFlow"] + record["item"]["largeNetFlow"] + record["item"]["mediumNetFlow"] +record["item"]["smallNetFlow"] +record["item"]["majorNetFlow"]
+                }, index=[0])
+            df_flow = pd.concat([df_flow,newRow])
+
+    df_flow["Color"] = np.where(df_flow["net"]<0, 'red', 'green')
+    cumulative_flows = round(pd.to_numeric(df_flow["net"]).sum(),2)
+
+    fig = go.Figure()
+    fig.add_trace(
+        go.Bar(name='Net',
+            x=df_flow['date'],
+            y=pd.to_numeric(df_flow['net']),
+            marker_color=df_flow['Color']))
+    fig.update_layout(title_text=f"{symbol} Latest flows | cumulative: {utils.print_formated_numbers(cumulative_flows)}", template="plotly_dark", font=dict(
+        family="Courier New, monospace",
+        size=18,  # Set the font size here
+        color="white"
+    ))
+    fig.show()
