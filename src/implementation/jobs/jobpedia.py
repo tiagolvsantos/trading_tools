@@ -103,3 +103,12 @@ def process_ema_up_down(symbol, ma_period, market ):
         print(f"Update {symbol} for {ma_period} EMA strategy")
         update_query = f"UPDATE strat_exponential_moving_average SET signal='{signal}', updated='{datetime.now().strftime('%Y-%m-%d')}' WHERE symbol ='{symbol}' and ema = '{ma_period}';"
         sqlite_lib.create_update_query(update_query)
+
+def process_market_breath(period, indx):
+    query_below=f"select count(signal) from strat_moving_average  where signal ='Below' and ma ='{period}' and symbol in (select symbol from data_index_constituints where indx='{indx}' )"
+    query_above=f"select count(signal) from strat_moving_average  where signal ='Above' and ma ='{period}' and symbol in (select symbol from data_index_constituints where indx='{indx}' )"
+    data_above = sqlite_lib.get_record_query(query_above)[0][0]
+    data_below = sqlite_lib.get_record_query(query_below)[0][0]
+
+    insert_query = f"INSERT INTO data_market_breath(date, period, above, below, indx)VALUES('{datetime.now().strftime('%Y-%m-%d')}', '{period}', '{data_above}', '{data_below}', '{indx}');"
+    sqlite_lib.create_update_query(insert_query)

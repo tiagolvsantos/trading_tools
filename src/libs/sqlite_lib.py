@@ -35,11 +35,8 @@ def get_crypto_symbols_list():
 
 
 def insert_from_csv():
-    df_data = pd.read_csv(r"C:\\Users\\tiago\\Downloads\\etf-constituents-01-28-2024.csv")
-    search_query = "select * from data_index_constituints"
-    df_search_result = pd.DataFrame(get_record_query(search_query))
+    df_data = pd.read_csv(r"C:\\Users\\User\\Downloads\\etf-constituents-01-29-2024.csv")
     df_data.columns=["Symbol","Name"]
     for index, row in df_data.iterrows():
-        if len(df_search_result) == 0 or len(df_search_result[df_search_result[0].str.contains(row["Symbol"])])==0:
-            query = "insert into data_index_constituints (symbol, index) VALUES('"+row["symbol"]+"','sp500')"
-            create_update_query(query)
+        query = "insert into data_index_constituints (symbol, indx) VALUES('"+row["Symbol"]+"','nasdaq100')"
+        create_update_query(query)

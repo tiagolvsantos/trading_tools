@@ -149,7 +149,8 @@ def report_momentum(market:str, to_measure:int):
         elif market == "crypto":
             df_data =binance_lib.get_quotes(symbol[0])
 
-
+        if round(float(df_data['close'].head(1)),2) <= 0.1:
+            continue
         last_price = round(float(df_data['close'].head(1)),2)
         to_measure_days_price = round(float((df_data['close'].head(20)).tail(1)),2)
 

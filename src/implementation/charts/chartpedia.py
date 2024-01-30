@@ -12,6 +12,7 @@ from src.libs import google_trends_lib
 from src.libs import CBOE_lib
 from src.libs import webull_lib
 from src.libs import utils
+from src.libs import sqlite_lib
 
 from dateutil.relativedelta import relativedelta
 import numpy as np
@@ -917,7 +918,8 @@ def chart_skew():
     ax.get_xaxis().set_visible(False)
 
 def plot_stock_flows(symbol):
-    df_data = webull_lib.get_capital_flow(symbol)["historical"]
+    query = f"select * from data_stock_flows dsf  where symbol ='{symbol}'"
+    df_data = sqlite_lib.get_record_query(query)
 
     
     df_flow = pd.DataFrame(columns = [
@@ -932,13 +934,13 @@ def plot_stock_flows(symbol):
     if len(df_data) >=1:
         for record in df_data:
             newRow= pd.DataFrame (
-                {   "date": datetime.datetime.strptime(record["date"], '%Y%m%d'), 
-                    "superLargeNetFlow": record["item"]["superLargeNetFlow"],
-                    "largeNetFlow":record["item"]["largeNetFlow"],
-                    "mediumNetFlow": record["item"]["mediumNetFlow"],
-                    "smallNetFlow": record["item"]["smallNetFlow"],
-                    "majorNetFlow":record["item"]["majorNetFlow"],
-                    "net":  record["item"]["superLargeNetFlow"] + record["item"]["largeNetFlow"] + record["item"]["mediumNetFlow"] +record["item"]["smallNetFlow"] +record["item"]["majorNetFlow"]
+                {   "date" :record[0].split(" ")[0], 
+                    "superLargeNetFlow": record[4],
+                    "largeNetFlow":record[7],
+                    "mediumNetFlow": record[15],
+                    "smallNetFlow": record[20],
+                    "majorNetFlow":record[27],
+                    "net":  float(record[4]) + float(record[7]) + float(record[15]) + float(record[20]) + float(record[27])
                 }, index=[0])
             df_flow = pd.concat([df_flow,newRow])
 

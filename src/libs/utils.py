@@ -54,7 +54,7 @@ def print_formated_numbers(num):
         magnitude += 1
         num /= 1000.0
     # add more suffixes if you need them
-    return '%.2f%s' % (num, ['', 'K', 'M', 'G', 'T', 'P'][magnitude])
+    return '%.2f%s' % (num, ['', 'K', 'M', 'B', 'T', 'P'][magnitude])
 
 def export_excel(file_path, df_data):
     if os.path.exists(file_path):

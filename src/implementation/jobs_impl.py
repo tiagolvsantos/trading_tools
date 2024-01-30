@@ -12,6 +12,7 @@ def _run_jobs(market):
 
 def _run_jobs_data():
     process_flows()
+    process_market_breath()
 
 def process_ma(market, ma):
     if market == "tradfi":
@@ -39,6 +40,14 @@ def process_flows():
         jobpedia.process_flows(symbol[0])
     jobpedia.remove_todays_flows_records()
 
+def process_market_breath():
+    jobpedia.process_market_breath("50","sp500")
+    jobpedia.process_market_breath("100","sp500")
+    jobpedia.process_market_breath("200","sp500")
+
+    jobpedia.process_market_breath("50","nasdaq100")
+    jobpedia.process_market_breath("100","nasdaq100")
+    jobpedia.process_market_breath("200","nasdaq100")
 def run_jobs():
     print("Running jobs.....")
     _run_jobs("tradfi")
