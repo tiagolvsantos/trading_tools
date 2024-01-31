@@ -188,7 +188,6 @@ def reports_menu():
                              'Volume bigger than average TradFi',
                              'Volume bigger than average Crypto','RSI Overbought',
                              'RSI Oversold','CoT Reports',
-                             'Momentum TradFi', 'Momentum Crypto',
                              'Candles TradFI','Candles Crypto',
                              'Main menu'],
                     carousel=True
@@ -217,10 +216,6 @@ def reports_menu():
         reports_impl.process_rsi_oversold()
     if reports_menu_pick["option"] == "CoT Reports":
         reports_impl.process_cot_reports()
-    if reports_menu_pick["option"] == "Momentum TradFi":
-        reports_impl.process_momentum("tradfi",10)
-    if reports_menu_pick["option"] == "Momentum Crypto":
-        reports_impl.process_momentum("crypto",10)
     if reports_menu_pick["option"] == "Candles TradFi":
         reports_impl.process_candles("tradfi")
     if reports_menu_pick["option"] == "Candles Crypto":

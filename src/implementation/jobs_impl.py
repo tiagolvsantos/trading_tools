@@ -13,6 +13,8 @@ def _run_jobs(market):
 def _run_jobs_data():
     process_flows()
     process_market_breath()
+    process_momentum("tradfi",10)
+    process_momentum("crypto",10)
 
 def process_ma(market, ma):
     if market == "tradfi":
@@ -48,6 +50,12 @@ def process_market_breath():
     jobpedia.process_market_breath("50","nasdaq100")
     jobpedia.process_market_breath("100","nasdaq100")
     jobpedia.process_market_breath("200","nasdaq100")
+
+def process_momentum(market, to_measure):
+    print(f"Running momentum report for {market} ....")
+    jobpedia.process_momentum(market, to_measure)
+
+    
 def run_jobs():
     print("Running jobs.....")
     _run_jobs("tradfi")

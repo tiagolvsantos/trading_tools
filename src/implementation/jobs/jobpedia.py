@@ -4,7 +4,6 @@ from src.libs import sqlite_lib
 from src.libs import technical_indicators_lib
 from src.libs import binance_lib
 from src.libs import utils
-import time
 import pandas as pd
 from datetime import datetime
 
@@ -112,3 +111,44 @@ def process_market_breath(period, indx):
 
     insert_query = f"INSERT INTO data_market_breath(date, period, above, below, indx)VALUES('{utils.get_yesterdays_date('%Y-%m-%d')}', '{period}', '{data_above}', '{data_below}', '{indx}');"
     sqlite_lib.create_update_query(insert_query)
+
+def process_momentum(market:str, to_measure:int):
+    if market == "tradfi":
+        df_symbols = sqlite_lib.get_stock_symbols_list()
+    elif market == "crypto":
+        df_symbols = sqlite_lib.get_crypto_symbols_list()
+
+    df_momentum=pd.DataFrame(columns = [
+        "symbol",   
+        "trend",
+        "momentum_value",
+        "period",
+        "region"
+        ])
+
+    for symbol in df_symbols:
+        if market == "tradfi":
+            df_data = yfinance_lib.get_download_data(symbol[0], "1y")
+        elif market == "crypto":
+            df_data =binance_lib.get_quotes(symbol[0])
+
+        if round(float(df_data['close'].head(1)),2) <= 0.1:
+            continue
+        last_price = round(float(df_data['close'].head(1)),2)
+        to_measure_days_price = round(float((df_data['close'].head(20)).tail(1)),2)
+
+        momentum = round((last_price / to_measure_days_price) * 100, 3)
+        momentum_text = "Bull" if momentum >= 100 else "Bear"
+
+        newRow= pd.DataFrame (
+            {   "symbol": symbol[0], 
+                "trend": momentum_text,
+                "momentum_value":momentum,
+                "period": f"{to_measure} days",
+                "region": symbol[2]
+            }, index=[0])
+        df_momentum = pd.concat([df_momentum,newRow])
+        insert_query =f"INSERT INTO data_asset_momentum (date, symbol, momentum) VALUES('{utils.get_yesterdays_date('%Y-%m-%d')}', '{symbol[0]}', '{momentum}')"
+        sqlite_lib.create_update_query(insert_query)
+    file_path =f"generated_reports\\{market}_momentum.xlsx"
+    utils.export_excel(file_path, df_momentum)
