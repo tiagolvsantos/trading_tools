@@ -110,5 +110,5 @@ def process_market_breath(period, indx):
     data_above = sqlite_lib.get_record_query(query_above)[0][0]
     data_below = sqlite_lib.get_record_query(query_below)[0][0]
 
-    insert_query = f"INSERT INTO data_market_breath(date, period, above, below, indx)VALUES('{datetime.now().strftime('%Y-%m-%d')}', '{period}', '{data_above}', '{data_below}', '{indx}');"
+    insert_query = f"INSERT INTO data_market_breath(date, period, above, below, indx)VALUES('{utils.get_yesterdays_date('%Y-%m-%d')}', '{period}', '{data_above}', '{data_below}', '{indx}');"
     sqlite_lib.create_update_query(insert_query)
