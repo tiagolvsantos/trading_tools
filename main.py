@@ -89,7 +89,7 @@ def charts_menu():
                              "SPX/VIX ratio","SPX 2D RSI", "VIX 1 ATR","Futures curve", 
                              "ETF Flows","Stock Flows","Crypto CVD","S/R TradFi","S/R Crypto", 'ShortVol chart',
                              'Options charts', 'Srategic Petroleum Reserve','Google trends', 'Year on Year comparrison',
-                             'SKEW',
+                             'SKEW','AAII',
                              'Main menu'],
                     carousel=True
                 ),
@@ -125,6 +125,8 @@ def charts_menu():
         charts_impl.chart_stock_flows(input("Select a symbol:").upper())
     if charts_menu_pick["option"] == "ShortVol chart":
         charts_impl.chart_simple_chart('^SHORTVOL')
+    if charts_menu_pick["option"] == "AAII":
+        charts_impl.chart_aaii()
     if charts_menu_pick["option"] == "Srategic Petroleum Reserve":
         charts_impl.chart_spr()
     if charts_menu_pick["option"] == "Google trends":

@@ -10,7 +10,6 @@ from src.libs import quandl_lib
 from src.libs import eia_lib
 from src.libs import google_trends_lib
 from src.libs import CBOE_lib
-from src.libs import webull_lib
 from src.libs import utils
 from src.libs import sqlite_lib
 
@@ -646,7 +645,6 @@ def plot_fear_greed_index():
 def plot_simple_chart(symbol):
     openbb_lib.plot_asset_chart(symbol)
 
-
 def plot_cot_report(list_commodities):
     for k, v in list_commodities.items():
         df_data = quandl_lib.get_quandl_data(v).reset_index().tail(100)
@@ -811,7 +809,6 @@ def get_options_chart(symbol: str, expire : int):
     ))
     fig.show()
 
-
 def plot_spr_chart():
     df_data = eia_lib.get_spr()
     df_data.columns =["date","value"]
@@ -954,6 +951,38 @@ def plot_stock_flows(symbol):
             y=pd.to_numeric(df_flow['net']),
             marker_color=df_flow['Color']))
     fig.update_layout(title_text=f"{symbol} Latest flows | cumulative: {utils.print_formated_numbers(cumulative_flows)}", template="plotly_dark", font=dict(
+        family="Courier New, monospace",
+        size=18,  # Set the font size here
+        color="white"
+    ))
+    fig.show()
+
+def plot_aaii():
+    df_data = pd.read_excel('data\sentiment.xls').tail(50)
+    fig = make_subplots(rows=1, cols=1)
+
+    fig.append_trace(go.Scatter(
+        x=df_data['Date'],
+        y=df_data['Bullish'], name = "Bullish", line_color='#85BB65'
+    ), row=1, col=1)
+
+    fig.append_trace(go.Scatter(
+        x=df_data['Date'],
+        y=df_data['Bearish'], name = "Bearish", line_color='#CC4E5C'
+    ), row=1, col=1)
+
+    fig.append_trace(go.Scatter(
+        x=df_data['Date'],
+        y=df_data['Neutral'], name = "Neutral", line_color='#8B8589'
+    ), row=1, col=1)
+
+    fig.append_trace(go.Scatter(
+        x=df_data['Date'],
+        y=df_data['Bullish 8-week Mov Avg'], name = "Bullish 8-week Mov Avg", line_color='#ED9121',  line = dict(color='#ED9121', width=1, dash='dash')
+    ), row=1, col=1)
+
+    fig.update_xaxes(rangeslider_visible=False)
+    fig.update_layout(title_text="AAII Sentiment Survey", template="plotly_dark", font=dict(
         family="Courier New, monospace",
         size=18,  # Set the font size here
         color="white"

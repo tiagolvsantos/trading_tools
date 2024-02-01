@@ -68,3 +68,6 @@ def chart_skew_sp500():
 
 def chart_stock_flows(symbol):
     chartpedia.plot_stock_flows(symbol)
+
+def chart_aaii():
+    chartpedia.plot_aaii()
