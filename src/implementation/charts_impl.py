@@ -71,3 +71,6 @@ def chart_stock_flows(symbol):
 
 def chart_aaii():
     chartpedia.plot_aaii()
+
+def chart_market_breath(period, indx):
+    chartpedia.plot_market_breath(period, indx)

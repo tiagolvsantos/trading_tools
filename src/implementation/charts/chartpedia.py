@@ -988,3 +988,30 @@ def plot_aaii():
         color="white"
     ))
     fig.show()
+
+def plot_market_breath(period, indx):
+    query_search =f"select * from data_market_breath dmb  where dmb.period ='{period}' and dmb.indx ='{indx}'"
+    df_data = pd.DataFrame(sqlite_lib.get_record_query(query_search))
+    df_data.columns = ['date', 'period','above','below','indx']
+    df_data["above"] = pd.to_numeric(df_data["above"] )
+    df_data["below"] = pd.to_numeric(df_data["below"] )
+
+    fig = make_subplots(rows=1, cols=1)
+
+    fig.append_trace(go.Scatter(
+        x=df_data['date'],
+        y=df_data['above'], name = f"Above {period}DMA", line_color='#85BB65'
+    ), row=1, col=1)
+
+    fig.append_trace(go.Scatter(
+        x=df_data['date'],
+        y=df_data['below'], name = f"Below {period}DMA", line_color='#CC4E5C'
+    ), row=1, col=1)
+
+    fig.update_xaxes(rangeslider_visible=False)
+    fig.update_layout(title_text=f"Market Breath for {indx} | {period}DMA", template="plotly_dark", font=dict(
+        family="Courier New, monospace",
+        size=18,  # Set the font size here
+        color="white"
+    ))
+    fig.show()

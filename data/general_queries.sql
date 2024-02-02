@@ -11,3 +11,6 @@ select symbol from data_index_constituints dic where dic.indx ="nasdaq100" and d
 
 -- delete all
 delete from data_asset_momentum;
+
+-- market breath
+select * from data_market_breath dmb  where dmb.period ="50" and dmb.indx ="sp500";

@@ -89,7 +89,7 @@ def charts_menu():
                              "SPX/VIX ratio","SPX 2D RSI", "VIX 1 ATR","Futures curve", 
                              "ETF Flows","Stock Flows","Crypto CVD","S/R TradFi","S/R Crypto", 'ShortVol chart',
                              'Options charts', 'Srategic Petroleum Reserve','Google trends', 'Year on Year comparrison',
-                             'SKEW','AAII',
+                             'SKEW','AAII', 'Market Breath',
                              'Main menu'],
                     carousel=True
                 ),
@@ -127,6 +127,11 @@ def charts_menu():
         charts_impl.chart_simple_chart('^SHORTVOL')
     if charts_menu_pick["option"] == "AAII":
         charts_impl.chart_aaii()
+    if charts_menu_pick["option"] == "Market Breath":
+        charts_impl.chart_market_breath("50","sp500")
+        charts_impl.chart_market_breath("50","nasdaq100")
+        charts_impl.chart_market_breath("200","sp500")
+        charts_impl.chart_market_breath("200","nasdaq100")
     if charts_menu_pick["option"] == "Srategic Petroleum Reserve":
         charts_impl.chart_spr()
     if charts_menu_pick["option"] == "Google trends":
