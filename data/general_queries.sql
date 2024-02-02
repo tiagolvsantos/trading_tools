@@ -1,7 +1,7 @@
 -- ABOVE /BELOW Ratio
-select count(signal) from strat_moving_average  where signal ="Below" and ma ="50" and symbol in (select symbol from data_index_constituints where indx="nasdaq100" );
+select count(signal) from strat_moving_average  where signal ="Below" and ma ="50" and symbol in (select symbol from data_index_constituints where indx="coindex21" );
 
-select count(signal) from strat_moving_average  where signal ="Above" and ma ="50" and symbol in (select symbol from data_index_constituints where indx="sp500" );
+select count(signal) from strat_moving_average  where signal ="Above" and ma ="50" and symbol in (select symbol from data_index_constituints where indx="coindex21" );
 
 
 
