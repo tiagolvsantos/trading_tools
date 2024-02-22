@@ -127,7 +127,6 @@ def process_momentum(market:str, to_measure:int):
         ])
 
     for symbol in df_symbols:
-        print(symbol[0])
         if market == "tradfi":
             df_data = yfinance_lib.get_download_data(symbol[0], "1y")
         elif market == "crypto":
