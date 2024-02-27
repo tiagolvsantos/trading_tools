@@ -195,7 +195,7 @@ def reports_menu():
                              'Volume bigger than average TradFi',
                              'Volume bigger than average Crypto','RSI Overbought',
                              'RSI Oversold','CoT Reports',
-                             'Candles TradFI','Candles Crypto',
+                             'Candles TradFi','Candles Crypto',
                              'Main menu'],
                     carousel=True
                 ),
