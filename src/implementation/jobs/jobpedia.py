@@ -136,11 +136,12 @@ def process_momentum(market:str, to_measure:int):
             continue
         if round(float(df_data['close'].head(1)),2) <= 0.1:
             continue
-        last_price = round(float(df_data['close'].head(1)),2)
-        to_measure_days_price = round(float((df_data['close'].head(20)).tail(1)),2)
+        last_price = round(float(df_data['close'].tail(1)),2)
+        to_measure_days_price = round(float((df_data['close'].tail(to_measure)).head(1)),2)
+
 
         momentum = round((last_price / to_measure_days_price) * 100, 3)
-        momentum_text = "Bull" if momentum >= 100 else "Bear"
+        momentum_text = "Up" if momentum >= 100 else "Down"
 
         newRow= pd.DataFrame (
             {   "symbol": symbol[0], 
