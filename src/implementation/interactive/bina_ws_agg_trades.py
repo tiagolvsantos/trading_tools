@@ -1,6 +1,6 @@
 import websocket
 import json
-
+from datetime import datetime
 
 class bcolors:
     Red = '\033[91m'
@@ -52,6 +52,7 @@ def get_position_delta(message, side):
 
 def print_position_delta():
     print(f"{bcolors.Yellow}################# POSITION DELTA #################")
+    print(f"{bcolors.White}Date: {datetime.now()}")
     print(f"{bcolors.Green}Buy: {str(counter_buy)}")
     print(f"{bcolors.Red}Sell: {str(counter_sell)}")
     print(f"{bcolors.White}Delta (Buy/Sell): {str(counter_buy / counter_sell)}")
@@ -66,7 +67,7 @@ def main(ticker, thresh):
     global counter_occurence
     counter_occurence = 0
     global occurence
-    occurence = 1000 # configure the number of occurences to print the Delta results
+    occurence = 2500 # configure the number of occurences to print the Delta results
     global symbol 
     symbol = ticker
     global threshold
