@@ -6,6 +6,7 @@ from src.libs import webull_lib
 from src.libs import trackinsight_lib
 from src.libs import swaggystocks_lib
 from src.libs import finviz_lib
+from src.libs import utils
 import pandas as pd
 
 
@@ -74,15 +75,24 @@ def get_stock_ratings(symbol):
 def get_etf_top_holdings(symbol):
     tabulate_lib.tabulate_dict(trackinsight_lib.get_etf_x_ray(symbol))
 
-def get_options_ratios():
-    json_data = CBOE_lib.get_options_ratios()
-    if len(json_data) != 0:
+def get_options_statistics():
+    df_data = CBOE_lib.get_options_ratios()
+    if len(df_data) != 0:
         tabulate_lib.print_it_line_title(" \n OPTIONS RATIOS \n ")
-        for ratio in json_data["ratios"]:
-            tabulate_lib.print_it_line(f"{ratio['name']}: {ratio['value']} ")
+        for index, row in df_data.iterrows():
+            _get_options_statistics_compute_data(df_data, index)
     else:
         print("No data on weekends!")
     print("\n")
+
+def _get_options_statistics_compute_data(df_data, index):
+    df_data.at[index,'Equity Option Contracts']= utils.print_formated_numbers(float(df_data.at[index,'Equity Option Contracts']))
+    df_data.at[index,'Equity Option Notional']= utils.print_formated_numbers(float(df_data.at[index,'Equity Option Notional']))
+    df_data.at[index,'Index/Other Option Contracts']= utils.print_formated_numbers(float(df_data.at[index,'Index/Other Option Contracts']))
+    df_data.at[index,'Index/Other Option Notional']= utils.print_formated_numbers(float(df_data.at[index,'Index/Other Option Notional']))
+    df_data.at[index,'Total Option Contracts']= utils.print_formated_numbers(float(df_data.at[index,'Total Option Contracts']))
+    df_data.at[index,'Total Option Notional']= utils.print_formated_numbers(float(df_data.at[index,'Total Option Notional']))
+    tabulate_lib.tabulate_it("CBOE Options Ratios",df_data)
 
 def get_wsb_trending_stocks():
     tabulate_lib.tabulate_it("WSB Trending stocks for the last 12h", swaggystocks_lib.get_wsb_buzz_stocks())
@@ -95,3 +105,14 @@ def get_stock_insider_trading(symbol):
 
 def get_sp500_technicals():
     tabulate_lib.tabulate_it('SP500 technicals',finviz_lib.get_technicals())
+
+def get_options_ratios():
+    json_data = CBOE_lib.get_options_ratios()
+    if len(json_data) != 0:
+        tabulate_lib.print_it_line_title(" \n OPTIONS RATIOS \n ")
+        for ratio in json_data["ratios"]:
+            tabulate_lib.print_it_line(f"Date: {utils.get_yesterdays_date("%Y-%m-%d")}")
+            tabulate_lib.print_it_line(f"{ratio['name']}: {ratio['value']} ")
+    else:
+        print("No data on weekends!")
+    print("\n")

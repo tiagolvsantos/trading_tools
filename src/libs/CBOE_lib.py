@@ -1,7 +1,8 @@
-import datetime
+import json
 import pandas as pd
 import requests
 from io import StringIO
+from src.libs import utils
 
 
 def get_fx_volatility():
@@ -48,9 +49,7 @@ def parse_cbe_list(list_cboe: list):
     return df_data.append(list_cboe, ignore_index = True)
 
 def get_options_ratios():
-    date = datetime.datetime.now()
-    if date.isoweekday() not in range(1, 6):
-        return {}
-    url = f"https://cdn.cboe.com/data/us/options/market_statistics/daily/{date.strftime('%Y-%m-%d')}_daily_options"
+    date = utils.get_yesterdays_date("%Y-%m-%d")
+    url = f"https://cdn.cboe.com/data/us/options/market_statistics/daily/{date}_daily_options"
     response = requests.get(url)
-    return {} if response.status_code == 403 else requests.get(url).json
+    return {} if response.status_code == 403 or len(requests.get(url).json())==0 else requests.get(url).json()

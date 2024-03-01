@@ -55,3 +55,6 @@ def print_it_line_red(text: str):
 
 def print_it_line_green(text: str):
     print(f'{bcolors.Green} {text}')
+
+def print_it_line_white(text: str):
+    print(f'{bcolors.White} {text}')

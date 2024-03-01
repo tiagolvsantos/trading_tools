@@ -23,7 +23,7 @@ def tradfi_menu():
     inquirer.List('option',
                     message="Select an option",
                     choices=['Market Breath', 'Top gainers', 'Top loosers', 'Most active equity Options', 'Most active index options',
-                             'Intraday top volume','Stock ratings','ETF top holdings','Options ratios','Fear Greed Index',
+                             'Intraday top volume','Stock ratings','ETF top holdings','Options statistics','Options ratios','Fear Greed Index',
                              'WSB Trending stocks for the last 12h', "Stock News", "Stock insider trading","SP500 stocks technicals",
                              'Main menu'],
                     carousel=True
@@ -52,8 +52,10 @@ def tradfi_menu():
         tradfi_impl.get_sp500_technicals()
     if tradfi_menu["option"] == "ETF top holdings":
         tradfi_impl.get_etf_top_holdings(input("Select a symbol:"))
+    if tradfi_menu["option"] == "Options statistics":
+        tradfi_impl.get_options_statistics()
     if tradfi_menu["option"] == "Options ratios":
-        tradfi_impl.get_options_ratios()   
+        tradfi_impl.get_options_ratios() 
     if tradfi_menu["option"] == "Fear Greed Index":
         charts_impl.chart_fear_greed()
     if tradfi_menu["option"] == "WSB Trending stocks for the last 12h":

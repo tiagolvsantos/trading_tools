@@ -88,6 +88,8 @@ def report_volume_up_average(symbol, market, to_tail, name=""):
     avg_volume = float(df_data["volume"].tail(to_tail).mean())
     if last_volume>avg_volume:
         print(f"Volume bigger than average for {name} {symbol}  Actual:{utils.print_formated_numbers(round(last_volume,2))}   Avg:{utils.print_formated_numbers(round(avg_volume,2))}")
+        return 1
+    return 0
 
 def report_rsi_oversold(symbol, market, name=""):
     if market == "tradfi":
@@ -126,8 +128,10 @@ def report_bb_bands_outside(symbol, market, name=""):
 
     if float(df_bb.tail(1)["close"]) > float(df_bb.tail(1)["UpperBand"]) and float(df_bb.tail(1)["volume"]) > avg_volume:
         tabulate_lib.print_it_line_red(f"Price for {symbol} is above Upper Bollinger Band.")
+        return 2
     if float(df_bb.tail(1)["close"]) < float(df_bb.tail(1)["LowerBand"]) and float(df_bb.tail(1)["volume"]) > avg_volume:
         tabulate_lib.print_it_line_green(f"Price for {symbol} is below Lower Bollinger Band.")
+        return 1
 
 def report_candles(market:str):
     if market == "tradfi":

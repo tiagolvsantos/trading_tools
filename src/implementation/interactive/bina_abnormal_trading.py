@@ -37,7 +37,10 @@ def binance_abnormal_trading():
                 df_data.at[index,'priceChange']= f"{(round(float(row['priceChange']),2)*100)}%"
                 if df_data.at[index,'period'] == "MINUTE_5":
                     # Load your song file
-                    pygame.mixer.music.load('assets\level-complete-mobile-game-app-locran-1-00-06.mp3')
+                    pygame.mixer.music.load('.\\assets\\level-complete-mobile-game-app-locran-1-00-06.mp3')
+                    pygame.mixer.music.play()
+                else:
+                    pygame.mixer.music.load('.\\assets\\notification-sound-7062.mp3')
                     pygame.mixer.music.play()
                 tabulate_lib.tabulate_it("",df_data)
                 print('\n')

@@ -1,6 +1,7 @@
 from src.implementation.reports import reportpedia
 from src.implementation.charts import chartpedia
 from src.libs import sqlite_lib
+from src.libs import tabulate_lib
 
 
 
@@ -13,13 +14,17 @@ def report_ema(ma, market):
 def process_volume_average(market):
     if market == "tradfi":
         list_symbols = sqlite_lib.get_stock_symbols_list()
-        to_tail = 30
+        to_tail = 15
     elif market == "crypto":
         list_symbols = sqlite_lib.get_crypto_symbols_list()
         to_tail = 15
 
+    above_avg_counter = 0
     for symbol in list_symbols:
-        reportpedia.report_volume_up_average(symbol[0], market, to_tail, symbol[1])
+        result = reportpedia.report_volume_up_average(symbol[0], market, to_tail, symbol[1])
+        above_avg_counter+= result == 1  
+
+    print(f"{above_avg_counter}/{len(list_symbols)} are above  the average volume.")
 
 def process_rsi_oversold():
     list_symbols = sqlite_lib.get_stock_symbols_list()
@@ -60,8 +65,15 @@ def process_bb_outside_range(market):
     elif market == "crypto":
         list_symbols = sqlite_lib.get_crypto_symbols_list()
 
+    up_counter = 0
+    low_counter = 0
     for symbol in list_symbols:
-        reportpedia.report_bb_bands_outside(symbol[0], market, symbol[1])
+        result = reportpedia.report_bb_bands_outside(symbol[0], market, symbol[1])
+        low_counter += result == 1  
+        up_counter += result == 2 
+
+    tabulate_lib.print_it_line_white(f"Lower: {low_counter} | Upper: {up_counter}  --> Total: {len(list_symbols)} ")
+
 
 def process_candles(market):
     print(f"Running candles report for {market} ....")
