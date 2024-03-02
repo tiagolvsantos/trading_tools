@@ -110,8 +110,9 @@ def get_options_ratios():
     json_data = CBOE_lib.get_options_ratios()
     if len(json_data) != 0:
         tabulate_lib.print_it_line_title(" \n OPTIONS RATIOS \n ")
+        yesterday_date = utils.get_yesterdays_date("%Y-%m-%d")
         for ratio in json_data["ratios"]:
-            tabulate_lib.print_it_line(f"Date: {utils.get_yesterdays_date("%Y-%m-%d")}")
+            tabulate_lib.print_it_line(f"Date: {yesterday_date}")
             tabulate_lib.print_it_line(f"{ratio['name']}: {ratio['value']} ")
     else:
         print("No data on weekends!")
