@@ -1,12 +1,9 @@
 # Import the necessary packages
 import inquirer
-from src.implementation import interactive_impl 
-from src.implementation import charts_impl
-from src.implementation import tradfi_impl
-from src.implementation import crypto_impl
-from src.implementation import links_impl
-from src.implementation import reports_impl
-from src.implementation import jobs_impl
+from src.implementation import (interactive_impl, charts_impl, tradfi_impl, 
+                                crypto_impl, links_impl, reports_impl, jobs_impl)
+
+
 ## Menus
 def main_menu():
     main_menu = [
@@ -74,11 +71,20 @@ def interactive_menu():
     ]
     interactive_menu_pick = inquirer.prompt(interactive_menu)
     if interactive_menu_pick["option"] == "Binance abnormal Trading":
-       interactive_impl.bina_abnormal_trading_impl()
+        try:
+            interactive_impl.bina_abnormal_trading_impl()
+        except KeyboardInterrupt:
+            main()  
     if interactive_menu_pick["option"] == "Binance Agg Trades":
-        interactive_impl.bina_ws_agg_trades_impl(input("Select a symbol:"),input("Select a threshold:"))
+        try:
+            interactive_impl.bina_ws_agg_trades_impl(input("Select a symbol:"),input("Select a threshold:"))
+        except KeyboardInterrupt:
+            main() 
     if interactive_menu_pick["option"] == "BitMEX Agg Trades":
-        interactive_impl.bitmex_ws_agg_trades_impl(input("Select a symbol:"))
+        try:
+            interactive_impl.bitmex_ws_agg_trades_impl(input("Select a symbol:"))
+        except KeyboardInterrupt:
+            main()  
     if interactive_menu_pick["option"] == "Main menu":
         main()
     main()

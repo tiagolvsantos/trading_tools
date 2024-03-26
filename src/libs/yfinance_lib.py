@@ -164,7 +164,7 @@ def get_symbol_historical_data_from(symbol,since_date, interval ="1d"):
 # period  1d,5d,1mo,3mo,6mo,1y,2y,5y,10y,ytd,max
 def get_download_data(symbol,period = "ytd", interval ="1d"):
     try:
-        time.sleep(0.1)
+        time.sleep(0.3)
         df_data = (yf.download(tickers=symbol,period=period,interval=interval,progress=False).dropna())
         df_data.reset_index(level=0, inplace=True)
 
