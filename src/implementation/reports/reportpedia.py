@@ -9,23 +9,37 @@ import pandas as pd
 
 
 def process_ma_up_down(symbol, ma_period, market):
+    """
+    Process the Moving Average (MA) strategy for a given symbol and MA period.
+
+    Args:
+        symbol (str): The symbol to process the MA strategy for.
+        ma_period (int): The period of the moving average.
+        market (str): The market type, either "tradfi" or "crypto".
+
+    Returns:
+        None
+
+    Raises:
+        None
+    """
     if market == "tradfi":
         df_data = yfinance_lib.get_download_data(symbol, "1y")
     elif market == "crypto":
-        df_data =binance_lib.get_quotes(symbol)
+        df_data = binance_lib.get_quotes(symbol)
         df_data.columns = ['date', 'open', 'high', 'low', 'close', 'volume', 'close time', 'asset volume', 'number of trades', 'taker buy asset volume', 'taker buy quote volume', 'ignore']
 
-    if len(df_data)==0 or len(df_data) < ma_period:
+    if len(df_data) == 0 or len(df_data) < ma_period:
         return
 
-    df_ma = technical_indicators_lib.moving_average(df_data,ma_period)
+    df_ma = technical_indicators_lib.moving_average(df_data, ma_period)
 
     # get db data
     search_query = f"select * from strat_moving_average where symbol ='{symbol}' and ma='{ma_period}'"
     search_data = sqlite_lib.get_record_query(search_query)
 
-    ma = str(round(float(df_ma.iloc[0][f"MA_{ma_period}"]),3))
-    last = str(round(float(df_ma.iloc[0]["close"]),3))
+    ma = str(round(float(df_ma.iloc[0][f"MA_{ma_period}"]), 3))
+    last = str(round(float(df_ma.iloc[0]["close"]), 3))
     signal = "Below" if ma > last else "Above"
 
     if len(search_data) == 0:
@@ -37,22 +51,37 @@ def process_ma_up_down(symbol, ma_period, market):
         update_query = f"UPDATE strat_moving_average SET signal='{signal}', updated='{datetime.now().strftime('%Y-%m-%d')}' WHERE symbol ='{symbol}' and ma = '{ma_period}';"
         sqlite_lib.create_update_query(update_query)
 
-def process_ema_up_down(symbol, ma_period, market ):
+def process_ema_up_down(symbol, ma_period, market):
+    """
+    Process the Exponential Moving Average (EMA) strategy for a given symbol and moving average period.
+
+    Args:
+        symbol (str): The symbol to process the EMA strategy for.
+        ma_period (int): The moving average period.
+        market (str): The market type ("tradfi" or "crypto").
+
+    Returns:
+        None: If the length of the data is 0 or less than the moving average period.
+
+    Raises:
+        None.
+
+    """
     if market == "tradfi":
         df_data = yfinance_lib.get_download_data(symbol, "1y")
     elif market == "crypto":
-        df_data =binance_lib.get_quotes(symbol)
+        df_data = binance_lib.get_quotes(symbol)
         df_data.columns = ['date', 'open', 'high', 'low', 'close', 'volume', 'close time', 'asset volume', 'number of trades', 'taker buy asset volume', 'taker buy quote volume', 'ignore']
-    
-    if len(df_data)==0 or len(df_data) < ma_period:
+
+    if len(df_data) == 0 or len(df_data) < ma_period:
         return
-    
+
     df_ema = technical_indicators_lib.exponential_moving_average(df_data, 200)
-    ema = str(round(float(df_ema.iloc[0]["EMA_200"]),3))
-    last = str(round(float(df_ema.iloc[0]["close"]),3))
+    ema = str(round(float(df_ema.iloc[0]["EMA_200"]), 3))
+    last = str(round(float(df_ema.iloc[0]["close"]), 3))
 
     signal = "Below" if ema > last else "Above"
-   
+
     # get db data
     search_query = f"select * from strat_exponential_moving_average where symbol ='{symbol}' and ema='{ma_period}'"
     search_data = sqlite_lib.get_record_query(search_query)
@@ -67,39 +96,83 @@ def process_ema_up_down(symbol, ma_period, market ):
         sqlite_lib.create_update_query(update_query)
 
 def report_ma(ma, market):
+    """
+    Generate a report for a specific moving average (MA) and market.
+
+    Args:
+        ma (str): The moving average to search for.
+        market (str): The market to search in.
+
+    Returns:
+        None
+    """
     search_query = f"select * from  strat_moving_average where ma='{ma}' and market = '{market}' and updated= '{datetime.now().strftime('%Y-%m-%d')}'"
     search_data = sqlite_lib.get_record_query(search_query)
     tabulate_lib.tabulate_it(f"Updated MA {ma}", pd.DataFrame(search_data, columns=['symbol', 'ma','signal','updated', 'market']))
 
 def report_ema(ema, market):
+    """
+    Generate a report for a specific Exponential Moving Average (EMA) value and market.
+
+    Args:
+        ema (str): The EMA value to search for.
+        market (str): The market to search in.
+
+    Returns:
+        None
+    """
     search_query = f"select * from  strat_exponential_moving_average where ema='{ema}' and market = '{market}' and updated= '{datetime.now().strftime('%Y-%m-%d')}'"
     search_data = sqlite_lib.get_record_query(search_query)
     tabulate_lib.tabulate_it(f"Updated EMA {ema}", pd.DataFrame(search_data, columns=['symbol', 'ema','signal','updated', 'market']))
 
 def report_volume_up_average(symbol, market, to_tail, name=""):
+    """
+    Checks if the volume of a given symbol is greater than the average volume.
+
+    Args:
+        symbol (str): The symbol to check the volume for.
+        market (str): The market type ("tradfi" or "crypto").
+        to_tail (int): The number of data points to consider for calculating the average volume.
+        name (str, optional): The name of the symbol (default is an empty string).
+
+    Returns:
+        int: 1 if the volume is greater than the average, 0 otherwise.
+    """
     if market == "tradfi":
         df_data = yfinance_lib.get_download_data(symbol, "1y")
     elif market == "crypto":
-        df_data =binance_lib.get_quotes(symbol)
+        df_data = binance_lib.get_quotes(symbol)
 
     df_data["volume"] = pd.to_numeric(df_data["volume"])
 
     last_volume = float(df_data["volume"].tail(1))
     avg_volume = float(df_data["volume"].tail(to_tail).mean())
-    if last_volume>avg_volume:
+    if last_volume > avg_volume:
         print(f"Volume bigger than average for {name} {symbol}  Actual:{utils.print_formated_numbers(round(last_volume,2))}   Avg:{utils.print_formated_numbers(round(avg_volume,2))}")
         return 1
     return 0
 
 def report_rsi_oversold(symbol, market, name=""):
+    """
+    Generates a report if the RSI (Relative Strength Index) for a given symbol is below or equal to 30,
+    indicating an oversold condition.
+
+    Args:
+        symbol (str): The symbol of the asset.
+        market (str): The market where the asset is traded. Possible values: "tradfi" or "crypto".
+        name (str, optional): The name of the asset. Defaults to "".
+
+    Returns:
+        None
+    """
     if market == "tradfi":
         df_data = yfinance_lib.get_download_data(symbol, "1y")
     elif market == "crypto":
-        df_data =binance_lib.get_quotes(symbol)
+        df_data = binance_lib.get_quotes(symbol)
         
     rsi = technical_indicators_lib.rsi(df_data)
-    if round(float(rsi.tail(1)),2)<=30:
-        print(f"RSI for {name} {symbol} is Oversold {round(float(rsi.tail(1)),2)} !")
+    if round(float(rsi.tail(1)), 2) <= 30:
+        print(f"RSI for {name} {symbol} is Oversold {round(float(rsi.tail(1)), 2)} !")
 
 def report_rsi_overbought(symbol, market, name=""):
     if market == "tradfi":
@@ -133,6 +206,33 @@ def report_bb_bands_outside(symbol, market, name=""):
         tabulate_lib.print_it_line_green(f"Price for {symbol} is below Lower Bollinger Band.")
         return 1
 
+def report_candles(market:str):
+    """
+    Generate a report of candlestick patterns for the given market.
+
+    Parameters:
+    market (str): The market to generate the report for. Can be "tradfi" for traditional finance or "crypto" for cryptocurrency.
+
+    Returns:
+    None
+    """
+    if market == "tradfi":
+        df_symbols = sqlite_lib.get_stock_symbols_list()
+    elif market == "crypto":
+        df_symbols = sqlite_lib.get_crypto_symbols_list()
+
+    df_candles=pd.DataFrame(columns = [
+        "symbol",   
+        "Bullish swing",
+        "Bearish swing",
+        "Bearish pinbar",
+        "Inside bar",
+        "Outside bar",  
+        "Bullish engulfing",
+        "Bearish engulfing" 
+        ])
+
+    # Rest of the code...
 def report_candles(market:str):
     if market == "tradfi":
         df_symbols = sqlite_lib.get_stock_symbols_list()
