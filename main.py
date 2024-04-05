@@ -40,15 +40,15 @@ def tradfi_menu():
     if tradfi_menu["option"] == "Intraday top volume":
         tradfi_impl.get_intraday_top_volume()
     if tradfi_menu["option"] == "Stock ratings":
-        tradfi_impl.get_stock_ratings(input("Select a symbol:"))
+        tradfi_impl.get_stock_ratings(input("Select a symbol:").upper())
     if tradfi_menu["option"] == "Stock News":
         tradfi_impl.get_stock_news(input("Select a symbol:"))
     if tradfi_menu["option"] == "Stock insider trading":
-        tradfi_impl.get_stock_insider_trading(input("Select a symbol:"))
+        tradfi_impl.get_stock_insider_trading(input("Select a symbol:").upper())
     if tradfi_menu["option"] == "SP500 stocks technicals":
         tradfi_impl.get_sp500_technicals()
     if tradfi_menu["option"] == "ETF top holdings":
-        tradfi_impl.get_etf_top_holdings(input("Select a symbol:"))
+        tradfi_impl.get_etf_top_holdings(input("Select a symbol:").upper())
     if tradfi_menu["option"] == "Options statistics":
         tradfi_impl.get_options_statistics()
     if tradfi_menu["option"] == "Options ratios":
@@ -77,12 +77,12 @@ def interactive_menu():
             main()  
     if interactive_menu_pick["option"] == "Binance Agg Trades":
         try:
-            interactive_impl.bina_ws_agg_trades_impl(input("Select a symbol:"),input("Select a threshold:"))
+            interactive_impl.bina_ws_agg_trades_impl(input("Select a symbol:").upper(),input("Select a threshold:"))
         except KeyboardInterrupt:
             main() 
     if interactive_menu_pick["option"] == "BitMEX Agg Trades":
         try:
-            interactive_impl.bitmex_ws_agg_trades_impl(input("Select a symbol:"))
+            interactive_impl.bitmex_ws_agg_trades_impl(input("Select a symbol:").upper())
         except KeyboardInterrupt:
             main()  
     if interactive_menu_pick["option"] == "Main menu":
