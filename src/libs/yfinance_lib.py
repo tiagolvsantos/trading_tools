@@ -162,12 +162,17 @@ def get_symbol_historical_data_from(symbol,since_date, interval ="1d"):
         return NameError
 
 # period  1d,5d,1mo,3mo,6mo,1y,2y,5y,10y,ytd,max
+# intervals: 1m,2m,5m,15m,30m,60m,90m,1h,1d,5d,1wk,1mo,3mo
 def get_download_data(symbol,period = "ytd", interval ="1d"):
     try:
         time.sleep(0.3)
         df_data = (yf.download(tickers=symbol,period=period,interval=interval,progress=False).dropna())
         df_data.reset_index(level=0, inplace=True)
 
+        if period in ( "1d","5d","1mo","3mo","6mo"):
+            if len(df_data)>0:
+                df_data.columns = ['date', 'open', 'high', 'low','close','adj close','volume']
+                return df_data
         if len(df_data)>0:
             df_data["Date"] = df_data["Date"].dt.tz_localize(None)
         else:

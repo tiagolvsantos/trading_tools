@@ -31,7 +31,7 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
 from pylab import rcParams
 import datetime
-
+from datetime import timedelta
 
 from statsmodels.tsa.seasonal import seasonal_decompose
 
@@ -463,6 +463,58 @@ def plot_spx_2d_rsi():
     fig.add_hrect(y0=80, y1=100, line_width=0, fillcolor="red", opacity=0.2, row=2, col=1)
     fig.update_xaxes(rangeslider_visible=False)
     fig.update_layout(title_text="SP500 2D RSI", template="plotly_dark", font=dict(
+        family="Courier New, monospace",
+        size=18,  # Set the font size here
+        color="grey"
+    ))
+    fig.show()
+
+
+def plot_chart_rsi_7(symbol:str):
+    df = yfinance_lib.get_download_data(symbol, period="1y",interval="1d")
+    if len(df) < 1:
+        print(f"No data for {symbol}")
+        return
+    df_rsi = pd.DataFrame({'rsi':technical_indicators_lib.rsi(df,periods= 7)})
+    df = pd.concat((df,df_rsi), axis=1)
+    
+    # Calculate support and resistance levels here
+    df = technical_indicators_lib.ppsr(df)
+    
+    fig = make_subplots(rows=2, cols=1)
+
+    df['color'] = 'white'  # default color6a
+    df.loc[df['rsi'] > 85, 'color'] = 'red'
+    df.loc[df['rsi'] < 25, 'color'] = 'green'
+
+    for color in df['color'].unique():
+        mask = df['color'] == color
+        fig.append_trace(go.Candlestick(x=df.loc[mask, 'date'],
+                                        open=df.loc[mask, 'open'], high=df.loc[mask, 'high'],
+                                        low=df.loc[mask, 'low'], close=df.loc[mask, 'close'], 
+                                        name=f"{symbol} {color}",
+                                        increasing_line_color=color, decreasing_line_color=color), 
+                        row=1, col=1)
+
+    # Add horizontal lines for the last S1 and R1 values
+    fig.add_hline(y=float(df['S1'].iloc[0]), line_dash="dash", annotation_text="Last S1", annotation_position="bottom right", line=dict(color="green", width=0.5), opacity=0.5)
+    fig.add_hline(y=float(df['R1'].iloc[0]), line_dash="dash", annotation_text="Last R1", annotation_position="top right", line=dict(color="red", width=0.5), opacity=0.5)
+    fig.add_hline(y=float(df['S2'].iloc[0]), line_dash="dash", annotation_text="Last S2", annotation_position="bottom right",  line=dict(color="green", width=0.5), opacity=0.5)
+    fig.add_hline(y=float(df['R2'].iloc[0]), line_dash="dash", annotation_text="Last R2", annotation_position="top right", line=dict(color="red", width=0.5), opacity=0.5)
+    fig.add_hline(y=float(df['S3'].iloc[0]), line_dash="dash", annotation_text="Last S3", annotation_position="bottom right",  line=dict(color="green", width=0.5), opacity=0.5)
+    fig.add_hline(y=float(df['R3'].iloc[0]), line_dash="dash", annotation_text="Last R3", annotation_position="top right", line=dict(color="red", width=0.5), opacity=0.5)
+
+    fig.append_trace(go.Scatter(
+        x=df['date'],
+        y=df['rsi'], name = f"{symbol} 7 day RSI", line_color='orange',mode='lines'
+    ), row=2, col=1)
+
+    fig.add_hrect(y0=0, y1=25, line_width=0, fillcolor="green", opacity=0.2, row=2, col=1)
+    fig.add_hrect(y0=85, y1=100, line_width=0, fillcolor="red", opacity=0.2, row=2, col=1)
+    end_date = df['date'].max() + timedelta(days=30)
+
+    fig.update_xaxes(rangeslider_visible=False, range=[df['date'].min(), end_date])
+    fig.update_layout(title_text=f"{symbol} fast RSI strategy", template="plotly_dark", showlegend=False, font=dict(
         family="Courier New, monospace",
         size=18,  # Set the font size here
         color="grey"

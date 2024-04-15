@@ -75,3 +75,6 @@ def chart_aaii():
 
 def chart_market_breath(period, indx):
     chartpedia.plot_market_breath(period, indx)
+
+def chart_fast_rsi(symbol):
+    chartpedia.plot_chart_rsi_7(symbol)
