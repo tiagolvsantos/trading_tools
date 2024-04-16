@@ -2,20 +2,23 @@ from src.implementation.jobs import jobpedia
 from src.libs import sqlite_lib
 
 
-def _run_jobs(market):
+def _run_jobs(market, run_emas=False):
     print(f"Running MA jobs {market}.....")
     process_ma(market, 50)
     process_ma(market, 100)
     process_ma(market, 200)
-    print(f"Running EMA jobs {market}.....")
-    process_ema(market, 200)
+    if run_emas:
+        print(f"Running EMA jobs {market}.....")
+        process_ema(market, 200)
 
-def _run_jobs_data():
+
+def _run_jobs_data(run_momentum_reports=False):
     process_flows()
     process_market_breath_tradfi()
     process_market_breath_crypto()
-    process_momentum("tradfi",10)
-    process_momentum("crypto",10)
+    if run_momentum_reports:
+        process_momentum("tradfi",10)
+        process_momentum("crypto",10)
 
 def process_ma(market, ma):
     if market == "tradfi":
