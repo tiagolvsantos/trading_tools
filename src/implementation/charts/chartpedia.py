@@ -497,12 +497,12 @@ def plot_chart_rsi_7(symbol:str):
                         row=1, col=1)
 
     # Add horizontal lines for the last S1 and R1 values
-    fig.add_hline(y=float(df['S1'].iloc[0]), line_dash="dash", annotation_text="Last S1", annotation_position="bottom right", line=dict(color="green", width=0.5), opacity=0.5)
-    fig.add_hline(y=float(df['R1'].iloc[0]), line_dash="dash", annotation_text="Last R1", annotation_position="top right", line=dict(color="red", width=0.5), opacity=0.5)
-    fig.add_hline(y=float(df['S2'].iloc[0]), line_dash="dash", annotation_text="Last S2", annotation_position="bottom right",  line=dict(color="green", width=0.5), opacity=0.5)
-    fig.add_hline(y=float(df['R2'].iloc[0]), line_dash="dash", annotation_text="Last R2", annotation_position="top right", line=dict(color="red", width=0.5), opacity=0.5)
-    fig.add_hline(y=float(df['S3'].iloc[0]), line_dash="dash", annotation_text="Last S3", annotation_position="bottom right",  line=dict(color="green", width=0.5), opacity=0.5)
-    fig.add_hline(y=float(df['R3'].iloc[0]), line_dash="dash", annotation_text="Last R3", annotation_position="top right", line=dict(color="red", width=0.5), opacity=0.5)
+    fig.add_hline(y=float(df['S1'].iloc[0]), line_dash="dash", annotation_text="S1", annotation_position="bottom right", line=dict(color="green", width=0.5), opacity=0.5)
+    fig.add_hline(y=float(df['R1'].iloc[0]), line_dash="dash", annotation_text="R1", annotation_position="top right", line=dict(color="red", width=0.5), opacity=0.5)
+    fig.add_hline(y=float(df['S2'].iloc[0]), line_dash="dash", annotation_text="S2", annotation_position="bottom right",  line=dict(color="green", width=0.5), opacity=0.5)
+    fig.add_hline(y=float(df['R2'].iloc[0]), line_dash="dash", annotation_text="R2", annotation_position="top right", line=dict(color="red", width=0.5), opacity=0.5)
+    fig.add_hline(y=float(df['S3'].iloc[0]), line_dash="dash", annotation_text="S3", annotation_position="bottom right",  line=dict(color="green", width=0.5), opacity=0.5)
+    fig.add_hline(y=float(df['R3'].iloc[0]), line_dash="dash", annotation_text="R3", annotation_position="top right", line=dict(color="red", width=0.5), opacity=0.5)
 
     fig.append_trace(go.Scatter(
         x=df['date'],

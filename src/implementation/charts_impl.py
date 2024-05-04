@@ -17,7 +17,7 @@ def chart_cross_asset_correlation():
     chartpedia.plot_cross_asset_correlation(["ES=F","GC=F","NQ=F","CL=F","DX-Y.NYB","^VIX","^RUT","HG=F","NG=F","RB=F","ZN=F","^STOXX50E","^N225","ZT=F","EURUSD=x","USDJPY=x","HYG","TLT" ,"JNK"], "CrossAsset correlation matrix")
 
 def chart_cross_sector_correlation():
-    chartpedia.plot_cross_asset_correlation(["SPY","XLY","XLP","XLE","XLF","XLV","XLI","XLB","XLRE","XLK","XLC","XLU","GDX","GDXJ","MOO","FDN","KIE","KRE","TAN","JETS","IBB","OIH","SMH"], "Sector correlation matrix")
+    chartpedia.plot_cross_asset_correlation(["SPY","QQQ","IWM","XLY","XLP","XLE","XLF","XLV","XLI","XLB","XLRE","XLK","XLC","XLU","GDX","GDXJ","MOO","FDN","KIE","KRE","TAN","JETS","IBB","OIH","SMH"], "Sector correlation matrix")
 
 def chart_sp500_vix():
     chartpedia.plot_sp500_vix_ratio()
