@@ -629,24 +629,6 @@ def plot_sr_tradfi(symbol:str,):
         if len(df_data) >1:
             _plot_sr_chart(df_data, symbol, interval)
 
-def plot_etf_flows(symbol):
-    df_data = pd.DataFrame(etf_com_lib.get_etf_flow_data(symbol))
-    if len(df_data) >=1:
-        df_data["Color"] = np.where(df_data["Value"]<0, 'red', 'green')
-        cumulative_flows = round(df_data["Value"].sum(),2)
-
-        fig = go.Figure()
-        fig.add_trace(
-            go.Bar(name='Net',
-                x=df_data['Date'],
-                y=df_data['Value'],
-                marker_color=df_data['Color']))
-        fig.update_layout(title_text=f"{symbol} ETF Flows in Millions | Cumulative {cumulative_flows} M", template="plotly_dark", font=dict(
-            family="Courier New, monospace",
-            size=18,  # Set the font size here
-            color="white"
-        ))
-        fig.show()
 
 def plot_crypto_fear_greed_index():
     df_data = pd.DataFrame(alternative_lib.get_crypto_fear_greed_index()["data"])

@@ -40,9 +40,6 @@ def chart_sr_crypto(symbol):
 def chart_sr_tradfi(symbol):
     chartpedia.plot_sr_tradfi(symbol)
 
-def chart_etf_flows(symbol):
-    chartpedia.plot_etf_flows(symbol)
-
 def chart_crypto_fear_greed():
     chartpedia.plot_crypto_fear_greed_index()
 

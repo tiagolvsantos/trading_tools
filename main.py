@@ -95,7 +95,7 @@ def charts_menu():
                     message="Select an option",
                     choices=["TA", "MAG7","Asset profile","Cross asset corr", "Cross sector corr",
                              "SPX/VIX ratio","SPX 2D RSI", "VIX 1 ATR","Futures curve", 
-                             "ETF Flows","Stock Flows","Crypto CVD","S/R TradFi","S/R Crypto", 'ShortVol chart',
+                             "Stock Flows","Crypto CVD","S/R TradFi","S/R Crypto", 'ShortVol chart',
                              'Options charts', 'Srategic Petroleum Reserve','Google trends', 'Year on Year comparrison',
                              'SKEW','AAII', 'Market Breath','Fast RSI',
                              'Main menu'],
@@ -127,8 +127,6 @@ def charts_menu():
         charts_impl.chart_sr_tradfi(input("Select a symbol:").upper())
     if charts_menu_pick["option"] == "S/R Crypto":
         charts_impl.chart_sr_crypto(input("Select a symbol:").upper())
-    if charts_menu_pick["option"] == "ETF Flows":
-        charts_impl.chart_etf_flows(input("Select a symbol:").upper())
     if charts_menu_pick["option"] == "Stock Flows":
         charts_impl.chart_stock_flows(input("Select a symbol:").upper())
     if charts_menu_pick["option"] == "Fast RSI":
