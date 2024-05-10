@@ -1,6 +1,7 @@
 from src.implementation.interactive import bina_ws_agg_trades 
 from src.implementation.interactive import bina_abnormal_trading 
 from src.implementation.interactive import bitmex_ws_agg_trades
+from src.implementation.interactive import binance_twap   
 
 
 def bina_ws_agg_trades_impl(symbol, threshold ):
@@ -11,3 +12,6 @@ def bina_abnormal_trading_impl():
 
 def bitmex_ws_agg_trades_impl(symbol):
     bitmex_ws_agg_trades.main(symbol)
+
+def binance_twap_impl():
+    binance_twap.main()   

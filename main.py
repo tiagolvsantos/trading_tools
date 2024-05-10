@@ -65,7 +65,7 @@ def interactive_menu():
     interactive_menu = [
     inquirer.List('option',
                     message="Select an option",
-                    choices=['Binance abnormal Trading', 'Binance Agg Trades', 'BitMEX Agg Trades','Main menu'],
+                    choices=['Binance abnormal Trading', 'Binance Agg Trades','Binance TWAP','Main menu'],
                     carousel=True
                 ),
     ]
@@ -80,9 +80,9 @@ def interactive_menu():
             interactive_impl.bina_ws_agg_trades_impl(input("Select a symbol:").upper(),input("Select a threshold:"))
         except KeyboardInterrupt:
             main() 
-    if interactive_menu_pick["option"] == "BitMEX Agg Trades":
+    if interactive_menu_pick["option"] == "Binance TWAP":
         try:
-            interactive_impl.bitmex_ws_agg_trades_impl(input("Select a symbol:").upper())
+            interactive_impl.binance_twap_impl()
         except KeyboardInterrupt:
             main()  
     if interactive_menu_pick["option"] == "Main menu":
