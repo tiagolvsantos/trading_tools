@@ -4,6 +4,15 @@ import os
 import time
 import numpy as np
 
+class bcolors:
+    Red = '\033[91m'
+    Green = '\033[92m'
+    Magenta = '\033[95m'
+    Yellow = '\033[93m'
+    White = '\33[37m'
+    Reset = '\033[0m'
+
+
 # Initialize the Binance client
 client = Client(os.getenv('binance_api_key'), os.getenv('binance_api_secret'))
 
@@ -21,8 +30,8 @@ def get_binance_twap(symbol):
 
     dt_string = now.strftime("%Y-%m-%d %H:%M:%S")
 
-
-    print(f'{dt_string} | {symbol}@{prices[-1]} -> TWAP: {round(twap,2)}')
+    color = bcolors.Green if prices[-1] > twap else bcolors.Red
+    print(f'{color}{dt_string} | {symbol}@{prices[-1]} -> TWAP: {round(twap,2)}{bcolors.Reset}')
 
 
 def main():
@@ -30,4 +39,8 @@ def main():
         get_binance_twap('BTCUSDT')
         get_binance_twap('ETHUSDT')
         get_binance_twap('SOLUSDT')
-        time.sleep(600) 
+        get_binance_twap('BNBUSDT')
+        get_binance_twap('ENAUSDT')
+        get_binance_twap('WIFUSDT')
+        get_binance_twap('DOGEUSDT')
+        time.sleep(300) 
