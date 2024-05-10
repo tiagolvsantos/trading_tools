@@ -1,9 +1,7 @@
-from src.libs import openbb_lib
 from src.libs import yfinance_lib
 from src.libs import technical_indicators_lib
 from src.libs import binance_lib
 from src.libs import yfinance_lib
-from src.libs import etf_com_lib
 from src.libs import alternative_lib
 from src.libs import dataviz_lib
 from src.libs import quandl_lib
@@ -187,10 +185,6 @@ def _plot_crypto_cvd_chart(df_data, symbol, df_oi,to_tail):
         color="grey"
     ))
     fig.show()
-
-def plot_ma_chart(symbol:str):
-    openbb_lib.plot_ma_asset_chart(symbol, 1440, True)
-
 
 def _plot_price_profile(df_data, df_data_5_trading_years, symbol):
     fig = make_subplots(vertical_spacing = 0, rows=3, cols=1, row_heights=[4, 0.2, 2])
@@ -442,34 +436,6 @@ def plot_sp500_vix_ratio():
 
     fig.show()
 
-def plot_spx_2d_rsi():
-    df_spx = yfinance_lib.get_download_data("^GSPC", "1y")
-    df_rsi = pd.DataFrame({'rsi':technical_indicators_lib.rsi(df_spx,2)})
-    df_spx = pd.concat((df_spx,df_rsi), axis=1)
-    
-    
-    fig = make_subplots(rows=2, cols=1)
-
-    fig.append_trace(go.Candlestick(x=df_spx['date'],
-                    open=df_spx['open'], high=df_spx['high'],
-                    low=df_spx['low'], close=df_spx['close'], name = "SP500"), row=1, col=1)
-
-    fig.append_trace(go.Scatter(
-        x=df_spx['date'],
-        y=df_spx['rsi'], name = "2D RSI", line_color='orange',mode='lines'
-    ), row=2, col=1)
-
-    fig.add_hrect(y0=0, y1=30, line_width=0, fillcolor="green", opacity=0.2, row=2, col=1)
-    fig.add_hrect(y0=80, y1=100, line_width=0, fillcolor="red", opacity=0.2, row=2, col=1)
-    fig.update_xaxes(rangeslider_visible=False)
-    fig.update_layout(title_text="SP500 2D RSI", template="plotly_dark", font=dict(
-        family="Courier New, monospace",
-        size=18,  # Set the font size here
-        color="grey"
-    ))
-    fig.show()
-
-
 def plot_chart_rsi_7(symbol:str):
     df = yfinance_lib.get_download_data(symbol, period="1y",interval="1d")
     if len(df) < 1:
@@ -546,13 +512,6 @@ def plot_vix_atr_1():
         size=15,  # Set the font size here
         color="white"
     ))
-    fig.show()
-
-def plot_futures_curve(symbol):
-    df_data = openbb_lib.get_futures_curve(symbol)
-    df_data = df_data.reset_index(drop=False)
-    df_data.columns = ['date', 'value']
-    fig = px.line(df_data, x="date", y="value", title=f"{symbol} Futures Curve", template="plotly_dark")
     fig.show()
 
 def plot_crypto_cvd(symbol, interval="1d",to_tail=30):
@@ -675,9 +634,6 @@ def plot_fear_greed_index():
         color="white"
     ))
     fig.show()
-
-def plot_simple_chart(symbol):
-    openbb_lib.plot_asset_chart(symbol)
 
 def plot_cot_report(list_commodities):
     for k, v in list_commodities.items():

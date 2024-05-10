@@ -19,8 +19,8 @@ def tradfi_menu():
     tradfi_menu = [
     inquirer.List('option',
                     message="Select an option",
-                    choices=['Market Breath', 'Top gainers', 'Top loosers', 'Most active equity Options', 'Most active index options',
-                             'Intraday top volume','Stock ratings','ETF top holdings','Options statistics','Options ratios','Fear Greed Index',
+                    choices=['Market Breath', 'Most active equity Options', 'Most active index options',
+                             'Stock ratings','ETF top holdings','Options statistics','Options ratios','Fear Greed Index',
                              'WSB Trending stocks for the last 12h', "Stock News", "Stock insider trading","SP500 stocks technicals",
                              'Main menu'],
                     carousel=True
@@ -29,16 +29,10 @@ def tradfi_menu():
     tradfi_menu = inquirer.prompt(tradfi_menu)
     if tradfi_menu["option"] == "Market Breath":
         tradfi_impl.get_market_breath()
-    if tradfi_menu["option"] == "Top gainers":
-        tradfi_impl.get_market_top_gainers()
-    if tradfi_menu["option"] == "Top loosers":
-        tradfi_impl.get_market_top_loosers()
     if tradfi_menu["option"] == "Most active equity Options":
         tradfi_impl.get_most_active_equity_options()
     if tradfi_menu["option"] == "Most active index options":
         tradfi_impl.get_most_active_index_options()
-    if tradfi_menu["option"] == "Intraday top volume":
-        tradfi_impl.get_intraday_top_volume()
     if tradfi_menu["option"] == "Stock ratings":
         tradfi_impl.get_stock_ratings(input("Select a symbol:").upper())
     if tradfi_menu["option"] == "Stock News":
@@ -93,20 +87,15 @@ def charts_menu():
     charts_menu = [
     inquirer.List('option',
                     message="Select an option",
-                    choices=["TA", "MAG7","Asset profile","Cross asset corr", "Cross sector corr",
-                             "SPX/VIX ratio","SPX 2D RSI", "VIX 1 ATR","Futures curve", 
-                             "Stock Flows","Crypto CVD","S/R TradFi","S/R Crypto", 'ShortVol chart',
-                             'Options charts', 'Srategic Petroleum Reserve','Google trends', 'Year on Year comparrison',
+                    choices=["Asset profile","Cross asset corr", "Cross sector corr",
+                             "SPX/VIX ratio", "VIX 1 ATR", "Stock Flows","Crypto CVD",
+                             'Options charts', 'Srategic Petroleum Reserve', 'Year on Year comparrison',
                              'SKEW','AAII', 'Market Breath','Fast RSI',
                              'Main menu'],
                     carousel=True
                 ),
     ]
     charts_menu_pick = inquirer.prompt(charts_menu)
-    if charts_menu_pick["option"] == "TA":
-        charts_impl.chart_general_ta(input("Select a symbol:").upper())
-    if charts_menu_pick["option"] == "MAG7":
-        charts_impl.chart_general_ta_mag7()
     if charts_menu_pick["option"] == "Asset profile":
         charts_impl.chart_asset_profile(input("Select a symbol:").upper())
     if charts_menu_pick["option"] == "Cross asset corr":
@@ -115,24 +104,14 @@ def charts_menu():
         charts_impl.chart_cross_sector_correlation()
     if charts_menu_pick["option"] == "SPX/VIX ratio":
         charts_impl.chart_sp500_vix()
-    if charts_menu_pick["option"] == "SPX 2D RSI":
-        charts_impl.chart_spx_2d_rsi()
     if charts_menu_pick["option"] == "VIX 1 ATR":
         charts_impl.chart_vix_atr_1()
-    if charts_menu_pick["option"] == "Futures curve":
-        charts_impl.chart_futures_curve(input("Select a symbol:").upper())
     if charts_menu_pick["option"] == "Crypto CVD":
         charts_impl.chart_binance_symbol_cvd(input("Select a symbol:").upper(),"1d",180)
-    if charts_menu_pick["option"] == "S/R TradFi":
-        charts_impl.chart_sr_tradfi(input("Select a symbol:").upper())
-    if charts_menu_pick["option"] == "S/R Crypto":
-        charts_impl.chart_sr_crypto(input("Select a symbol:").upper())
     if charts_menu_pick["option"] == "Stock Flows":
         charts_impl.chart_stock_flows(input("Select a symbol:").upper())
     if charts_menu_pick["option"] == "Fast RSI":
         charts_impl.chart_fast_rsi(input("Select a symbol:").upper())
-    if charts_menu_pick["option"] == "ShortVol chart":
-        charts_impl.chart_simple_chart('^SHORTVOL')
     if charts_menu_pick["option"] == "AAII":
         charts_impl.chart_aaii()
     if charts_menu_pick["option"] == "Market Breath":
@@ -142,10 +121,6 @@ def charts_menu():
         charts_impl.chart_market_breath("200","nasdaq100")
     if charts_menu_pick["option"] == "Srategic Petroleum Reserve":
         charts_impl.chart_spr()
-    if charts_menu_pick["option"] == "Google trends":
-        input_string = input('Enter elements to search separated by space \n')
-        lst_keywords = input_string.split()
-        charts_impl.chart_google_trends(lst_keywords)
     if charts_menu_pick["option"] == "Options charts":
         charts_impl.chart_options_data(input("Select a symbol:").upper(),input("Select an expiration:"))
     if charts_menu_pick["option"] == "Year on Year comparrison":

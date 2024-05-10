@@ -1,6 +1,5 @@
 from src.libs import wsj_lib
 from src.libs import tabulate_lib
-from src.libs import openbb_lib
 from src.libs import CBOE_lib
 from src.libs import webull_lib
 from src.libs import trackinsight_lib
@@ -27,29 +26,6 @@ def get_market_breath_table():
     if len(df_data) > 0:
         tabulate_lib.tabulate_it("MARKET VOLUME", df_data)
 
-
-def get_stock_top_gainers():
-    """
-    Retrieves the daily top gainers in the stock market.
-
-    Returns:
-        None
-    """
-    df_data = openbb_lib.get_daily_gainers()
-    if len(df_data) > 0:
-        tabulate_lib.tabulate_it("Daily gainers", df_data.reset_index())
-
-
-def get_stock_top_loosers():
-    """
-    Retrieves the daily top losers in the stock market.
-
-    Returns:
-        None
-    """
-    df_data = openbb_lib.get_daily_loosers()
-    if len(df_data) > 0:
-        tabulate_lib.tabulate_it("Daily loosers", df_data.reset_index())
 
 def get_equity_active_options():
     """
@@ -95,16 +71,6 @@ def get_index_active_options():
     else:
         print("No data!")
 
-def get_intraday_top_volume():
-    """
-    Retrieves intraday trading volume data and displays it using tabulate_lib.
-
-    Returns:
-        None
-    """
-    df_data = openbb_lib.get_intraday_trading_volume()
-    if len(df_data) > 0: 
-        tabulate_lib.tabulate_it("Intraday Top Volume", df_data)
 
 def get_stock_ratings(symbol):
     """
