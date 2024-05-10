@@ -11,11 +11,6 @@ class bcolors:
 
 def on_open(ws):
     print(f"{bcolors.White}Subscribing to Binance trade agg stream for {symbol}...")
-    ws.send(json.dumps({
-        "method": "SUBSCRIBE",
-        "params": [f"{symbol}@aggTrade"],
-        "id": 1
-    }))
 
 def on_message(ws, message):
     message = json.loads(message)
@@ -73,7 +68,7 @@ def main(ticker, thresh):
     global threshold
     threshold = thresh
 
-    socket = "wss://stream.binance.com:9443/ws"
+    socket = f"wss://fstream.binance.com/ws/{ticker.lower()}@aggTrade"
     ws = websocket.WebSocketApp(socket,
                             on_open=on_open,
                             on_message=on_message,
