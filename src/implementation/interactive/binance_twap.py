@@ -43,4 +43,5 @@ def main():
         get_binance_twap('ENAUSDT')
         get_binance_twap('WIFUSDT')
         get_binance_twap('DOGEUSDT')
+        print("___________________________________________________________")
         time.sleep(300) 
