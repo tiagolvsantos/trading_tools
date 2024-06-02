@@ -1,6 +1,6 @@
 from src.implementation.jobs import jobpedia
 from src.libs import sqlite_lib
-
+import subprocess
 
 def _run_jobs(market, run_emas=False):
     print(f"Running MA jobs {market}.....")
@@ -68,10 +68,19 @@ def process_momentum(market, to_measure):
     print(f"Running momentum report for {market} ....")
     jobpedia.process_momentum(market, to_measure)
 
-    
+def git_push():
+    try:
+        subprocess.run(["git", "add", "."], check=True)
+        subprocess.run(["git", "commit", "-m", "chore: daily update"], check=True)
+        subprocess.run(["git", "push"], check=True)
+        print("Successfully pushed to the repository.")
+    except subprocess.CalledProcessError as e:
+        print(f"Failed to push to the repository: {e}")
+
 def run_jobs():
     print("Running jobs.....")
     _run_jobs("tradfi")
     _run_jobs("crypto")
     _run_jobs_data()
+    git_push()
     print("Running jobs done!")
