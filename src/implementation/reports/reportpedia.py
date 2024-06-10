@@ -170,8 +170,8 @@ def report_rsi_oversold(symbol, market, name=""):
     elif market == "crypto":
         df_data = binance_lib.get_quotes(symbol)
         
-    rsi = technical_indicators_lib.rsi(df_data)
-    if round(float(rsi.tail(1)), 2) <= 30:
+    rsi = technical_indicators_lib.rsi(df_data,7)
+    if round(float(rsi.tail(1)), 2) <= 25:
         print(f"RSI for {name} {symbol} is Oversold {round(float(rsi.tail(1)), 2)} !")
 
 def report_rsi_overbought(symbol, market, name=""):
@@ -180,8 +180,8 @@ def report_rsi_overbought(symbol, market, name=""):
     elif market == "crypto":
         df_data =binance_lib.get_quotes(symbol)
    
-    rsi = technical_indicators_lib.rsi(df_data)
-    if round(float(rsi.tail(1)),2)>=70:
+    rsi = technical_indicators_lib.rsi(df_data,7)
+    if round(float(rsi.tail(1)),2)>=85:
         print(f"RSI for {name} {symbol} is Overbought {round(float(rsi.tail(1)),2)} !")
 
 def report_bb_bands_outside(symbol, market, name=""):
