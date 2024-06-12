@@ -10,6 +10,10 @@ def chart_cross_asset_correlation():
 def chart_cross_sector_correlation():
     chartpedia.plot_cross_asset_correlation(["SPY","QQQ","IWM","XLY","XLP","XLE","XLF","XLV","XLI","XLB","XLRE","XLK","XLC","XLU","GDX","GDXJ","MOO","FDN","KIE","KRE","TAN","JETS","IBB","OIH","SMH"], "Sector correlation matrix")
 
+def chart_stock_correlation():
+    chartpedia.plot_cross_asset_correlation(["SPY","QQQ","IWM","PEP","MSFT","NVDA","GOLD","AAPL","COST","TSLA","GME","BNKG","O"], "Stock correlation matrix")
+
+
 def chart_sp500_vix():
     chartpedia.plot_sp500_vix_ratio()
 

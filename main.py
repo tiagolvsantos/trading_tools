@@ -88,6 +88,7 @@ def charts_menu():
     inquirer.List('option',
                     message="Select an option",
                     choices=["Asset profile","Cross asset corr", "Cross sector corr",
+                             "Stock correlations",
                              "SPX/VIX ratio", "VIX 1 ATR", "Stock Flows","Crypto CVD",
                              'Options charts', 'Srategic Petroleum Reserve', 'Year on Year comparrison',
                              'SKEW','AAII', 'Market Breath','Fast RSI',
@@ -102,6 +103,8 @@ def charts_menu():
         charts_impl.chart_cross_asset_correlation()
     if charts_menu_pick["option"] == "Cross sector corr":
         charts_impl.chart_cross_sector_correlation()
+    if charts_menu_pick["option"] == "Stock correlations":
+        charts_impl.chart_stock_correlation()
     if charts_menu_pick["option"] == "SPX/VIX ratio":
         charts_impl.chart_sp500_vix()
     if charts_menu_pick["option"] == "VIX 1 ATR":

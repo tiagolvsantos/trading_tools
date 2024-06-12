@@ -383,7 +383,7 @@ def plot_cross_asset_correlation( list_corrs, title, to_tail=180):
         aspect="auto",
         color_continuous_scale="spectral",
         template="plotly_dark",
-        title=title,
+        title=f"{title} for last {to_tail} trading days",
     )
     fig.show()
 
