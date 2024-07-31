@@ -148,7 +148,7 @@ def report_volume_up_average(symbol, market, to_tail, name=""):
     last_volume = float(df_data["volume"].tail(1))
     avg_volume = float(df_data["volume"].tail(to_tail).mean())
     if last_volume > avg_volume:
-        print(f"Volume bigger than average for {name} {symbol}  Actual:{utils.print_formated_numbers(round(last_volume,2))}   Avg:{utils.print_formated_numbers(round(avg_volume,2))}")
+        print(f"Volume bigger than average for {name} ${symbol}  Actual:{utils.print_formated_numbers(round(last_volume,2))}   Avg:{utils.print_formated_numbers(round(avg_volume,2))}")
         return 1
     return 0
 
@@ -172,7 +172,7 @@ def report_rsi_oversold(symbol, market, name=""):
         
     rsi = technical_indicators_lib.rsi(df_data,7)
     if round(float(rsi.tail(1)), 2) <= 25:
-        print(f"RSI for {name} {symbol} is Oversold {round(float(rsi.tail(1)), 2)} !")
+        print(f"{name} ${symbol} is Oversold {round(float(rsi.tail(1)), 2)}")
 
 def report_rsi_overbought(symbol, market, name=""):
     if market == "tradfi":
@@ -182,7 +182,7 @@ def report_rsi_overbought(symbol, market, name=""):
    
     rsi = technical_indicators_lib.rsi(df_data,7)
     if round(float(rsi.tail(1)),2)>=85:
-        print(f"RSI for {name} {symbol} is Overbought {round(float(rsi.tail(1)),2)} !")
+        print(f"{name} ${symbol} is Overbought {round(float(rsi.tail(1)),2)}")
 
 def report_bb_bands_outside(symbol, market, name=""):
     if market == "tradfi":
