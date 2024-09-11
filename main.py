@@ -181,7 +181,7 @@ def reports_menu():
                              'Volume bigger than average TradFi',
                              'Volume bigger than average Crypto','RSI Overbought',
                              'RSI Oversold','CoT Reports',
-                             'Candles TradFi','Candles Crypto',
+                             'Candles TradFi','Candles Crypto', 'SP500 Reports',
                              'Main menu'],
                     carousel=True
                 ),
@@ -213,6 +213,8 @@ def reports_menu():
         reports_impl.process_candles("tradfi")
     if reports_menu_pick["option"] == "Candles Crypto":
         reports_impl.process_candles("crypto")
+    if reports_menu_pick["option"] == "SP500 Reports":
+        reports_impl.process_sp500_reports()
     if reports_menu_pick["option"] == "Main menu":
         main()
 

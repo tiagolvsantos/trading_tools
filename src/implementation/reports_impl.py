@@ -1,4 +1,5 @@
 from src.implementation.reports import reportpedia
+from src.implementation.reports import sp500_reports
 from src.implementation.charts import chartpedia
 from src.libs import sqlite_lib
 from src.libs import tabulate_lib
@@ -79,3 +80,5 @@ def process_candles(market):
     print(f"Running candles report for {market} ....")
     reportpedia.report_candles(market)
 
+def process_sp500_reports():
+    sp500_reports.print_sp500_reports()

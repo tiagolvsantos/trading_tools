@@ -1,6 +1,7 @@
 import pandas as pd
 import yfinance as yf
 import numpy as np
+from datetime import datetime, timezone
 
 # Define sector_etfs globally
 sector_etfs = {
@@ -165,9 +166,14 @@ def calculate_sector_52_week_diff(threshold=10):
     print("")
     print("")
 
-print("")
-print(f"### S&P 500 {period} Sector Analysis ###")
-check_sector_outperformance()
-calculate_sector_dispersion()
-calculate_sp500_sector_std()
-calculate_sector_52_week_diff()
+def print_sp500_reports():
+    # Get the current UTC time
+    current_utc_time = datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S UTC')
+    
+    print("")
+    print(f"### S&P 500 {period} Sector Analysis ### - {current_utc_time}")
+    print("")
+    check_sector_outperformance()
+    calculate_sector_dispersion()
+    calculate_sp500_sector_std()
+    calculate_sector_52_week_diff()
