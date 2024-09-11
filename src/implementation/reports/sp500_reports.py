@@ -1,7 +1,7 @@
 import pandas as pd
 import yfinance as yf
 import numpy as np
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 
 # Define sector_etfs globally
 sector_etfs = {
@@ -404,10 +404,10 @@ def calculate_market_pressure():
 
     # Get the current date and the date one month from now
     current_date = datetime.now()
-    one_month_later = current_date + timedelta(days=30)
+    diff_days = current_date + timedelta(days=1)
 
     # Filter expiration dates to be within a month from the current date
-    filtered_expirations = [date for date in expiration_dates if current_date <= datetime.strptime(date, '%Y-%m-%d') <= one_month_later]
+    filtered_expirations = [date for date in expiration_dates if current_date <= datetime.strptime(date, '%Y-%m-%d') <= diff_days]
 
     # Get the nearest expiration date within the filtered expirations
     nearest_expiration = filtered_expirations[0]
@@ -435,7 +435,7 @@ def calculate_market_pressure():
 
     # Print the total dollar value of open interest for calls and puts, and the market side
     print("")
-    print("Market Pressure Analysis for SPY Options:")
+    print("Daily Market Pressure Analysis for SPY Options:")
     print(f"Total Dollar Value of Volume for Calls: ${total_call_volume:,.2f}")
     print(f"Total Dollar Value of Volume for Puts: ${total_put_volume:,.2f}")
     print(f"Market Side Exerting More Pressure: {market_side}")
@@ -470,9 +470,11 @@ def print_sp500_reports():
     calculate_sector_dispersion()
     calculate_sp500_sector_std()
     calculate_sector_52_week_diff()
+    print("### SP500 Price Ranges ###")
     calculate_sp500_ranges_based_on_ytd_vix()
     calculate_daily_sp500_vix_rule_of_16_range()
     calculate_seasonal_sp500_range()
     calculate_sp500_levels_based_on_dxy()
     calculate_sp500_levels_based_on_10y()
+    print("### Market Signals ###")
     calculate_market_pressure()
