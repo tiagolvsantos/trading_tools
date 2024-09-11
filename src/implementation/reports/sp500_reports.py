@@ -74,7 +74,6 @@ def calculate_sp500_sector_std():
     print("")
     print("")
 
-
 def check_sector_outperformance():
     """
     Check which sectors are outperforming the S&P 500 using sector ETFs.
@@ -166,6 +165,147 @@ def calculate_sector_52_week_diff(threshold=10):
     print("")
     print("")
 
+def calculate_sp500_ranges_based_on_ytd_vix():
+    # Fetch historical VIX data
+    vix_data = yf.Ticker("^VIX").history(period=period)  # Adjust period as needed
+    vix_data.reset_index(inplace=True)  # Reset index to make 'Date' a column
+    vix_data['Date'] = vix_data['Date'].dt.date  # Strip the time component
+
+    # Fetch historical S&P 500 data
+    sp500_data = yf.Ticker("^GSPC").history(period=period)  # Adjust period as needed
+    sp500_data.reset_index(inplace=True)  # Reset index to make 'Date' a column
+    sp500_data['Date'] = sp500_data['Date'].dt.date  # Strip the time component
+
+    # Ensure both datasets have the same frequency and align date ranges
+    vix_data = vix_data[['Date', 'Close']].rename(columns={'Close': 'Close_vix'})
+    sp500_data = sp500_data[['Date', 'Close']].rename(columns={'Close': 'Close_sp500'})
+
+    # Merge data on Date
+    merged_data = pd.merge(vix_data, sp500_data, on='Date', how='inner')
+    
+    # Calculate daily returns of S&P 500
+    merged_data['SP500_Return'] = merged_data['Close_sp500'].pct_change()
+
+    # Drop rows with NaN values in SP500_Return
+    merged_data.dropna(subset=['SP500_Return'], inplace=True)
+
+    # Group by VIX levels and calculate mean and std of S&P 500 returns
+    vix_bins = [0, 15, 20, 25, 30, 35, 40, 100]
+    merged_data['VIX_Level'] = pd.cut(merged_data['Close_vix'], bins=vix_bins)
+    sp500_ranges = merged_data.groupby('VIX_Level')['SP500_Return'].agg(['mean', 'std'])
+
+    # Fetch the current S&P 500 price
+    current_sp500_price = yf.Ticker("^GSPC").history(period="1d")['Close'].iloc[0]
+
+    # Calculate potential price ranges
+    sp500_ranges['Price_Mean'] = current_sp500_price * (1 + sp500_ranges['mean'])
+    sp500_ranges['Price_Std_Dev_Up'] = current_sp500_price * (1 + sp500_ranges['mean'] + sp500_ranges['std'])
+    sp500_ranges['Price_Std_Dev_Down'] = current_sp500_price * (1 + sp500_ranges['mean'] - sp500_ranges['std'])
+
+    # Print the ranges
+    print("")
+    print(f"Current S&P 500 Price: {current_sp500_price:.2f}")
+    print(f"S&P 500 Next Moves Based on {period} VIX Levels:")
+    print(sp500_ranges[['Price_Mean', 'Price_Std_Dev_Up', 'Price_Std_Dev_Down']])
+    print("")
+
+def calculate_daily_sp500_vix_rule_of_16_range():
+    # Fetch the latest VIX data
+    vix_data = yf.Ticker("^VIX").history(period="1d")
+    vix_close = vix_data['Close'].iloc[0]
+
+    # Fetch the latest S&P 500 data
+    sp500_data = yf.Ticker("^GSPC").history(period="1d")
+    sp500_close = sp500_data['Close'].iloc[0]
+
+    # Define the range high and range low based on VIX close using the Rule of 16
+    range_percentage = vix_close / 16 / 100  # Convert VIX close to daily percentage move
+    range_high = sp500_close * (1 + range_percentage)
+    range_low = sp500_close * (1 - range_percentage)
+
+    # Print the calculated ranges
+    print("")
+    print("Daily S&P 500 Range Calculation based on VIX rule of 16:")
+    print(f"Current S&P 500 Price: {sp500_close:.2f}")
+    print(f"VIX Close: {vix_close:.2f}")
+    print(f"S&P 500 Daily Range High: {range_high:.2f}")
+    print(f"S&P 500 Daily Range Low: {range_low:.2f}")
+    print("")
+
+def calculate_seasonal_sp500_range():
+    # Fetch historical S&P 500 data for the past 5 years
+    sp500_data = yf.Ticker("^GSPC").history(period="5y")
+    sp500_data['Date'] = sp500_data.index
+
+    # Calculate daily percentage change
+    sp500_data['Daily_Return'] = sp500_data['Close'].pct_change()
+
+    # Extract month and day from the date
+    sp500_data['Month'] = sp500_data['Date'].dt.month
+    sp500_data['Day'] = sp500_data['Date'].dt.day
+
+    # Group by month and day to calculate the average daily return
+    seasonal_returns = sp500_data.groupby(['Month', 'Day'])['Daily_Return'].mean().reset_index()
+
+    # Get today's month and day
+    today = datetime.now()
+    current_month = today.month
+    current_day = today.day
+
+    # Fetch the latest S&P 500 data
+    latest_sp500_data = yf.Ticker("^GSPC").history(period="1d")
+    sp500_close = latest_sp500_data['Close'].iloc[0]
+
+    # Find the average daily return for today
+    today_return = seasonal_returns[(seasonal_returns['Month'] == current_month) & (seasonal_returns['Day'] == current_day)]['Daily_Return'].values
+
+    if len(today_return) == 0:
+        print("No historical data available for today's date.")
+        return
+
+    # Calculate the range high and range low based on the average daily return
+    range_percentage = today_return[0]
+    range_high = sp500_close * (1 + range_percentage)
+    range_low = sp500_close * (1 - range_percentage)
+
+    # Print the calculated ranges
+    print("")
+    print("Daily S&P 500 Range Calculation based on Seasonality for the past 5 years:")
+    print(f"Current S&P 500 Price: {sp500_close:.2f}")
+    print(f"Average Daily Return for {today.strftime('%B %d')}: {range_percentage * 100:.2f}%")
+    print(f"S&P 500 Daily Range High: {range_high:.2f}")
+    print(f"S&P 500 Daily Range Low: {range_low:.2f}")
+    print("")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 def print_sp500_reports():
     # Get the current UTC time
     current_utc_time = datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S UTC')
@@ -177,3 +317,6 @@ def print_sp500_reports():
     calculate_sector_dispersion()
     calculate_sp500_sector_std()
     calculate_sector_52_week_diff()
+    calculate_sp500_ranges_based_on_ytd_vix()
+    calculate_daily_sp500_vix_rule_of_16_range()
+    calculate_seasonal_sp500_range()
