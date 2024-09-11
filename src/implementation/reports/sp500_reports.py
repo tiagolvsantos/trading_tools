@@ -277,16 +277,169 @@ def calculate_seasonal_sp500_range():
     print(f"S&P 500 Daily Range Low: {range_low:.2f}")
     print("")
 
+def calculate_sp500_dxy_correlation():
+    # Fetch historical data for the S&P 500 and DXY Dollar Index for the past 5 years
+    sp500_data = yf.Ticker("^GSPC").history(period="5y")
+    sp500_data.reset_index(inplace=True) 
+    sp500_data['Date'] = sp500_data['Date'].dt.date
 
+    dxy_data = yf.Ticker("DX-Y.NYB").history(period="5y")
+    dxy_data.reset_index(inplace=True) 
+    dxy_data['Date'] = dxy_data['Date'].dt.date
 
+    # Calculate daily returns for both indices
+    sp500_data['SP500_Return'] = sp500_data['Close'].pct_change()
+    dxy_data['DXY_Return'] = dxy_data['Close'].pct_change()
 
+    # Merge the data on the date
+    merged_data = pd.merge(sp500_data[['Date', 'SP500_Return']], dxy_data[['Date', 'DXY_Return']], on='Date')
 
+    # Drop rows with NaN values
+    merged_data.dropna(inplace=True)
 
+    # Calculate the correlation between the daily returns of the S&P 500 and the DXY Dollar Index
+    correlation = merged_data['SP500_Return'].corr(merged_data['DXY_Return'])
 
+    return correlation
 
+def calculate_sp500_levels_based_on_dxy():
+    # Fetch the latest data for the S&P 500 and DXY Dollar Index, including the previous day
+    sp500_data = yf.Ticker("^GSPC").history(period="5d")
+    sp500_close = sp500_data['Close'].iloc[-1]
 
+    dxy_data = yf.Ticker("DX-Y.NYB").history(period="5d")
+    dxy_close = dxy_data['Close'].iloc[-1]
+    dxy_prev_close = dxy_data['Close'].iloc[-2]
 
+    # Calculate the latest DXY return
+    dxy_return = (dxy_close - dxy_prev_close) / dxy_prev_close
 
+    # Get the historical correlation between S&P 500 and DXY
+    correlation = calculate_sp500_dxy_correlation()
+
+    # Print the correlation value
+    print("Correlation between S&P 500 and DXY Dollar Index:")
+    print(f"{correlation:.4f}")
+    print("")
+
+    # Estimate the expected daily return for the S&P 500 based on the latest DXY return and the historical correlation
+    expected_sp500_return = correlation * dxy_return
+
+    # Calculate the possible S&P 500 levels for the day
+    sp500_high = sp500_close * (1 + expected_sp500_return)
+    sp500_low = sp500_close * (1 - expected_sp500_return)
+
+    # Print the calculated levels
+    print("Possible S&P 500 Levels for the Day based on DXY correlation:")
+    print(f"Current S&P 500 Price: {sp500_close:.2f}")
+    print(f"Expected Daily Return for S&P 500: {expected_sp500_return * 100:.2f}%")
+    print(f"S&P 500 Daily Range High: {sp500_high:.2f}")
+    print(f"S&P 500 Daily Range Low: {sp500_low:.2f}")
+    print("")
+
+def calculate_sp500_10y_correlation():
+    # Fetch historical data for the S&P 500 and US 10-Year Treasury Note Yield for the past 5 years
+    sp500_data = yf.Ticker("^GSPC").history(period="5y")
+    sp500_data.reset_index(inplace=True) 
+    sp500_data['Date'] = sp500_data['Date'].dt.date
+
+    us10y_data = yf.Ticker("^TNX").history(period="5y")
+    us10y_data.reset_index(inplace=True) 
+    us10y_data['Date'] = us10y_data['Date'].dt.date
+
+    # Calculate daily returns for both indices
+    sp500_data['SP500_Return'] = sp500_data['Close'].pct_change()
+    us10y_data['US10Y_Return'] = us10y_data['Close'].pct_change()
+
+    # Merge the data on the date
+    merged_data = pd.merge(sp500_data[['Date', 'SP500_Return']], us10y_data[['Date', 'US10Y_Return']], on='Date')
+
+    # Drop rows with NaN values
+    merged_data.dropna(inplace=True)
+
+    # Calculate the correlation between the daily returns of the S&P 500 and the US 10-Year Treasury Note Yield
+    correlation = merged_data['SP500_Return'].corr(merged_data['US10Y_Return'])
+
+    # Print the correlation value
+    print("Correlation between S&P 500 and US 10-Year Treasury Note Yield:")
+    print(f"{correlation:.4f}")
+    print("")
+
+    return correlation
+
+def calculate_sp500_levels_based_on_10y():
+    # Fetch the latest data for the S&P 500 and US 10-Year Treasury Note Yield, including the previous day
+    sp500_data = yf.Ticker("^GSPC").history(period="5d")
+    sp500_close = sp500_data['Close'].iloc[-1]
+
+    us10y_data = yf.Ticker("^TNX").history(period="5d")
+    us10y_close = us10y_data['Close'].iloc[-1]
+    us10y_prev_close = us10y_data['Close'].iloc[-2]
+
+    # Calculate the latest US 10-Year Treasury Note Yield return
+    us10y_return = (us10y_close - us10y_prev_close) / us10y_prev_close
+
+    # Get the historical correlation between S&P 500 and US 10-Year Treasury Note Yield
+    correlation = calculate_sp500_10y_correlation()
+
+    # Estimate the expected daily return for the S&P 500 based on the latest US 10-Year Treasury Note Yield return and the historical correlation
+    expected_sp500_return = correlation * us10y_return
+
+    # Calculate the possible S&P 500 levels for the day
+    sp500_high = sp500_close * (1 + expected_sp500_return)
+    sp500_low = sp500_close * (1 - expected_sp500_return)
+
+    # Print the calculated levels
+    print("Possible S&P 500 Levels for the Day based on US 10-Year Treasury Note Yield correlation:")
+    print(f"Current S&P 500 Price: {sp500_close:.2f}")
+    print(f"Expected Daily Return for S&P 500: {expected_sp500_return * 100:.2f}%")
+    print(f"S&P 500 Daily Range High: {sp500_high:.2f}")
+    print(f"S&P 500 Daily Range Low: {sp500_low:.2f}")
+    print("")
+
+def calculate_market_pressure():
+    # Fetch the options chain data for SPY
+    ticker_options = yf.Ticker("SPY")
+    expiration_dates = ticker_options.options
+
+    # Get the current date and the date one month from now
+    current_date = datetime.now()
+    one_month_later = current_date + timedelta(days=30)
+
+    # Filter expiration dates to be within a month from the current date
+    filtered_expirations = [date for date in expiration_dates if current_date <= datetime.strptime(date, '%Y-%m-%d') <= one_month_later]
+
+    # Get the nearest expiration date within the filtered expirations
+    nearest_expiration = filtered_expirations[0]
+
+    # Fetch the options chain for the nearest expiration date
+    options = ticker_options.option_chain(nearest_expiration)
+
+    # Combine calls and puts data
+    calls = options.calls
+    puts = options.puts
+
+    # Calculate the total dollar value of open interest at each strike price for calls and puts
+    calls['Total_Call_Volume'] = calls['volume'] * calls['strike']
+    puts['Total_Put_Volume'] = puts['volume'] * puts['strike']
+
+    # Sum the total dollar value of open interest for calls and puts
+    total_call_volume = calls['Total_Call_Volume'].sum()
+    total_put_volume = puts['Total_Put_Volume'].sum()
+
+    # Determine which side is exerting more pressure
+    if total_call_volume > total_put_volume:
+        market_side = "Calls"
+    else:
+        market_side = "Puts"
+
+    # Print the total dollar value of open interest for calls and puts, and the market side
+    print("")
+    print("Market Pressure Analysis for SPY Options:")
+    print(f"Total Dollar Value of Volume for Calls: ${total_call_volume:,.2f}")
+    print(f"Total Dollar Value of Volume for Puts: ${total_put_volume:,.2f}")
+    print(f"Market Side Exerting More Pressure: {market_side}")
+    print("")
 
 
 
@@ -320,3 +473,6 @@ def print_sp500_reports():
     calculate_sp500_ranges_based_on_ytd_vix()
     calculate_daily_sp500_vix_rule_of_16_range()
     calculate_seasonal_sp500_range()
+    calculate_sp500_levels_based_on_dxy()
+    calculate_sp500_levels_based_on_10y()
+    calculate_market_pressure()
