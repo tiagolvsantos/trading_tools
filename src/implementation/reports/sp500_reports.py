@@ -441,11 +441,57 @@ def calculate_market_pressure():
     print(f"Market Side Exerting More Pressure: {market_side}")
     print("")
 
+def calculate_mag7_weight_on_sp500():
+    # Define the MAG 7 stocks
+    mag7_tickers = ["AAPL", "MSFT", "GOOGL", "AMZN", "META", "TSLA", "NVDA"]
 
+    # Fetch historical data for the S&P 500 and MAG 7 stocks for the past year
+    sp500_data = yf.Ticker("^GSPC").history(period="1y")
+    sp500_data.reset_index(inplace=True)  # Reset index to make 'Date' a column
 
+    mag7_data = {ticker: yf.Ticker(ticker).history(period="1y").reset_index() for ticker in mag7_tickers}
 
+    # Calculate daily returns for the S&P 500
+    sp500_data['SP500_Return'] = sp500_data['Close'].pct_change()
 
+    # Calculate daily returns for each of the MAG 7 stocks
+    for ticker in mag7_tickers:
+        mag7_data[ticker]['Return'] = mag7_data[ticker]['Close'].pct_change()
 
+    # Fetch the latest market capitalization for each of the MAG 7 stocks
+    mag7_market_caps = {ticker: yf.Ticker(ticker).info['marketCap'] for ticker in mag7_tickers}
+
+    # Calculate the total market capitalization of the MAG 7 stocks
+    total_market_cap = sum(mag7_market_caps.values())
+
+    # Calculate the weighted average return of the MAG 7 stocks
+    weighted_returns = pd.DataFrame()
+    for ticker in mag7_tickers:
+        weight = mag7_market_caps[ticker] / total_market_cap
+        weighted_returns[ticker] = mag7_data[ticker]['Return'] * weight
+
+    weighted_avg_return = weighted_returns.sum(axis=1)
+
+    # Merge the S&P 500 returns with the weighted average return of the MAG 7 stocks
+    merged_data = pd.DataFrame({
+        'SP500_Return': sp500_data['SP500_Return'],
+        'MAG7_Weighted_Return': weighted_avg_return
+    }).dropna()
+
+    # Calculate the correlation between the S&P 500 return and the weighted average return of the MAG 7 stocks
+    correlation = merged_data['SP500_Return'].corr(merged_data['MAG7_Weighted_Return'])
+
+    # Print the correlation value
+    print("Correlation between S&P 500 and MAG 7 Weighted Average Return:")
+    print(f"{correlation:.4f}")
+    print("")
+
+    # Print the daily performance for the last day for the MAG 7 stocks in percentage
+    print("Daily Performance for the MAG 7 Stocks (Last Day):")
+    for ticker in mag7_tickers:
+        last_return = mag7_data[ticker]['Return'].dropna().iloc[-1] * 100  # Get the last available return and convert to percentage
+        print(f"{ticker} Last Day Return: {last_return:.2f}%")
+    print("")
 
 
 
@@ -470,6 +516,7 @@ def print_sp500_reports():
     calculate_sector_dispersion()
     calculate_sp500_sector_std()
     calculate_sector_52_week_diff()
+    calculate_mag7_weight_on_sp500()
     print("### SP500 Price Ranges ###")
     calculate_sp500_ranges_based_on_ytd_vix()
     calculate_daily_sp500_vix_rule_of_16_range()
