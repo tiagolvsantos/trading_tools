@@ -494,7 +494,49 @@ def calculate_mag7_weight_on_sp500():
     print("")
 
 
+def classify_risk_regime():
+    # Fetch historical data for the S&P 500 and VIX for the past year
+    sp500_data = yf.Ticker("^GSPC").history(period="1y")
+    vix_data = yf.Ticker("^VIX").history(period="1y")
 
+    # Calculate the 50-day and 200-day moving averages for the S&P 500
+    sp500_data['50_MA'] = sp500_data['Close'].rolling(window=50).mean()
+    sp500_data['200_MA'] = sp500_data['Close'].rolling(window=200).mean()
+
+    # Determine the market structure based on moving averages
+    sp500_data['Market_Structure'] = sp500_data['50_MA'] > sp500_data['200_MA']
+
+    # Determine the current market structure
+    current_market_structure = sp500_data['Market_Structure'].iloc[-1]
+
+    # Determine the current volatility level based on the VIX
+    current_vix = vix_data['Close'].iloc[-1]
+
+    # Define thresholds for high, medium, and low volatility
+    high_volatility_threshold = 20  # Example threshold for high volatility
+    low_volatility_threshold = 15   # Example threshold for low volatility
+
+    # Classify the regime based on market structure and volatility
+    if current_market_structure:
+        if current_vix < low_volatility_threshold:
+            regime = "Risk-On"
+        elif current_vix < high_volatility_threshold:
+            regime = "Neutral"
+        else:
+            regime = "Risk-Off"
+    else:
+        if current_vix < low_volatility_threshold:
+            regime = "Neutral"
+        else:
+            regime = "Risk-Off"
+
+    # Print the classification
+    print("")
+    print("Current Market Regime Classification:")
+    print(f"Market Structure (50_MA > 200_MA): {current_market_structure}")
+    print(f"Current VIX Level: {current_vix:.2f}")
+    print(f"Regime: {regime}")
+    print("")
 
 
 
@@ -525,3 +567,4 @@ def print_sp500_reports():
     calculate_sp500_levels_based_on_10y()
     print("### Market Signals ###")
     calculate_market_pressure()
+    classify_risk_regime()
