@@ -404,7 +404,7 @@ def calculate_market_pressure():
 
     # Get the current date and the date one month from now
     current_date = datetime.now()
-    diff_days = current_date + timedelta(days=1)
+    diff_days = current_date + timedelta(days=5)
 
     # Filter expiration dates to be within a month from the current date
     filtered_expirations = [date for date in expiration_dates if current_date <= datetime.strptime(date, '%Y-%m-%d') <= diff_days]
