@@ -15,7 +15,14 @@ sector_etfs = {
     'Materials': 'XLB',
     'Utilities': 'XLU',
     'Real Estate': 'XLRE',
-    'Communication Services': 'XLC'
+    'Communication Services': 'XLC',
+    'Semiconductors': 'SOXX',
+    'Biotechnology': 'IBB',
+    'Gold Miners': 'GDX',
+    'Oil & Gas Exploration & Production': 'XOP',
+    'Homebuilders': 'XHB',
+    'Cybersecurity': 'HACK',
+    'Agribusiness': 'MOO'
 }
 
 period = 'YTD'
