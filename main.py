@@ -20,8 +20,8 @@ def tradfi_menu():
     inquirer.List('option',
                     message="Select an option",
                     choices=['Market Breath', 'Most active equity Options', 'Most active index options',
-                             'Stock ratings','ETF top holdings','Options statistics','Options ratios','Fear Greed Index',
-                             'WSB Trending stocks for the last 12h', "Stock News", "Stock insider trading","SP500 stocks technicals",
+                             'ETF top holdings','Options statistics','Options ratios','Fear Greed Index',
+                             'WSB Trending stocks for the last 12h', "Stock News","SP500 stocks technicals",
                              'Main menu'],
                     carousel=True
                 ),
@@ -33,12 +33,8 @@ def tradfi_menu():
         tradfi_impl.get_most_active_equity_options()
     if tradfi_menu["option"] == "Most active index options":
         tradfi_impl.get_most_active_index_options()
-    if tradfi_menu["option"] == "Stock ratings":
-        tradfi_impl.get_stock_ratings(input("Select a symbol:").upper())
     if tradfi_menu["option"] == "Stock News":
         tradfi_impl.get_stock_news(input("Select a symbol:"))
-    if tradfi_menu["option"] == "Stock insider trading":
-        tradfi_impl.get_stock_insider_trading(input("Select a symbol:").upper())
     if tradfi_menu["option"] == "SP500 stocks technicals":
         tradfi_impl.get_sp500_technicals()
     if tradfi_menu["option"] == "ETF top holdings":

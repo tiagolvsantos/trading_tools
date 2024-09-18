@@ -1,7 +1,6 @@
 from src.libs import wsj_lib
 from src.libs import tabulate_lib
 from src.libs import CBOE_lib
-from src.libs import webull_lib
 from src.libs import trackinsight_lib
 from src.libs import swaggystocks_lib
 from src.libs import finviz_lib
@@ -71,37 +70,6 @@ def get_index_active_options():
     else:
         print("No data!")
 
-
-def get_stock_ratings(symbol):
-    """
-    Retrieves and prints the market ratings and price targets for a given stock symbol.
-
-    Args:
-        symbol (str): The stock symbol to retrieve ratings for.
-
-    Returns:
-        None
-    """
-    data = webull_lib.get_analysis(symbol.upper())
-    if len(data) > 1 and not ('code' in data and data['code'] == 'INTERNAL_SERVER_ERROR'):
-        # Your code here
-        print(f"MARKET RATING FOR {symbol}")
-        print("----------------------------------------------------------------------------")
-        print(f"""Market rating: {data['rating']["ratingAnalysis"]}""")
-        print(
-            f"""     Under Perform: {data['rating']["ratingSpread"]["underPerform"]}"""
-        )
-        print(f"""     Buy: {data['rating']["ratingSpread"]["buy"]}""")
-        print(f"""     Sell: {data['rating']["ratingSpread"]["sell"]}""")
-        print(f"""     Strong Buy: {data['rating']["ratingSpread"]["strongBuy"]}""")
-        print(f"""     Hold: {data['rating']["ratingSpread"]["hold"]}""")
-        print("")
-        print("----------------------------------------------------------------------------")
-        print("PRICE TARGETS:")
-        print(
-            f"""Low: {data['targetPrice']["low"]}   High: {data['targetPrice']["high"]}   Mean: {data['targetPrice']["mean"]}   Current: {data['targetPrice']["current"]}"""
-        )
-
 def get_etf_top_holdings(symbol):
     """
     Retrieves the top holdings of an ETF based on its symbol.
@@ -143,16 +111,27 @@ def _get_options_statistics_compute_data(df_data, index):
     tabulate_lib.tabulate_it("CBOE Options Ratios",df_data)
 
 def get_wsb_trending_stocks():
-    tabulate_lib.tabulate_it("WSB Trending stocks for the last 12h", swaggystocks_lib.get_wsb_buzz_stocks()) if swaggystocks_lib.get_wsb_buzz_stocks() else None
+    wsb_buzz_stocks_df = swaggystocks_lib.get_wsb_buzz_stocks()
+
+    if not wsb_buzz_stocks_df.empty:
+        tabulate_lib.tabulate_it("WSB Trending stocks for the last 12h", wsb_buzz_stocks_df)
 
 def get_stock_news(symbol):
-    tabulate_lib.tabulate_it(f'News for {symbol}', finviz_lib.symbol_news(symbol)) if finviz_lib.symbol_news(symbol) else None
+    news_df = finviz_lib.symbol_news(symbol)
 
-def get_stock_insider_trading(symbol):
-    tabulate_lib.tabulate_it(f'Insider trading for {symbol}', finviz_lib.symbol_insider_trading(symbol)) if finviz_lib.symbol_insider_trading(symbol) else None
+    if not news_df.empty:
+        tabulate_lib.tabulate_it(f'News for {symbol}', news_df)
 
 def get_sp500_technicals():
-    tabulate_lib.tabulate_it('SP500 technicals', finviz_lib.get_technicals()) if finviz_lib.get_technicals() else None
+    df = finviz_lib.get_technicals()
+    if not df.empty:
+        for column in ['Change', 'from Open', 'Gap']:
+            if column in df.columns:
+                # Remove any existing percentage signs and convert to float
+                df[column] = df[column].str.replace('%', '').astype(float)
+                # Format as percentage with two decimal places and add '%'
+                df[column] = df[column].apply(lambda x: f"{x:.2f}%")
+        tabulate_lib.tabulate_it('SP500 technicals', df)
 
 def get_options_ratios():
     """

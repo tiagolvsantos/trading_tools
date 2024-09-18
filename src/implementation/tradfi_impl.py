@@ -9,9 +9,6 @@ def get_most_active_equity_options():
 def get_most_active_index_options():
     tradfipedia.get_index_active_options()
 
-def get_stock_ratings(symbol):
-    tradfipedia.get_stock_ratings(symbol)
-
 def get_etf_top_holdings(symbol):
     tradfipedia.get_etf_top_holdings(symbol)
 
