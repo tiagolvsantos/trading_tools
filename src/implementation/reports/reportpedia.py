@@ -200,10 +200,10 @@ def report_bb_bands_outside(symbol, market, name=""):
     avg_volume = round(df_bb["volume"].mean(),2)
 
     if float(df_bb.tail(1)["close"]) > float(df_bb.tail(1)["UpperBand"]) and float(df_bb.tail(1)["volume"]) > avg_volume:
-        tabulate_lib.print_it_line_red(f"Price for {symbol} is above Upper Bollinger Band.")
+        tabulate_lib.print_it_line_red(f"Price for ${symbol} is above Upper Bollinger Band.")
         return 2
     if float(df_bb.tail(1)["close"]) < float(df_bb.tail(1)["LowerBand"]) and float(df_bb.tail(1)["volume"]) > avg_volume:
-        tabulate_lib.print_it_line_green(f"Price for {symbol} is below Lower Bollinger Band.")
+        tabulate_lib.print_it_line_green(f"Price for ${symbol} is below Lower Bollinger Band.")
         return 1
 
 def report_candles(market:str):

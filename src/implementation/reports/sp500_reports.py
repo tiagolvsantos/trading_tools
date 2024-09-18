@@ -26,7 +26,8 @@ sector_etfs = {
 }
 
 period = 'YTD'
-
+asset = "$SPX"
+asset_ticker ="^GSPC"
 def __get_performance(ticker, period=period):
     """
     Fetch the performance data for a given ticker over a specified period.
@@ -61,25 +62,32 @@ def __get_52_week_high_low(ticker):
     return high_52_week, low_52_week, current_price
 
 def calculate_sp500_sector_std():
-    # Dictionary to store standard deviations
+    # Dictionary to store standard deviations and ETF tickers
     sector_std = {}
 
     # Fetch historical data and calculate standard deviation of returns
     for sector, etf in sector_etfs.items():
         data = yf.Ticker(etf).history(period=period)  # Adjust period as needed
         returns = data['Close'].pct_change().dropna()
-        sector_std[sector] = returns.std()
+        sector_std[sector] = (returns.std(), etf)
 
     # Convert to DataFrame for pretty printing
-    sector_std_df = pd.DataFrame.from_dict(sector_std, orient='index', columns=['Standard Deviation'])
+    sector_std_df = pd.DataFrame.from_dict(sector_std, orient='index', columns=['Standard Deviation', 'ETF'])
     sector_std_df.index.name = 'Sector'
+    sector_std_df.reset_index(inplace=True)
+    sector_std_df = sector_std_df[['ETF', 'Sector', 'Standard Deviation']]
     sector_std_df = sector_std_df.sort_values(by='Standard Deviation', ascending=False)
+
+    # Prepend $ to ETF tickers
+    sector_std_df['ETF'] = sector_std_df['ETF'].apply(lambda x: f'${x}')
 
     print("Higher standard deviation means higher volatility and risk, while lower standard deviation means lower volatility and risk.")
     print("This information helps investors understand the risk associated with different sectors and make informed investment decisions.")
-    print(sector_std_df.to_string())
+    print("")
+    print(sector_std_df.to_string(index=False))
     print("")
     print("")
+
 
 def check_sector_outperformance():
     """
@@ -88,24 +96,25 @@ def check_sector_outperformance():
     Returns:
     list: A sorted list of sectors that are outperforming the S&P 500, from higher to lower performance.
     """
-    sp500_ticker = '^GSPC'
+    sp500_ticker = asset_ticker
 
     sp500_performance = __get_performance(sp500_ticker)
     sector_performance = {sector: __get_performance(ticker) for sector, ticker in sector_etfs.items()}
 
-    print(f"S&P 500 Performance: {sp500_performance:.2f}%")
+    print(f"{asset} Performance: {sp500_performance:.2f}% {period}")
     print("")
     sorted_sector_performance = sorted(sector_performance.items(), key=lambda item: item[1], reverse=True)
     for sector, performance in sorted_sector_performance:
-        print(f"{sector} Performance: {performance:.2f}%")
+        ticker = sector_etfs[sector]
+        print(f"${ticker} {sector} Performance: {performance:.2f}%")
 
-    outperforming_sectors = {sector: performance for sector, performance in sector_performance.items() if performance > sp500_performance}
-    sorted_outperforming_sectors = sorted(outperforming_sectors.items(), key=lambda item: item[1], reverse=True)
+    outperforming_sectors = {sector: (performance, sector_etfs[sector]) for sector, performance in sector_performance.items() if performance > sp500_performance}
+    sorted_outperforming_sectors = sorted(outperforming_sectors.items(), key=lambda item: item[1][0], reverse=True)
 
     print("")
     print("Sectors outperforming the S&P 500 (sorted from higher to lower performance):")
-    for sector, performance in sorted_outperforming_sectors:
-        print(f"{sector}: {performance:.2f}%")
+    for sector, (performance, ticker) in sorted_outperforming_sectors:
+        print(f"${ticker} {sector}: {performance:.2f}%")
     print("")
     print("")
 
@@ -155,6 +164,7 @@ def calculate_sector_52_week_diff(threshold=10):
         is_buy_opportunity = pct_diff_to_low <= threshold
 
         data.append({
+            'Ticker': ticker,
             'Sector': sector,
             '52-Week High': high_52_week,
             '52-Week Low': low_52_week,
@@ -167,6 +177,8 @@ def calculate_sector_52_week_diff(threshold=10):
         })
 
     df = pd.DataFrame(data)
+    # Prepend $ to Ticker values
+    df['Ticker'] = df['Ticker'].apply(lambda x: f'${x}')
     print("Sector 52-Week Differences and Buy Opportunities based on R:R:")
     print(df)
     print("")
@@ -179,7 +191,7 @@ def calculate_sp500_ranges_based_on_ytd_vix():
     vix_data['Date'] = vix_data['Date'].dt.date  # Strip the time component
 
     # Fetch historical S&P 500 data
-    sp500_data = yf.Ticker("^GSPC").history(period=period)  # Adjust period as needed
+    sp500_data = yf.Ticker(asset_ticker).history(period=period)  # Adjust period as needed
     sp500_data.reset_index(inplace=True)  # Reset index to make 'Date' a column
     sp500_data['Date'] = sp500_data['Date'].dt.date  # Strip the time component
 
@@ -202,7 +214,7 @@ def calculate_sp500_ranges_based_on_ytd_vix():
     sp500_ranges = merged_data.groupby('VIX_Level')['SP500_Return'].agg(['mean', 'std'])
 
     # Fetch the current S&P 500 price
-    current_sp500_price = yf.Ticker("^GSPC").history(period="1d")['Close'].iloc[0]
+    current_sp500_price = yf.Ticker(asset_ticker).history(period="1d")['Close'].iloc[0]
 
     # Calculate potential price ranges
     sp500_ranges['Price_Mean'] = current_sp500_price * (1 + sp500_ranges['mean'])
@@ -211,8 +223,8 @@ def calculate_sp500_ranges_based_on_ytd_vix():
 
     # Print the ranges
     print("")
-    print(f"Current S&P 500 Price: {current_sp500_price:.2f}")
-    print(f"S&P 500 Next Moves Based on {period} VIX Levels:")
+    print(f"Current {asset} Price: {current_sp500_price:.2f}")
+    print(f"{asset} Next Moves Based on {period} VIX Levels:")
     print(sp500_ranges[['Price_Mean', 'Price_Std_Dev_Up', 'Price_Std_Dev_Down']])
     print("")
 
@@ -222,7 +234,7 @@ def calculate_daily_sp500_vix_rule_of_16_range():
     vix_close = vix_data['Close'].iloc[0]
 
     # Fetch the latest S&P 500 data
-    sp500_data = yf.Ticker("^GSPC").history(period="1d")
+    sp500_data = yf.Ticker(asset_ticker).history(period="1d")
     sp500_close = sp500_data['Close'].iloc[0]
 
     # Define the range high and range low based on VIX close using the Rule of 16
@@ -232,16 +244,16 @@ def calculate_daily_sp500_vix_rule_of_16_range():
 
     # Print the calculated ranges
     print("")
-    print("Daily S&P 500 Range Calculation based on VIX rule of 16:")
-    print(f"Current S&P 500 Price: {sp500_close:.2f}")
+    print(f"Daily {asset} Range Calculation based on VIX rule of 16:")
+    print(f"Current {asset} Price: {sp500_close:.2f}")
     print(f"VIX Close: {vix_close:.2f}")
-    print(f"S&P 500 Daily Range High: {range_high:.2f}")
-    print(f"S&P 500 Daily Range Low: {range_low:.2f}")
+    print(f"{asset} Daily Range High: {range_high:.2f}")
+    print(f"{asset} Daily Range Low: {range_low:.2f}")
     print("")
 
 def calculate_seasonal_sp500_range():
     # Fetch historical S&P 500 data for the past 5 years
-    sp500_data = yf.Ticker("^GSPC").history(period="5y")
+    sp500_data = yf.Ticker(asset_ticker).history(period="5y")
     sp500_data['Date'] = sp500_data.index
 
     # Calculate daily percentage change
@@ -260,7 +272,7 @@ def calculate_seasonal_sp500_range():
     current_day = today.day
 
     # Fetch the latest S&P 500 data
-    latest_sp500_data = yf.Ticker("^GSPC").history(period="1d")
+    latest_sp500_data = yf.Ticker(asset_ticker).history(period="1d")
     sp500_close = latest_sp500_data['Close'].iloc[0]
 
     # Find the average daily return for today
@@ -272,21 +284,24 @@ def calculate_seasonal_sp500_range():
 
     # Calculate the range high and range low based on the average daily return
     range_percentage = today_return[0]
-    range_high = sp500_close * (1 + range_percentage)
-    range_low = sp500_close * (1 - range_percentage)
-
+    if range_percentage >= 0:
+        range_high = sp500_close * (1 + range_percentage)
+        range_low = sp500_close * (1 - range_percentage)
+    else:
+        range_high = sp500_close * (1 - range_percentage)
+        range_low = sp500_close * (1 + range_percentage)
     # Print the calculated ranges
     print("")
-    print("Daily S&P 500 Range Calculation based on Seasonality for the past 5 years:")
-    print(f"Current S&P 500 Price: {sp500_close:.2f}")
+    print(f"Daily S&P 500 Range Calculation based on Seasonality for the past 5 years:")
+    print(f"Current {asset} Price: {sp500_close:.2f}")
     print(f"Average Daily Return for {today.strftime('%B %d')}: {range_percentage * 100:.2f}%")
-    print(f"S&P 500 Daily Range High: {range_high:.2f}")
-    print(f"S&P 500 Daily Range Low: {range_low:.2f}")
+    print(f"{asset} Daily Range High: {range_high:.2f}")
+    print(f"{asset} Daily Range Low: {range_low:.2f}")
     print("")
 
 def calculate_sp500_dxy_correlation():
     # Fetch historical data for the S&P 500 and DXY Dollar Index for the past 5 years
-    sp500_data = yf.Ticker("^GSPC").history(period="5y")
+    sp500_data = yf.Ticker(asset_ticker).history(period="5y")
     sp500_data.reset_index(inplace=True) 
     sp500_data['Date'] = sp500_data['Date'].dt.date
 
@@ -311,7 +326,7 @@ def calculate_sp500_dxy_correlation():
 
 def calculate_sp500_levels_based_on_dxy():
     # Fetch the latest data for the S&P 500 and DXY Dollar Index, including the previous day
-    sp500_data = yf.Ticker("^GSPC").history(period="5d")
+    sp500_data = yf.Ticker(asset_ticker).history(period="5d")
     sp500_close = sp500_data['Close'].iloc[-1]
 
     dxy_data = yf.Ticker("DX-Y.NYB").history(period="5d")
@@ -325,7 +340,7 @@ def calculate_sp500_levels_based_on_dxy():
     correlation = calculate_sp500_dxy_correlation()
 
     # Print the correlation value
-    print("Correlation between S&P 500 and DXY Dollar Index:")
+    print("Correlation between {asset} and DXY Dollar Index:")
     print(f"{correlation:.4f}")
     print("")
 
@@ -333,20 +348,24 @@ def calculate_sp500_levels_based_on_dxy():
     expected_sp500_return = correlation * dxy_return
 
     # Calculate the possible S&P 500 levels for the day
-    sp500_high = sp500_close * (1 + expected_sp500_return)
-    sp500_low = sp500_close * (1 - expected_sp500_return)
+    if expected_sp500_return >= 0:
+        sp500_high = sp500_close * (1 + expected_sp500_return)
+        sp500_low = sp500_close * (1 - expected_sp500_return)
+    else:
+        sp500_high = sp500_close * (1 - expected_sp500_return)
+        sp500_low = sp500_close * (1 + expected_sp500_return)
 
     # Print the calculated levels
-    print("Possible S&P 500 Levels for the Day based on DXY correlation:")
-    print(f"Current S&P 500 Price: {sp500_close:.2f}")
-    print(f"Expected Daily Return for S&P 500: {expected_sp500_return * 100:.2f}%")
-    print(f"S&P 500 Daily Range High: {sp500_high:.2f}")
-    print(f"S&P 500 Daily Range Low: {sp500_low:.2f}")
+    print("Possible {asset} Levels for the Day based on DXY correlation:")
+    print(f"Current {asset} Price: {sp500_close:.2f}")
+    print(f"Expected Daily Return for {asset}: {expected_sp500_return * 100:.2f}%")
+    print(f"{asset} Daily Range High: {sp500_high:.2f}")
+    print(f"{asset} Daily Range Low: {sp500_low:.2f}")
     print("")
 
 def calculate_sp500_10y_correlation():
     # Fetch historical data for the S&P 500 and US 10-Year Treasury Note Yield for the past 5 years
-    sp500_data = yf.Ticker("^GSPC").history(period="5y")
+    sp500_data = yf.Ticker(asset_ticker).history(period="5y")
     sp500_data.reset_index(inplace=True) 
     sp500_data['Date'] = sp500_data['Date'].dt.date
 
@@ -376,7 +395,7 @@ def calculate_sp500_10y_correlation():
 
 def calculate_sp500_levels_based_on_10y():
     # Fetch the latest data for the S&P 500 and US 10-Year Treasury Note Yield, including the previous day
-    sp500_data = yf.Ticker("^GSPC").history(period="5d")
+    sp500_data = yf.Ticker(asset_ticker).history(period="5d")
     sp500_close = sp500_data['Close'].iloc[-1]
 
     us10y_data = yf.Ticker("^TNX").history(period="5d")
@@ -393,15 +412,19 @@ def calculate_sp500_levels_based_on_10y():
     expected_sp500_return = correlation * us10y_return
 
     # Calculate the possible S&P 500 levels for the day
-    sp500_high = sp500_close * (1 + expected_sp500_return)
-    sp500_low = sp500_close * (1 - expected_sp500_return)
+    if expected_sp500_return >= 0:
+        sp500_high = sp500_close * (1 + expected_sp500_return)
+        sp500_low = sp500_close * (1 - expected_sp500_return)
+    else:
+        sp500_high = sp500_close * (1 - expected_sp500_return)
+        sp500_low = sp500_close * (1 + expected_sp500_return)
 
     # Print the calculated levels
-    print("Possible S&P 500 Levels for the Day based on US 10-Year Treasury Note Yield correlation:")
-    print(f"Current S&P 500 Price: {sp500_close:.2f}")
-    print(f"Expected Daily Return for S&P 500: {expected_sp500_return * 100:.2f}%")
-    print(f"S&P 500 Daily Range High: {sp500_high:.2f}")
-    print(f"S&P 500 Daily Range Low: {sp500_low:.2f}")
+    print("Possible {asset} Levels for the Day based on US 10-Year Treasury Note Yield correlation:")
+    print(f"Current {asset} Price: {sp500_close:.2f}")
+    print(f"Expected Daily Return for {asset}: {expected_sp500_return * 100:.2f}%")
+    print(f"{asset} Daily Range High: {sp500_high:.2f}")
+    print(f"{asset} Daily Range Low: {sp500_low:.2f}")
     print("")
 
 def calculate_market_pressure():
@@ -453,7 +476,7 @@ def calculate_mag7_weight_on_sp500():
     mag7_tickers = ["AAPL", "MSFT", "GOOGL", "AMZN", "META", "TSLA", "NVDA"]
 
     # Fetch historical data for the S&P 500 and MAG 7 stocks for the past year
-    sp500_data = yf.Ticker("^GSPC").history(period="1y")
+    sp500_data = yf.Ticker(asset_ticker).history(period="1y")
     sp500_data.reset_index(inplace=True)  # Reset index to make 'Date' a column
 
     mag7_data = {ticker: yf.Ticker(ticker).history(period="1y").reset_index() for ticker in mag7_tickers}
@@ -489,7 +512,7 @@ def calculate_mag7_weight_on_sp500():
     correlation = merged_data['SP500_Return'].corr(merged_data['MAG7_Weighted_Return'])
 
     # Print the correlation value
-    print("Correlation between S&P 500 and MAG 7 Weighted Average Return:")
+    print("Correlation between {asset} and MAG 7 Weighted Average Return:")
     print(f"{correlation:.4f}")
     print("")
 
@@ -497,13 +520,13 @@ def calculate_mag7_weight_on_sp500():
     print("Daily Performance for the MAG 7 Stocks (Last Day):")
     for ticker in mag7_tickers:
         last_return = mag7_data[ticker]['Return'].dropna().iloc[-1] * 100  # Get the last available return and convert to percentage
-        print(f"{ticker} Last Day Return: {last_return:.2f}%")
+        print(f"${ticker} Last Day Return: {last_return:.2f}%")
     print("")
 
 
 def classify_risk_regime():
     # Fetch historical data for the S&P 500 and VIX for the past year
-    sp500_data = yf.Ticker("^GSPC").history(period="1y")
+    sp500_data = yf.Ticker(asset_ticker).history(period="1y")
     vix_data = yf.Ticker("^VIX").history(period="1y")
 
     # Calculate the 50-day and 200-day moving averages for the S&P 500
@@ -559,7 +582,7 @@ def print_sp500_reports():
     current_utc_time = datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S UTC')
     
     print("")
-    print(f"### S&P 500 {period} Sector Analysis ### - {current_utc_time}")
+    print(f"### {asset} {period} Sector Analysis ### - {current_utc_time}")
     print("")
     check_sector_outperformance()
     calculate_sector_dispersion()
