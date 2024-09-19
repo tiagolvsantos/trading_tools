@@ -117,7 +117,7 @@ def get_wsb_trending_stocks():
         tabulate_lib.tabulate_it("WSB Trending stocks for the last 12h", wsb_buzz_stocks_df)
 
 def get_stock_news(symbol):
-    news_df = finviz_lib.symbol_news(symbol)
+    news_df = finviz_lib.symbol_news(symbol).head(5)
 
     if not news_df.empty:
         tabulate_lib.tabulate_it(f'News for {symbol}', news_df)
