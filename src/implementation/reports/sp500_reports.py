@@ -340,7 +340,7 @@ def calculate_sp500_levels_based_on_dxy():
     correlation = calculate_sp500_dxy_correlation()
 
     # Print the correlation value
-    print("Correlation between {asset} and DXY Dollar Index:")
+    print(f"Correlation between {asset} and DXY Dollar Index:")
     print(f"{correlation:.4f}")
     print("")
 
@@ -356,7 +356,7 @@ def calculate_sp500_levels_based_on_dxy():
         sp500_low = sp500_close * (1 + expected_sp500_return)
 
     # Print the calculated levels
-    print("Possible {asset} Levels for the Day based on DXY correlation:")
+    print(f"Possible {asset} Levels for the Day based on DXY correlation:")
     print(f"Current {asset} Price: {sp500_close:.2f}")
     print(f"Expected Daily Return for {asset}: {expected_sp500_return * 100:.2f}%")
     print(f"{asset} Daily Range High: {sp500_high:.2f}")
@@ -387,7 +387,7 @@ def calculate_sp500_10y_correlation():
     correlation = merged_data['SP500_Return'].corr(merged_data['US10Y_Return'])
 
     # Print the correlation value
-    print("Correlation between S&P 500 and US 10-Year Treasury Note Yield:")
+    print(f"Correlation between S&P 500 and US 10-Year Treasury Note Yield:")
     print(f"{correlation:.4f}")
     print("")
 
@@ -420,7 +420,7 @@ def calculate_sp500_levels_based_on_10y():
         sp500_low = sp500_close * (1 + expected_sp500_return)
 
     # Print the calculated levels
-    print("Possible {asset} Levels for the Day based on US 10-Year Treasury Note Yield correlation:")
+    print(f"Possible {asset} Levels for the Day based on US 10-Year Treasury Note Yield correlation:")
     print(f"Current {asset} Price: {sp500_close:.2f}")
     print(f"Expected Daily Return for {asset}: {expected_sp500_return * 100:.2f}%")
     print(f"{asset} Daily Range High: {sp500_high:.2f}")
@@ -465,7 +465,7 @@ def calculate_market_pressure():
 
     # Print the total dollar value of open interest for calls and puts, and the market side
     print("")
-    print("Daily Market Pressure Analysis for SPY Options:")
+    print("Daily Market Pressure Analysis for $SPY Options:")
     print(f"Total Dollar Value of Volume for Calls: ${total_call_volume:,.2f}")
     print(f"Total Dollar Value of Volume for Puts: ${total_put_volume:,.2f}")
     print(f"Market Side Exerting More Pressure: {market_side}")
@@ -512,7 +512,7 @@ def calculate_mag7_weight_on_sp500():
     correlation = merged_data['SP500_Return'].corr(merged_data['MAG7_Weighted_Return'])
 
     # Print the correlation value
-    print("Correlation between {asset} and MAG 7 Weighted Average Return:")
+    print(f"Correlation between {asset} and MAG 7 Weighted Average Return:")
     print(f"{correlation:.4f}")
     print("")
 
@@ -564,7 +564,7 @@ def classify_risk_regime():
     print("")
     print("Current Market Regime Classification:")
     print(f"Market Structure (50_MA > 200_MA): {current_market_structure}")
-    print(f"Current VIX Level: {current_vix:.2f}")
+    print(f"Current $VIX Level: {current_vix:.2f}")
     print(f"Regime: {regime}")
     print("")
 
