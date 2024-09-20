@@ -1,6 +1,7 @@
 import pandas as pd
 import yfinance as yf
 import numpy as np
+import tabulate as tb
 from datetime import datetime, timezone, timedelta
 
 # Define sector_etfs globally
@@ -84,7 +85,7 @@ def calculate_sp500_sector_std():
     print("Higher standard deviation means higher volatility and risk, while lower standard deviation means lower volatility and risk.")
     print("This information helps investors understand the risk associated with different sectors and make informed investment decisions.")
     print("")
-    print(sector_std_df.to_string(index=False))
+    print(tb.tabulate(sector_std_df, headers='keys', tablefmt='fancy_outline', showindex="never"))
     print("")
     print("")
 
@@ -179,7 +180,7 @@ def calculate_sector_52_week_diff(threshold=10):
     # Prepend $ to Ticker values
     df['Ticker'] = df['Ticker'].apply(lambda x: f'${x}')
     print("Sector 52-Week Differences and Buy Opportunities based on R:R:")
-    print(df)
+    print(tb.tabulate(df, headers='keys', tablefmt='fancy_outline', showindex="never"))
     print("")
     print("")
 
@@ -606,7 +607,10 @@ def calculate_sp500_relative_impact():
 
     # Separate into two DataFrames
     df_top_positive = df_sorted.head(5).sort_values(by='relative_impact', ascending=False)
+    df_top_positive['symbol'] = df_top_positive['symbol'].apply(lambda x: f"${x}")
+
     df_top_negative = df_sorted.tail(5).sort_values(by='relative_impact', ascending=True)
+    df_top_negative['symbol'] = df_top_negative['symbol'].apply(lambda x: f"${x}")
 
     # General statistics
     positive_impact_stocks = df_sorted[df_sorted['relative_impact'].str.rstrip('%').astype(float) > 0]
@@ -635,9 +639,9 @@ def calculate_sp500_relative_impact():
 
     # Print top 5 positive and negative relative impact
     print("\nTop 5 Positive Relative Impact:")
-    print(df_top_positive)
+    print(tb.tabulate(df_top_positive, headers='keys', tablefmt='fancy_outline', showindex="never"))
     print("\nTop 5 Negative Relative Impact:")
-    print(df_top_negative)
+    print(tb.tabulate(df_top_negative, headers='keys', tablefmt='fancy_outline', showindex="never"))
 
 
 
