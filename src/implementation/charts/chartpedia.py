@@ -367,14 +367,17 @@ def plot_asset_profile(symbol:str):
     _plot_asset_sesonality(df_data_5_trading_years, symbol)
 
 def plot_cross_asset_correlation( list_corrs, title, to_tail=180):
+    list_corrs_printable = [f"${symbol}" for symbol in list_corrs]
+    print(list_corrs_printable)
+
     df_final = pd.DataFrame()
 
     for asset in list_corrs:
         df_data = yfinance_lib.get_symbol_historical_data(asset)
-        df_data = df_data.tail(to_tail+1).reset_index(drop=True)
+        df_data = df_data.tail(to_tail + 1).reset_index(drop=True)
         if len(df_data) > int(to_tail):
             df_data['close'] = df_data['close'].astype(float)
-            df_data_new = pd.DataFrame(df_data["close"]).rename({'close': asset[0]}, axis=1)
+            df_data_new = pd.DataFrame(df_data["close"]).rename({'close': asset}, axis=1)
             df_final = pd.concat([df_final, df_data_new.tail(to_tail)], axis=1)
 
     df_final.columns = list_corrs
@@ -384,6 +387,7 @@ def plot_cross_asset_correlation( list_corrs, title, to_tail=180):
         color_continuous_scale="spectral",
         template="plotly_dark",
         title=f"{title} for last {to_tail} trading days",
+        text_auto=True  # Add correlation numbers to the chart
     )
     fig.show()
 

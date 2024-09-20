@@ -5,13 +5,22 @@ def chart_asset_profile(symbol):
     chartpedia.plot_stock_flows(symbol)
 
 def chart_cross_asset_correlation():
-    chartpedia.plot_cross_asset_correlation(["ES=F","GC=F","NQ=F","CL=F","DX-Y.NYB","^VIX","^RUT","HG=F","NG=F","RB=F","ZN=F","^STOXX50E","^N225","ZT=F","EURUSD=x","USDJPY=x","HYG","TLT" ,"JNK"], "CrossAsset correlation matrix")
+    asset_list = ["ES=F","GC=F","NQ=F","CL=F","DX-Y.NYB","^VIX","^RUT","HG=F","NG=F","RB=F","ZN=F","^STOXX50E","^N225","ZT=F","EURUSD=x","USDJPY=x","HYG","TLT" ,"JNK", "BTC-USD","ETH-USD"]
+    title = "CrossAsset correlation matrix"
+    chartpedia.plot_cross_asset_correlation(asset_list, title, 30)
+    chartpedia.plot_cross_asset_correlation(asset_list, title, 180)
 
 def chart_cross_sector_correlation():
-    chartpedia.plot_cross_asset_correlation(["SPY","QQQ","IWM","XLY","XLP","XLE","XLF","XLV","XLI","XLB","XLRE","XLK","XLC","XLU","GDX","GDXJ","MOO","FDN","KIE","KRE","TAN","JETS","IBB","OIH","SMH"], "Sector correlation matrix")
+    asset_list = ["SPY","QQQ","IWM","XLY","XLP","XLE","XLF","XLV","XLI","XLB","XLRE","XLK","XLC","XLU","GDX","GDXJ","MOO","FDN","KIE","KRE","TAN","JETS","IBB","OIH","SMH"]
+    title = "Sector correlation matrix"
+    chartpedia.plot_cross_asset_correlation(asset_list, title, 30)
+    chartpedia.plot_cross_asset_correlation(asset_list, title, 180)
 
 def chart_stock_correlation():
-    chartpedia.plot_cross_asset_correlation(["SPY","QQQ","IWM","PEP","MSFT","NVDA","GOLD","AAPL","COST","TSLA","GME","BKNG","O","BTC-USD","ETH-USD","XRP-USD"], "Stock correlation matrix")
+    asset_list = ["SPY","QQQ","IWM",'LIN', 'SHW', 'ECL', 'FCX', 'APD', 'GOOG', 'GOOGL', 'META', 'NFLX', 'TMUS', 'AMZN', 'TSLA', 'HD', 'MCD', 'LOW', 'WMT', 'PG', 'COST', 'KO', 'PEP', 'XOM', 'CVX', 'COP', 'EOG', 'SLB', 'JPM', 'V', 'MA', 'BAC', 'BX', 'LLY', 'UNH', 'JNJ', 'ABBV', 'MRK', 'GE', 'CAT', 'RTX', 'UNP', 'LMT', 'PLD', 'AMT', 'EQIX', 'WELL', 'PSA', 'AAPL', 'MSFT', 'NVDA', 'AVGO', 'ORCL', 'NEE', 'SO', 'DUK', 'GEV', 'CEG']
+    title = "Stock correlation matrix"
+    chartpedia.plot_cross_asset_correlation(asset_list, title, 30)
+    chartpedia.plot_cross_asset_correlation(asset_list, title, 180)
 
 
 def chart_sp500_vix():

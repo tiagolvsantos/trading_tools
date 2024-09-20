@@ -106,7 +106,7 @@ def charts_menu():
     if charts_menu_pick["option"] == "VIX 1 ATR":
         charts_impl.chart_vix_atr_1()
     if charts_menu_pick["option"] == "Crypto CVD":
-        charts_impl.chart_binance_symbol_cvd(input("Select a symbol:").upper(),"1d",180)
+        charts_impl.chart_binance_symbol_cvd(input("Select a symbol:").upper(),"1d",30)
     if charts_menu_pick["option"] == "Stock Flows":
         charts_impl.chart_stock_flows(input("Select a symbol:").upper())
     if charts_menu_pick["option"] == "Fast RSI":

@@ -106,9 +106,15 @@ def report_ma(ma, market):
     Returns:
         None
     """
-    search_query = f"select * from  strat_moving_average where ma='{ma}' and market = '{market}' and updated= '{datetime.now().strftime('%Y-%m-%d')}'"
+    search_query = f"select * from strat_moving_average where ma='{ma}' and market = '{market}' and updated= '{datetime.now().strftime('%Y-%m-%d')}'"
     search_data = sqlite_lib.get_record_query(search_query)
-    tabulate_lib.tabulate_it(f"Updated MA {ma}", pd.DataFrame(search_data, columns=['symbol', 'ma','signal','updated', 'market']))
+
+    # Create DataFrame and sort by 'signal' column
+    df = pd.DataFrame(search_data, columns=['symbol', 'ma', 'signal', 'updated', 'market'])
+    df_sorted = df.sort_values(by='signal')
+
+    # Tabulate the sorted DataFrame
+    tabulate_lib.tabulate_it(f"Updated MA {ma}", df_sorted)
 
 def report_ema(ema, market):
     """
@@ -121,9 +127,15 @@ def report_ema(ema, market):
     Returns:
         None
     """
-    search_query = f"select * from  strat_exponential_moving_average where ema='{ema}' and market = '{market}' and updated= '{datetime.now().strftime('%Y-%m-%d')}'"
+    search_query = f"select * from strat_exponential_moving_average where ema='{ema}' and market = '{market}' and updated= '{datetime.now().strftime('%Y-%m-%d')}'"
     search_data = sqlite_lib.get_record_query(search_query)
-    tabulate_lib.tabulate_it(f"Updated EMA {ema}", pd.DataFrame(search_data, columns=['symbol', 'ema','signal','updated', 'market']))
+
+    # Create DataFrame and sort by 'signal' column
+    df = pd.DataFrame(search_data, columns=['symbol', 'ema', 'signal', 'updated', 'market'])
+    df_sorted = df.sort_values(by='signal')
+
+    # Tabulate the sorted DataFrame
+    tabulate_lib.tabulate_it(f"Updated EMA {ema}", df_sorted)
 
 def report_volume_up_average(symbol, market, to_tail, name=""):
     """
@@ -206,33 +218,6 @@ def report_bb_bands_outside(symbol, market, name=""):
         tabulate_lib.print_it_line_green(f"Price for ${symbol} is below Lower Bollinger Band.")
         return 1
 
-def report_candles(market:str):
-    """
-    Generate a report of candlestick patterns for the given market.
-
-    Parameters:
-    market (str): The market to generate the report for. Can be "tradfi" for traditional finance or "crypto" for cryptocurrency.
-
-    Returns:
-    None
-    """
-    if market == "tradfi":
-        df_symbols = sqlite_lib.get_stock_symbols_list()
-    elif market == "crypto":
-        df_symbols = sqlite_lib.get_crypto_symbols_list()
-
-    df_candles=pd.DataFrame(columns = [
-        "symbol",   
-        "Bullish swing",
-        "Bearish swing",
-        "Bearish pinbar",
-        "Inside bar",
-        "Outside bar",  
-        "Bullish engulfing",
-        "Bearish engulfing" 
-        ])
-
-    # Rest of the code...
 def report_candles(market:str):
     if market == "tradfi":
         df_symbols = sqlite_lib.get_stock_symbols_list()
