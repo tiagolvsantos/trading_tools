@@ -88,7 +88,6 @@ def calculate_sp500_sector_std():
     print("")
     print("")
 
-
 def check_sector_outperformance():
     """
     Check which sectors are outperforming the S&P 500 using sector ETFs.
@@ -523,7 +522,6 @@ def calculate_mag7_weight_on_sp500():
         print(f"${ticker} Last Day Return: {last_return:.2f}%")
     print("")
 
-
 def classify_risk_regime():
     # Fetch historical data for the S&P 500 and VIX for the past year
     sp500_data = yf.Ticker(asset_ticker).history(period="1y")
@@ -568,7 +566,78 @@ def classify_risk_regime():
     print(f"Regime: {regime}")
     print("")
 
+def calculate_sp500_relative_impact():
+    # Fetch the list of S&P 500 stocks
+    sp500_symbols = pd.read_html('https://en.wikipedia.org/wiki/List_of_S%26P_500_companies')[0]['Symbol'].tolist()
 
+   # Replace '.' with '-' in the symbols
+    sp500_symbols = [symbol.replace('.', '-') for symbol in sp500_symbols]
+
+    # Retrieve market cap and performance data for each stock
+    stocks_data = []
+    for symbol in sp500_symbols:
+        ticker = yf.Ticker(symbol)
+        info = ticker.info
+        history = ticker.history(period=period)
+        if not history.empty:
+            performance = (history['Close'][-1] - history['Close'][0]) / history['Close'][0] * 100
+            stocks_data.append({
+                'symbol': symbol,
+                'market_cap': info.get('marketCap', 0),
+                'performance': performance
+            })
+
+    # Convert to DataFrame
+    df = pd.DataFrame(stocks_data)
+
+    # Filter out stocks with missing market cap
+    df = df[df['market_cap'] > 0]
+
+    # Calculate the relative impact on performance by market cap
+    total_market_cap = df['market_cap'].sum()
+    df['relative_impact'] = df['market_cap'] / total_market_cap * df['performance']
+
+    # Sort by relative impact
+    df_sorted = df.sort_values(by='relative_impact', ascending=False)
+
+    # sort performance and relative impact columns
+    df_sorted['performance'] = df_sorted['performance'].apply(lambda x: f"{x:.2f}%")
+    df_sorted['relative_impact'] = df_sorted['relative_impact'].apply(lambda x: f"{x:.2f}%")
+
+    # Separate into two DataFrames
+    df_top_positive = df_sorted.head(5).sort_values(by='relative_impact', ascending=False)
+    df_top_negative = df_sorted.tail(5).sort_values(by='relative_impact', ascending=True)
+
+    # General statistics
+    positive_impact_stocks = df_sorted[df_sorted['relative_impact'].str.rstrip('%').astype(float) > 0]
+    negative_impact_stocks = df_sorted[df_sorted['relative_impact'].str.rstrip('%').astype(float) < 0]
+
+    print("Summary Statistics:")
+    print(f"Number of stocks with positive impact: {len(positive_impact_stocks)}")
+    print(f"Number of stocks with negative impact: {len(negative_impact_stocks)}")
+
+    average_performance_positive = positive_impact_stocks['performance'].str.rstrip('%').astype(float).mean()
+    average_performance_negative = negative_impact_stocks['performance'].str.rstrip('%').astype(float).mean()
+
+    print(f"Average performance for positive impact stocks: {average_performance_positive:.2f}%")
+    print(f"Average performance for negative impact stocks: {average_performance_negative:.2f}%")
+
+    # Print specific statistics for performance and relative impact
+    print("\nPerformance Statistics:")
+    print(f"Mean: {df_sorted['performance'].str.rstrip('%').astype(float).mean():.2f}%")
+    print(f"Median: {df_sorted['performance'].str.rstrip('%').astype(float).median():.2f}%")
+    print(f"Standard Deviation: {df_sorted['performance'].str.rstrip('%').astype(float).std():.2f}%")
+
+    print("\nRelative Impact Statistics:")
+    print(f"Mean: {df_sorted['relative_impact'].str.rstrip('%').astype(float).mean():.2f}%")
+    print(f"Median: {df_sorted['relative_impact'].str.rstrip('%').astype(float).median():.2f}%")
+    print(f"Standard Deviation: {df_sorted['relative_impact'].str.rstrip('%').astype(float).std():.2f}%")
+
+    # Print top 5 positive and negative relative impact
+    print("\nTop 5 Positive Relative Impact:")
+    print(df_top_positive)
+    print("\nTop 5 Negative Relative Impact:")
+    print(df_top_negative)
 
 
 
@@ -598,3 +667,6 @@ def print_sp500_reports():
     print("### Market Signals ###")
     calculate_market_pressure()
     classify_risk_regime()
+    calculate_sp500_relative_impact()
+
+
