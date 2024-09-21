@@ -61,3 +61,6 @@ def chart_market_breath(period, indx):
 
 def chart_fast_rsi(symbol):
     chartpedia.plot_chart_rsi_7(symbol)
+
+def chart_sp500_sector_constituients_corr():
+    chartpedia.plot_sp500_constiuents_sector_correlation()

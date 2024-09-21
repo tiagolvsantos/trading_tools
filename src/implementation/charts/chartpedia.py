@@ -30,6 +30,8 @@ import matplotlib.ticker as mtick
 from pylab import rcParams
 import datetime
 from datetime import timedelta
+import seaborn as sns
+import yfinance as yf
 
 from statsmodels.tsa.seasonal import seasonal_decompose
 
@@ -1000,3 +1002,36 @@ def plot_market_breath(period, indx):
         color="white"
     ))
     fig.show()
+
+
+def plot_sp500_constiuents_sector_correlation():
+    period = "YTD"
+    # Set the theme to dark
+    sns.set_theme(style="darkgrid", rc={"axes.facecolor": "black", "figure.facecolor": "black", "axes.labelcolor": "white", "xtick.color": "white", "ytick.color": "white", "text.color": "white", "axes.edgecolor": "white"})
+
+    # Fetch the list of S&P 500 stocks and their sectors
+    sp500_table = pd.read_html('https://en.wikipedia.org/wiki/List_of_S%26P_500_companies')[0]
+    sp500_symbols = sp500_table['Symbol'].tolist()
+    sp500_symbols = [symbol.replace('.', '-') for symbol in sp500_symbols]
+    sp500_sectors = sp500_table['GICS Sector'].tolist()
+    
+    # Replace '.' with '-' in the symbols
+    sp500_symbols = [symbol.replace('.', '-') for symbol in sp500_symbols]
+
+    # Create a dictionary to store historical price data for each sector
+    sector_data = {}
+    for symbol, sector in zip(sp500_symbols, sp500_sectors):
+        ticker = yf.Ticker(symbol)
+        history = ticker.history(period=period)['Close']
+        if sector not in sector_data:
+            sector_data[sector] = pd.DataFrame()
+        sector_data[sector][symbol] = history
+
+    # Generate correlation plots for each sector
+    for sector, data in sector_data.items():
+        if not data.empty:
+            correlation_matrix = data.corr()
+            plt.figure(figsize=(10, 8))
+            sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', fmt='.2f', cbar_kws={'label': 'Correlation'}, annot_kws={'color': 'white'})
+            plt.title(f'Correlation Matrix for {sector} Sector', color='white')
+            plt.show()

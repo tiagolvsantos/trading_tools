@@ -84,7 +84,7 @@ def charts_menu():
     inquirer.List('option',
                     message="Select an option",
                     choices=["Asset profile","Cross asset corr", "Cross sector corr",
-                             "Stock correlations",
+                             "Stock correlations","SP500 Sector stocks correlations",
                              "SPX/VIX ratio", "VIX 1 ATR", "Stock Flows","Crypto CVD",
                              'Options charts', 'Srategic Petroleum Reserve', 'Year on Year comparrison',
                              'SKEW','AAII', 'Market Breath','Fast RSI',
@@ -126,6 +126,8 @@ def charts_menu():
         charts_impl.chart_year_on_year_comparisson(input("Select a symbol:").upper(),input("Select a year:").upper())
     if charts_menu_pick["option"] == "SKEW":
         charts_impl.chart_skew_sp500()
+    if charts_menu_pick["option"] == "SP500 Sector stocks correlations":
+        charts_impl.chart_sp500_sector_constituients_corr()
     if charts_menu_pick["option"] == "Main menu":
         main()
     main()

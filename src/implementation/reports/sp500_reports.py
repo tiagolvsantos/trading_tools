@@ -4,6 +4,8 @@ import numpy as np
 import tabulate as tb
 from datetime import datetime, timezone, timedelta
 
+
+
 # Define sector_etfs globally
 sector_etfs = {
     'Technology': 'XLK',
@@ -642,7 +644,6 @@ def calculate_sp500_relative_impact():
     print(tb.tabulate(df_top_positive, headers='keys', tablefmt='fancy_outline', showindex="never"))
     print("\nTop 5 Negative Relative Impact:")
     print(tb.tabulate(df_top_negative, headers='keys', tablefmt='fancy_outline', showindex="never"))
-
 
 
 
